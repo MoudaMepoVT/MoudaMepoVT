@@ -160,23 +160,15 @@ function tap() {
 
 <hr>
 
-<!-- 💬 掲示板 -->
+  <!-- 💬 掲示板 -->
 <h2>★掲示板★</h2>
+
 <input id="name" placeholder="名前"><br>
-<textarea id="msg"></textarea><br>
-<button onclick="post()">書き込む</button>
+<textarea id="msg" placeholder="メッセージ"></textarea><br>
+<button onclick="postMsg()">書き込む</button>
 
-<div id="bbs"></div>
+<div id="bbsArea"></div>
 
-<script>
-function post() {
-  const name = document.getElementById("name").value;
-  const msg = document.getElementById("msg").value;
-
-  document.getElementById("bbs").innerHTML +=
-    `<p>【${name}】<br>${msg}</p><hr>`;
-}
-</script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -189,6 +181,7 @@ const firebaseConfig = {
   messagingSenderId: "912472294656",
   appId: "1:912472294656:web:f64b805cebb4f188ff9fe5",
   measurementId: "G-SL2D9GDZBD"
+};
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -206,10 +199,11 @@ window.postMsg = async function() {
     time: new Date()
   });
 
+  document.getElementById("msg").value = ""; // 入力リセット
   loadMessages();
 }
 
-// 📖 読み込み（新しい順）
+// 📖 読み込み
 async function loadMessages() {
   const q = query(collection(db, "bbs"), orderBy("time", "desc"));
   const snapshot = await getDocs(q);
@@ -231,7 +225,10 @@ async function loadMessages() {
 
 // 初期読み込み
 loadMessages();
-</script>    
+</script>
+
+<hr>
+
 <hr>
 
   
