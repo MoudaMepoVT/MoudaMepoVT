@@ -4,25 +4,6 @@
 <head>
 <meta charset="UTF-8">
 <title>妄堕めぽのお部屋</title>
-</head>
-
-<body bgcolor="#ccffff" text="#000099">
-<center>
-
-<h1>★妄堕めぽのホームページ★</h1>
-
-<p>ようこそ⊂( ᴖ ̫ ᴖ )⊃</p>
-
-</center>
-</body>
-</html>
-
-
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>妄堕めぽちゃんねる</title>
 
 <style>
 body {
@@ -58,7 +39,7 @@ body {
 
 <body>
 
-<!-- 🌟 背景アニメ -->
+<!-- 🌟 背景 -->
 <script>
 for (let i = 0; i < 40; i++) {
   let s = document.createElement("div");
@@ -69,10 +50,10 @@ for (let i = 0; i < 40; i++) {
 }
 </script>
 
-<!-- 🎥 タイトル（YouTubeへ） -->
+<!-- 🎥 タイトル -->
 <h1>
 <a href="https://www.youtube.com/" target="_blank">
-★妄堕めぽのホームページ★
+★めぽのホームページ★
 </a>
 </h1>
 
@@ -87,13 +68,13 @@ localStorage.setItem("count", count);
 document.getElementById("counter").textContent = count;
 
 if (count == 8888) {
-  document.getElementById("kiri").innerHTML = "🎉キリ番8888！#妄堕めぽ で報告してね！";
+  document.getElementById("kiri").innerHTML = "🎉キリ番8888！報告してね！";
 }
 </script>
 
 <hr>
 
-<!-- 🔴 配信エリア -->
+<!-- 🔴 配信 -->
 <h2>★配信情報★</h2>
 
 <h3>🔴 LIVE中</h3>
@@ -117,7 +98,7 @@ async function loadYT(type, target) {
 
   let html = "";
 
-  if (data.items.length === 0) {
+  if (!data.items || data.items.length === 0) {
     html = "<p>なし</p>";
   } else {
     data.items.forEach(item => {
@@ -130,10 +111,11 @@ async function loadYT(type, target) {
           ${type === "live" ? '<p class="live">🔴 LIVE中！！！</p>' : ""}
           <img src="${thumb}" width="200"><br>
           ${title}<br>
-          <a href="https://youtube.com/watch?v=${videoId}" target="_blank">
-          ▶ 見に行く！
+          <a href="https://youtube.com/channel/UCmUlzug_w0WqRdTsEMJHjFw?si=qvBYVKeUWD0BfGMq" target="_blank">
+            ▶ 見に行く！
           </a>
-        </div><hr>
+        </div>
+        <hr>
       `;
     });
   }
@@ -148,14 +130,14 @@ loadYT("completed", "archive");
 
 <hr>
 
-<!-- おみくじ -->
+<!-- 🎮 おみくじ -->
 <h2>★おみくじ★</h2>
 <button onclick="omikuji()">引く</button>
 <p id="omikujiResult"></p>
 
 <script>
 function omikuji() {
-  const list = ["大吉🦷","中吉🩵","小吉🍓","凶🫵😁"];
+  const list = ["大吉🦷🩵","中吉✌️","小吉😂","凶😁🫵"];
   document.getElementById("omikujiResult").textContent =
     list[Math.floor(Math.random()*list.length)];
 }
@@ -163,7 +145,7 @@ function omikuji() {
 
 <hr>
 
-<!-- 🎮 連打ゲーム -->
+<!-- 🎮 連打 -->
 <h2>★応援ボタン★</h2>
 <button onclick="tap()">ぽち！</button>
 <p>応援：<span id="score">0</span></p>
@@ -178,7 +160,7 @@ function tap() {
 
 <hr>
 
-<!-- 💬 簡易BBS -->
+<!-- 💬 掲示板 -->
 <h2>★掲示板★</h2>
 <input id="name" placeholder="名前"><br>
 <textarea id="msg"></textarea><br>
@@ -204,15 +186,30 @@ function post() {
 
 <hr>
 
-<!--  キャラ -->
+<!-- 🦷キャラ🌧️-->
 <h2>★キャラ紹介★</h2>
-<p>妄堕めぽ：堕メ天使VTuber</p>
+<p> 堕メ天使の妄堕めぽ（Mouda Mepo）
+天界から追放された堕天使VTuber 
+ダメダメなめぽと見張り役の兎田さん（肩のぬいぐるみ）が、インターネットに触れて世界を知る物語
+
+[配信時間]
+21:00~
+[定期配信]
+金曜日：歌枠
+ゲーム配信はツイッチ
+歌枠耐久や雑談など視聴者との交流を大切にしています！
+
+❥お仕立て→さきまる様
+  https://x.com/sakimr1020
+❥モデリング→妄堕めぽ
+❥OP・ED ぽんすけかいかい 様
+https://x.com/kaikaipnsk </p>
 
 <hr>
 
 <!-- 🔗 リンク -->
 <h2>★リンク★</h2>
-<a href="https://www.youtube.com/@%E5%A6%84%E5%A0%95%E3%82%81%E3%81%BD-MoudaMepo" target="_blank">YouTube</a><br>
+<a href="https://youtube.com" target="_blank">YouTube</a>
 
 </body>
 </html>
