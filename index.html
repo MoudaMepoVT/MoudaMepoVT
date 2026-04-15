@@ -177,6 +177,62 @@ function post() {
     `<p>【${name}】<br>${msg}</p><hr>`;
 }
 </script>
+  <script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCJNWWipkTzo_CoWjCrJJG0rAXK_rfU9_c",
+  authDomain: "moudamepo-e3239.firebaseapp.com",
+  projectId: "moudamepo-e3239",
+  storageBucket: "moudamepo-e3239.firebasestorage.app",
+  messagingSenderId: "912472294656",
+  appId: "1:912472294656:web:f64b805cebb4f188ff9fe5",
+  measurementId: "G-SL2D9GDZBD"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// 📩 投稿
+window.postMsg = async function() {
+  const name = document.getElementById("name").value;
+  const msg = document.getElementById("msg").value;
+
+  if (!name || !msg) return alert("入力してね！");
+
+  await addDoc(collection(db, "bbs"), {
+    name: name,
+    msg: msg,
+    time: new Date()
+  });
+
+  loadMessages();
+}
+
+// 📖 読み込み（新しい順）
+async function loadMessages() {
+  const q = query(collection(db, "bbs"), orderBy("time", "desc"));
+  const snapshot = await getDocs(q);
+
+  let html = "";
+
+  snapshot.forEach(doc => {
+    const d = doc.data();
+    html += `
+      <p>
+      <b>${d.name}</b><br>
+      ${d.msg}
+      </p><hr>
+    `;
+  });
+
+  document.getElementById("bbsArea").innerHTML = html;
+}
+
+// 初期読み込み
+loadMessages();
+</script>
 
 <hr>
 
@@ -229,7 +285,7 @@ function post() {
 
 
 <!-- 🔗 リンク -->
-<h2>★LOVE★</h2>
+<h2>🪐LOVE💤</h2>
 <a href="https://x.com/layl_kamitsuki_">狼月鬼レイル🪐💤ショタVTuber🐺🧛</a>
 <p> 『くゅ』ことショタVTuber<a href="https://www.youtube.com/@KamitsukiLayl"_blank">
 狼月鬼レイル
