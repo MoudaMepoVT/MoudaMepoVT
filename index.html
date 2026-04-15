@@ -179,12 +179,31 @@ function post() {
 </script>
   <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCJNWWipkTzo_CoWjCrJJG0rAXK_rfU9_c",
   authDomain: "moudamepo-e3239.firebaseapp.com",
   projectId: "moudamepo-e3239",
+  storageBucket: "moudamepo-e3239.firebasestorage.app",
+  messagingSenderId: "912472294656",
+  appId: "1:912472294656:web:f64b805cebb4f188ff9fe5",
+  measurementId: "G-SL2D9GDZBD"
+};
+
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+// 🔑 ここに自分の設定入れる
+const firebaseConfig = {
+  apiKey: "ここに",
+  authDomain: "ここに",
+  projectId: "ここに"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -228,8 +247,7 @@ async function loadMessages() {
 
 // 初期読み込み
 loadMessages();
-</script>
-
+</script>    
 <hr>
 
   
