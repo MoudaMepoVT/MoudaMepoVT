@@ -16,3 +16,203 @@
 </center>
 </body>
 </html>
+
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>妄堕めぽのお部屋</title>
+
+<style>
+body {
+  background: #ccffff;
+  text-align: center;
+}
+
+/* LIVE点滅 */
+.live {
+  color: red;
+  font-weight: bold;
+  animation: blink 1s infinite;
+}
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+/* キラキラ背景 */
+.star {
+  position: fixed;
+  width: 5px;
+  height: 5px;
+  background: white;
+  border-radius: 50%;
+  animation: fall linear infinite;
+}
+@keyframes fall {
+  from { transform: translateY(-10vh); }
+  to { transform: translateY(110vh); }
+}
+</style>
+</head>
+
+<body>
+
+<!-- 🌟 背景アニメ -->
+<script>
+for (let i = 0; i < 40; i++) {
+  let s = document.createElement("div");
+  s.className = "star";
+  s.style.left = Math.random() * 100 + "vw";
+  s.style.animationDuration = (2 + Math.random()*3) + "s";
+  document.body.appendChild(s);
+}
+</script>
+
+<!-- 🎥 タイトル（YouTubeへ） -->
+<h1>
+<a href="https://www.youtube.com/" target="_blank">
+★妄堕めぽのホームページ★
+</a>
+</h1>
+
+<!-- 🔢 カウンター -->
+<p>あなたは <span id="counter">0</span> 人目！</p>
+<p id="kiri"></p>
+
+<script>
+let count = localStorage.getItem("count") || 0;
+count++;
+localStorage.setItem("count", count);
+document.getElementById("counter").textContent = count;
+
+if (count == 8888) {
+  document.getElementById("kiri").innerHTML = "🎉キリ番8888！#妄堕めぽ で報告してね！";
+}
+</script>
+
+<hr>
+
+<!-- 🔴 配信エリア -->
+<h2>★配信情報★</h2>
+
+<h3>🔴 LIVE中</h3>
+<div id="live"></div>
+
+<h3>⏰ 配信予定</h3>
+<div id="upcoming"></div>
+
+<h3>📼 アーカイブ</h3>
+<div id="archive"></div>
+
+<script>
+const API_KEY = "ここにAPIキー";
+const CHANNEL_ID = "ここにチャンネルID";
+
+async function loadYT(type, target) {
+  const res = await fetch(
+    `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL_ID}&eventType=${type}&type=video&key=${API_KEY}`
+  );
+  const data = await res.json();
+
+  let html = "";
+
+  if (data.items.length === 0) {
+    html = "<p>なし</p>";
+  } else {
+    data.items.forEach(item => {
+      const title = item.snippet.title;
+      const thumb = item.snippet.thumbnails.medium.url;
+      const videoId = item.id.videoId;
+
+      html += `
+        <div>
+          ${type === "live" ? '<p class="live">🔴 LIVE中！！！</p>' : ""}
+          <img src="${thumb}" width="200"><br>
+          ${title}<br>
+          <a href="https://youtube.com/watch?v=${videoId}" target="_blank">
+          ▶ 見に行く！
+          </a>
+        </div><hr>
+      `;
+    });
+  }
+
+  document.getElementById(target).innerHTML = html;
+}
+
+loadYT("live", "live");
+loadYT("upcoming", "upcoming");
+loadYT("completed", "archive");
+</script>
+
+<hr>
+
+<!-- おみくじ -->
+<h2>★おみくじ★</h2>
+<button onclick="omikuji()">引く</button>
+<p id="omikujiResult"></p>
+
+<script>
+function omikuji() {
+  const list = ["大吉🦷","中吉🩵","小吉🍓","凶🫵😁"];
+  document.getElementById("omikujiResult").textContent =
+    list[Math.floor(Math.random()*list.length)];
+}
+</script>
+
+<hr>
+
+<!-- 🎮 連打ゲーム -->
+<h2>★応援ボタン★</h2>
+<button onclick="tap()">ぽち！</button>
+<p>応援：<span id="score">0</span></p>
+
+<script>
+let score = 0;
+function tap() {
+  score++;
+  document.getElementById("score").textContent = score;
+}
+</script>
+
+<hr>
+
+<!-- 💬 簡易BBS -->
+<h2>★掲示板★</h2>
+<input id="name" placeholder="名前"><br>
+<textarea id="msg"></textarea><br>
+<button onclick="post()">書き込む</button>
+
+<div id="bbs"></div>
+
+<script>
+function post() {
+  const name = document.getElementById("name").value;
+  const msg = document.getElementById("msg").value;
+
+  document.getElementById("bbs").innerHTML +=
+    `<p>【${name}】<br>${msg}</p><hr>`;
+}
+</script>
+
+<hr>
+
+<!-- 📖 日記 -->
+<h2>★日記★</h2>
+<p>2026/04/15 サイトつくった！</p>
+
+<hr>
+
+<!--  キャラ -->
+<h2>★キャラ紹介★</h2>
+<p>妄堕めぽ：堕メ天使VTuber</p>
+
+<hr>
+
+<!-- 🔗 リンク -->
+<h2>★リンク★</h2>
+<a href="https://www.youtube.com/@%E5%A6%84%E5%A0%95%E3%82%81%E3%81%BD-MoudaMepo" target="_blank">YouTube</a><br>
+
+</body>
+</html>
