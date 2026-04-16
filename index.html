@@ -18,15 +18,19 @@ body{
  overflow:hidden;
 }
 
-/* レイアウト */
 .container{display:flex;height:100vh;}
-.side{width:20%;padding:10px;background:rgba(255,255,255,0.3);}
+.side{
+ width:20%;
+ padding:10px;
+ background:rgba(255,255,255,0.3);
+ backdrop-filter:blur(10px);
+}
 .main{width:60%;position:relative;}
 
 /* ウィンドウ */
 .window{
  position:absolute;
- width:300px;
+ width:320px;
  background:rgba(255,255,255,0.4);
  border:2px solid var(--main);
  border-radius:12px;
@@ -37,7 +41,11 @@ body{
  padding:5px;
  cursor:move;
 }
-.content{padding:10px;max-height:300px;overflow:auto;}
+.content{
+ padding:10px;
+ max-height:300px;
+ overflow:auto;
+}
 
 /* 星 */
 .star{
@@ -89,27 +97,13 @@ body{
  font-size:40px;
  display:none;
 }
-
-/* hover */
-.pill{
- padding:5px;
- margin:5px;
- background:#fff;
- border-radius:10px;
- cursor:pointer;
- transition:.2s;
-}
-.pill:hover{
- transform:scale(1.1);
- background:var(--accent);
-}
 </style>
 </head>
 
 <body>
 
-<!-- 星 -->
 <script>
+/* 星 */
 for(let i=0;i<50;i++){
  let s=document.createElement("div");
  s.className="star";
@@ -123,9 +117,26 @@ for(let i=0;i<50;i++){
 
 <!-- 左 -->
 <div class="side">
-<h3>🦷めぽ情報</h3>
-<p>堕メ天使VTuber 妄堕めぽ</p>
-<p>配信 21:00〜</p>
+<p>🦷めぽ情報🌧</p>
+<p> 堕メ天使の妄堕めぽ（Mouda Mepo）🍰11/03</p>
+<p> 天界から追放された堕天使VTuber </p>
+<p> ダメダメなめぽと見張り役の兎田さん（肩のぬいぐるみ）が、インターネットに触れて世界を知る物語</p>
+<p> </p>
+<p> [配信時間]</p>
+<p> 21:00~</p>
+<p> [定期配信]</p>
+<p> 金曜日：歌枠</p>
+<p> ゲーム配信はツイッチ</p>
+<p> 歌枠耐久や雑談など視聴者との交流を大切にしています！</p>
+
+<hr>
+
+<p><a href="https://x.com/sakimr1020" target="_blank">❥お仕立て→さきまる様</a></p>
+<p><a href="https://x.com/kaikaipnsk" target="_blank">❥OP・ED ぽんすけかいかい 様</a></p>
+<p><a href="https://www.youtube.com/@妄堕めぽ-MoudaMepo" target="_blank">❥モデリング→妄堕めぽ</a></p>
+
+<p id="counter"></p>
+<p id="kiri" style="color:red;"></p>
 </div>
 
 <!-- メイン -->
@@ -133,16 +144,8 @@ for(let i=0;i<50;i++){
 
 <h1>めぽのお部屋へようこそ⊂( ᴖ ̫ ᴖ )⊃</h1>
 
-<!-- 配信 -->
-<div class="window" id="liveWin" style="top:50px;left:50px;">
-<div class="titlebar">Live.exe</div>
-<div class="content">
-<div id="live">準備中...</div>
-</div>
-</div>
-
 <!-- BBS -->
-<div class="window" id="bbsWin" style="top:200px;left:120px;">
+<div class="window" id="bbsWin" style="top:100px;left:100px;">
 <div class="titlebar">掲示板</div>
 <div class="content">
 <input id="name" placeholder="名前"><br>
@@ -152,22 +155,19 @@ for(let i=0;i<50;i++){
 </div>
 </div>
 
-<!-- グッズ -->
-<div class="window" id="goodsWin" style="top:100px;left:400px;">
-<div class="titlebar">Goods.exe</div>
-<div class="content">
-<div class="pill" onclick="gacha(event)">アクスタ</div>
-<div class="pill" onclick="gacha(event)">アクキー</div>
-</div>
-</div>
-</div>
-
 </div>
 
 <!-- 右 -->
 <div class="side">
-<h3>リンク</h3>
-<a href="https://www.youtube.com/" target="_blank">YouTube</a>
+<h2>🦷リンク🦷</h2>
+<p><a href="https://www.youtube.com/@妄堕めぽ-MoudaMepo" target="_blank">YouTube</a></p>
+<p><a href="https://x.com/hello_mepo" target="_blank">Twitter</a></p>
+<p><a href="https://hello-mepo.booth.pm/">グッズ</a></p>
+
+<hr>
+
+<h2>🪐LOVE💤</h2>
+<a href="https://x.com/layl_kamitsuki_">狼月鬼レイル</a>
 </div>
 
 </div>
@@ -183,7 +183,7 @@ for(let i=0;i<50;i++){
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
 <script>
-/* 🔥 Firebase（自分のに変更） */
+/* Firebase（自分のに変更） */
 const firebaseConfig={
  apiKey:"YOUR_API_KEY",
  databaseURL:"YOUR_DB_URL"
@@ -191,42 +191,45 @@ const firebaseConfig={
 firebase.initializeApp(firebaseConfig);
 const db=firebase.database();
 
+/* カウンター */
+const counterRef=db.ref("counter");
+counterRef.transaction(c=>(c||0)+1);
+counterRef.on("value",s=>{
+ let c=s.val()||0;
+ counter.innerHTML=`あなたは <b>${c}</b> 人目の訪問者`;
+ if(c%100===0){kiri.innerHTML="🎉キリ番GET!!!🎉";}
+});
+
 /* BBS */
 function post(){
- let name=document.getElementById("name").value||"名無し";
- let msg=document.getElementById("msg").value;
+ let name=nameInput.value||"名無し";
+ let msg=msgInput.value;
  if(!msg)return;
-
  db.ref("bbs").push({name,msg});
- document.getElementById("msg").value="";
+ msgInput.value="";
 }
+
+const nameInput=document.getElementById("name");
+const msgInput=document.getElementById("msg");
 
 db.ref("bbs").limitToLast(20).on("value",s=>{
  let html="";
  let d=s.val();
  for(let k in d){
-  html+=`<div>${d[k].name}: ${d[k].msg}</div>`;
+  html=`<div>${d[k].name}: ${d[k].msg}</div>`+html;
  }
  bbs.innerHTML=html;
 });
 
 /* ガチャ */
-function gacha(e){
+document.addEventListener("click",e=>{
  let r=document.createElement("div");
  r.className="effect";
- const items=["🐰","✨","🍰","🦷"];
- const rare=Math.random()<0.1?"💖":items[Math.floor(Math.random()*items.length)];
- r.innerHTML=rare;
+ r.innerHTML=["🐰","✨","🍰","🦷"][Math.floor(Math.random()*4)];
  r.style.left=e.clientX+"px";
  r.style.top=e.clientY+"px";
- r.style.fontSize=rare==="💖"?"40px":"25px";
  document.body.appendChild(r);
  setTimeout(()=>r.remove(),1000);
-}
-
-/* クリックでガチャ */
-document.addEventListener("click",e=>{
- gacha(e);
 });
 
 /* ドラッグ */
@@ -243,28 +246,20 @@ function drag(el){
  };
  document.onmouseup=()=>document.onmousemove=null;
 }
-drag(liveWin);drag(bbsWin);drag(goodsWin);
+drag(bbsWin);
 
-/* ===================
-   👿 裏世界
-=================== */
+/* ===== 裏世界（2秒長押し） ===== */
 
-let clickCount=0;
-let timer;
+let pressTimer;
 
 document.addEventListener("mousedown",()=>{
- timer=setInterval(()=>{
-  clickCount++;
-  if(clickCount>60){
-   enterUra();
-   clearInterval(timer);
-  }
- },100);
+ pressTimer=setTimeout(()=>{
+  enterUra();
+ },2000); // ←ここが2秒
 });
 
 document.addEventListener("mouseup",()=>{
- clearInterval(timer);
- clickCount=0;
+ clearTimeout(pressTimer);
 });
 
 function enterUra(){
@@ -276,21 +271,20 @@ function enterUra(){
  },1000);
 
  setInterval(()=>{
-  if(Math.random()<0.2){
+  if(Math.random()<0.3){
    flash.style.display="block";
-   setTimeout(()=>flash.style.display="none",100);
+   setTimeout(()=>flash.style.display="none",120);
   }
  },2000);
 }
 
-/* ノイズ音 */
+/* ノイズ */
 document.getElementById("ura").addEventListener("click",()=>{
  const ctx=new AudioContext();
  const o=ctx.createOscillator();
  const g=ctx.createGain();
  o.connect(g);g.connect(ctx.destination);
- o.type="square";
- o.frequency.value=100;
+ o.frequency.value=120;
  g.gain.value=0.02;
  o.start();
  setTimeout(()=>o.stop(),50);
