@@ -80,37 +80,121 @@ body{
   50%{opacity:0;}
 }
 
-/* 💊 グッズ */
-/* 💊 */
+/* 💊 シート全体 */
 .pill-sheet{
   display:grid;
-  grid-template-columns:repeat(3,60px);
-  gap:10px;
+  grid-template-columns:repeat(3,70px);
+  gap:14px;
   justify-content:center;
+  padding:12px;
+
+  background:linear-gradient(#eaf8ff,#d7f0ff);
+  border-radius:12px;
+
+  /* シートの凹み感 */
+  box-shadow:
+    inset 0 0 12px rgba(0,0,0,0.15),
+    0 4px 10px rgba(0,0,0,0.1);
 }
+
+/* 💊 カプセル本体 */
 .pill{
-  width:60px;height:30px;
+  width:70px;
+  height:36px;
   border-radius:20px;
-  background:linear-gradient(#fff,#cdefff);
   position:relative;
   cursor:pointer;
+  overflow:hidden;
+
+  background:linear-gradient(#ffffff,#dff4ff);
+
+  /* ぷっくり感 */
+  box-shadow:
+    inset 0 3px 6px rgba(255,255,255,0.9),
+    inset 0 -3px 8px rgba(0,0,0,0.2),
+    0 2px 6px rgba(0,0,0,0.25);
+
+  transition:all 0.15s;
 }
+
+/* 半分カラー（薬っぽさ） */
 .pill::before{
   content:"";
   position:absolute;
   width:50%;
   height:100%;
-  background:#7fe3ff;
+  left:0;
+  top:0;
+
+  background:linear-gradient(#7fe3ff,#4ecbff);
+
   border-radius:20px 0 0 20px;
+
+  box-shadow:
+    inset 0 0 6px rgba(0,0,0,0.25);
 }
+
+/* 光沢（ガラス感） */
+.pill::after{
+  content:"";
+  position:absolute;
+  width:100%;
+  height:100%;
+  top:0;
+  left:0;
+
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8), transparent 60%),
+    linear-gradient(to bottom, rgba(255,255,255,0.3), transparent);
+
+  pointer-events:none;
+}
+
+/* 文字 */
 .pill span{
   position:absolute;
   width:100%;
   text-align:center;
   font-size:10px;
-  top:8px;
+  top:10px;
+  color:#333;
+  z-index:2;
 }
 
+/* 押したとき */
+.pill:active{
+  transform:scale(0.9);
+
+  box-shadow:
+    inset 0 4px 10px rgba(0,0,0,0.4);
+}
+
+/* ホバーでちょい違和感 */
+.pill:hover{
+  filter:brightness(1.1) contrast(1.05);
+}
+
+/* 💀 “飲まれた後” */
+.pill.empty{
+  opacity:0.25;
+
+  /* 中身消えた感じ */
+  background:linear-gradient(#f0f0f0,#dddddd);
+
+  box-shadow:
+    inset 0 3px 6px rgba(255,255,255,0.6),
+    inset 0 -3px 6px rgba(0,0,0,0.1);
+}
+
+/* 空カプセルの左半分も薄く */
+.pill.empty::before{
+  background:rgba(200,200,200,0.3);
+}
+
+/* 空カプセルは文字も薄い */
+.pill.empty span{
+  color:#888;
+}
 /* 🐰 */
 .rabbit{
   position:fixed;
@@ -371,10 +455,14 @@ document.addEventListener("click",e=>{
  rabbit(e.clientX,e.clientY);
 });
 
-/* 💊 */
-function buy(e){
- rabbit(e.clientX,e.clientY);
-}
+/* 💊 空カプセル生成 */
+window.addEventListener("load",()=>{
+  document.querySelectorAll(".pill").forEach(p=>{
+    if(Math.random() < 0.25){
+      p.classList.add("empty");
+    }
+  });
+});
 
 /* 🪟 */
 function drag(el){
