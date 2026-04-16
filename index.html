@@ -5,16 +5,10 @@
 <title>妄堕めぽのお部屋⊂( ᴖ ̫ ᴖ )⊃</title>
 
 <style>
-:root{
- --main:#7fe3ff;
- --accent:#ffb3da;
- --bg:#eaffff;
-}
-
 body{
  margin:0;
  font-family:"MS Gothic";
- background:linear-gradient(var(--bg),#bdefff);
+ background:linear-gradient(#eaffff,#bdefff);
  overflow:hidden;
 }
 
@@ -27,27 +21,21 @@ body{
 }
 .main{width:60%;position:relative;}
 
-/* ウィンドウ */
 .window{
  position:absolute;
  width:320px;
  background:rgba(255,255,255,0.4);
- border:2px solid var(--main);
+ border:2px solid #7fe3ff;
  border-radius:12px;
- box-shadow:0 0 15px var(--main);
+ box-shadow:0 0 15px #7fe3ff;
 }
 .titlebar{
- background:linear-gradient(90deg,var(--main),var(--accent));
+ background:linear-gradient(90deg,#7fe3ff,#ffb3da);
  padding:5px;
  cursor:move;
 }
-.content{
- padding:10px;
- max-height:500px;
- overflow:auto;
-}
+.content{padding:10px;max-height:400px;overflow:auto;}
 
-/* 星 */
 .star{
  position:fixed;
  width:6px;height:6px;
@@ -60,53 +48,9 @@ body{
  to{transform:translateY(110vh);}
 }
 
-/* LIVE */
-.live{
- color:red;
- font-weight:bold;
- animation:blink 1s infinite;
-}
-@keyframes blink{50%{opacity:0;}}
-
-/* 💊 グッズ */
-.pill-sheet{
- display:grid;
- grid-template-columns:repeat(3,60px);
- gap:10px;
- justify-content:center;
-}
-.pill{
- width:60px;height:30px;
- border-radius:20px;
- background:linear-gradient(#fff,#cdefff);
- position:relative;
- cursor:pointer;
- transition:0.2s;
-}
-.pill:hover{
- transform:scale(1.1) rotate(-2deg);
- box-shadow:0 0 15px var(--main);
-}
-.pill::before{
- content:"";
- position:absolute;
- width:50%;
- height:100%;
- background:var(--main);
- border-radius:20px 0 0 20px;
-}
-.pill span{
- position:absolute;
- width:100%;
- text-align:center;
- font-size:10px;
- top:8px;
-}
-
-/* 🐰 */
 .rabbit{
  position:fixed;
- font-size:30px;
+ font-size:28px;
  pointer-events:none;
  animation:rabbit 1s forwards;
 }
@@ -116,7 +60,6 @@ body{
  100%{opacity:0;transform:translateY(-40px)}
 }
 
-/* 裏世界 */
 #ura{
  position:fixed;
  top:0;left:0;
@@ -144,8 +87,8 @@ body{
 
 <body>
 
+<!-- 星 -->
 <script>
-/* 星 */
 for(let i=0;i<50;i++){
  let s=document.createElement("div");
  s.className="star";
@@ -156,78 +99,135 @@ for(let i=0;i<50;i++){
 </script>
 
 <div class="container">
-<!--（HTML部分はそのままなので省略OK）-->
+
+<!-- 左 -->
+<div class="side">
+<p>🦷めぽ情報🌧</p>
+<p>堕メ天使VTuber 妄堕めぽ</p>
+<hr>
+<p id="counter"></p>
+</div>
+
+<!-- メイン -->
+<div class="main">
+
+<div class="window" id="liveWin" style="top:40px;left:40px;">
+<div class="titlebar">配信情報</div>
+<div class="content">
+<div id="live"></div>
+</div>
+</div>
+
+<div class="window" id="bbsWin" style="top:200px;left:100px;">
+<div class="titlebar">掲示板</div>
+<div class="content">
+<input id="name" placeholder="名前"><br>
+<textarea id="msg"></textarea><br>
+<button onclick="post()">書き込む</button>
+<div id="bbs"></div>
+</div>
+</div>
+
+</div>
+
+<!-- 右 -->
+<div class="side">
+<h2>リンク</h2>
+<a href="https://www.youtube.com/@妄堕めぽ-MoudaMepo" target="_blank">YouTube</a>
+</div>
+
 </div>
 
 <!-- 裏世界 -->
 <div id="ura">
 <div id="uraTime"></div>
-<div class="flash" id="flash">堕ちろ</div>
+<div id="flash" class="flash">堕ちろ</div>
 </div>
 
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
 <script>
+
+/* ===== Firebase ===== */
+const firebaseConfig={
+ apiKey:"ここに自分のAPIキー",
+ databaseURL:"ここにDB URL"
+};
+firebase.initializeApp(firebaseConfig);
+const db=firebase.database();
+
+/* カウンター */
+const counterRef=db.ref("counter");
+counterRef.transaction(c=>(c||0)+1);
+counterRef.on("value",s=>{
+ counter.innerHTML=`訪問者 ${s.val()||0}`;
+});
+
+/* BBS */
+function post(){
+ let name=nameInput.value||"名無し";
+ let msg=msgInput.value;
+ if(!msg)return;
+
+ db.ref("bbs").push({name,msg});
+ msgInput.value="";
+}
+const nameInput=document.getElementById("name");
+const msgInput=document.getElementById("msg");
+
+db.ref("bbs").limitToLast(20).on("value",s=>{
+ let html="";
+ let d=s.val();
+ for(let k in d){
+  html=`<div>${d[k].name}:${d[k].msg}</div>`+html;
+ }
+ bbs.innerHTML=html;
+});
 
 /* 🐰 */
 function rabbit(x,y){
  let r=document.createElement("div");
  r.className="rabbit";
  r.innerHTML=["🐰","🩵","🦷"][Math.floor(Math.random()*3)];
- r.style.left=x+"px";
- r.style.top=y+"px";
+ r.style.left=x+"px;
+ r.style.top=y+"px;
  document.body.appendChild(r);
  setTimeout(()=>r.remove(),1000);
 }
-
 document.addEventListener("click",e=>{
  rabbit(e.clientX,e.clientY);
 });
 
-/* カウンター */
-const counterRef=db.ref("counter");
-counterRef.transaction(c=>(c||0)+1);
-
-counterRef.on("value",s=>{
- let c=s.val()||0;
- counter.innerHTML=`あなたは <b>${c}</b> 人目の訪問者`;
-
- if(c%100===0){
-  kiri.innerHTML="🎉キリ番GET!!!🎉";
- }
-});
-
-/* ===== ドラッグ ===== */
+/* ドラッグ */
 function drag(el){
- let p1=0,p2=0,p3=0,p4=0;
+ let x=0,y=0;
  el.querySelector(".titlebar").onmousedown=e=>{
-  p3=e.clientX;p4=e.clientY;
+  x=e.clientX;y=e.clientY;
   document.onmousemove=e=>{
-   p1=p3-e.clientX;p2=p4-e.clientY;
-   p3=e.clientX;p4=e.clientY;
-   el.style.top=(el.offsetTop-p2)+"px";
-   el.style.left=(el.offsetLeft-p1)+"px";
+   el.style.left=(el.offsetLeft+(e.clientX-x))+"px";
+   el.style.top=(el.offsetTop+(e.clientY-y))+"px";
+   x=e.clientX;y=e.clientY;
   };
  };
  document.onmouseup=()=>document.onmousemove=null;
 }
 drag(liveWin);
 drag(bbsWin);
-drag(goodsWin);
 
 /* ===== 裏世界 ===== */
 let timer;
 
 document.addEventListener("mousedown",()=>{
- timer=setTimeout(()=>{
-  enterUra();
- },6000);
+ timer=setTimeout(()=>enterUra(),2000);
 });
-
 document.addEventListener("mouseup",()=>{
  clearTimeout(timer);
 });
 
 function enterUra(){
- document.getElementById("ura").style.display="block";
+ ura.style.display="block";
  document.querySelector(".container").style.display="none";
 
  setInterval(()=>{
@@ -237,13 +237,13 @@ function enterUra(){
  setInterval(()=>{
   if(Math.random()<0.3){
    flash.style.display="block";
-   setTimeout(()=>flash.style.display="none",120);
+   setTimeout(()=>flash.style.display="none",100);
   }
  },2000);
 }
 
 /* ノイズ */
-document.getElementById("ura").addEventListener("click",()=>{
+ura.addEventListener("click",()=>{
  const ctx=new AudioContext();
  const o=ctx.createOscillator();
  const g=ctx.createGain();
