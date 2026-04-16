@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -116,7 +117,18 @@ counterRef.on("value",s=>{
  }
 });
  
- 
+ /* 🐰 */
+.rabbit{
+  position:fixed;
+  font-size:30px;
+  pointer-events:none;
+  animation:rabbit 1s forwards;
+}
+@keyframes rabbit{
+  0%{opacity:0;transform:scale(.5)}
+  30%{opacity:1;transform:scale(1.2)}
+  100%{opacity:0;transform:translateY(-40px)}
+}
 
 /* 裏世界 */
 #ura{
@@ -338,19 +350,18 @@ loadYT();
 setInterval(loadYT,60000);
 
 
-/* ===== ガチャ ===== */
-function gacha(e){
+/* 🐰 */
+function rabbit(x,y){
  let r=document.createElement("div");
- r.className="effect";
- r.innerHTML=["🐰","🩵","🍰","🦷"][Math.floor(Math.random()*4)];
- r.style.left=e.clientX+"px";
- r.style.top=e.clientY+"px";
+ r.className="rabbit";
+ r.innerHTML=["🐰","🩵","🦷"][Math.floor(Math.random()*3)];
+ r.style.left=x+"px";
+ r.style.top=y+"px";
  document.body.appendChild(r);
  setTimeout(()=>r.remove(),1000);
 }
-
 document.addEventListener("click",e=>{
- gacha(e);
+ rabbit(e.clientX,e.clientY);
 });
 
 /* ===== 裏世界（どこでも2秒長押し） ===== */
