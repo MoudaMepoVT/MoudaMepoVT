@@ -196,8 +196,11 @@ for(let i=0;i<40;i++){
 <div class="window" id="liveWin" style="top:40px;left:100px;">
 <div class="titlebar"><h2>Live.exe</h2></div>
 <div class="content">
+<h3>🔴 LIVE中</h3>  
 <div id="live"></div>
+<h3>⏰ 配信予定</h3>  
 <div id="upcoming"></div>
+<h3>📼 アーカイブ</h3>  
 <div id="archive"></div>
 </div>
 </div>
@@ -210,7 +213,7 @@ for(let i=0;i<40;i++){
 <textarea id="msg"></textarea><br>
 <button onclick="post()">書き込む</button>
 <div id="bbs"></div>
-</div>
+
 </div>
 
 <!-- 💊 グッズ -->
@@ -285,30 +288,71 @@ counterRef.on("value",s=>{
 });
 
 /* 💬 BBS */
-function post(){
- let name=document.getElementById("name").value||"名無し";
- let msg=document.getElementById("msg").value;
- if(!msg)return;
+<script>
+function post() {
+  const name = document.getElementById("name").value;
+  const msg = document.getElementById("msg").value;
 
- db.ref("bbs").push({
-  name:name,
-  msg:msg,
-  time:new Date().toLocaleString()
- });
+  document.getElementById("bbs").innerHTML +=
+    `<p>【${name}】<br>${msg}</p><hr>`;
+}
+</script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
- rabbit(window.innerWidth/2,window.innerHeight/2);
- document.getElementById("msg").value="";
+const firebaseConfig = {
+  apiKey: "AIzaSyCJNWWipkTzo_CoWjCrJJG0rAXK_rfU9_c",
+  authDomain: "moudamepo-e3239.firebaseapp.com",
+  projectId: "moudamepo-e3239",
+  storageBucket: "moudamepo-e3239.firebasestorage.app",
+  messagingSenderId: "912472294656",
+  appId: "1:912472294656:web:f64b805cebb4f188ff9fe5",
+  measurementId: "G-SL2D9GDZBD"
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// 📩 投稿
+window.postMsg = async function() {
+  const name = document.getElementById("name").value;
+  const msg = document.getElementById("msg").value;
+
+  if (!name || !msg) return alert("入力してね！");
+
+  await addDoc(collection(db, "bbs"), {
+    name: name,
+    msg: msg,
+    time: new Date()
+  });
+
+  loadMessages();
 }
 
-db.ref("bbs").on("value",s=>{
- let html="";
- let d=s.val();
- for(let k in d){
-  let p=d[k];
-  html=`<div class="bbs-post"><b>${p.name}</b> ${p.time}<br>${p.msg}</div>`+html;
- }
- bbs.innerHTML=html;
-});
+// 📖 読み込み（新しい順）
+async function loadMessages() {
+  const q = query(collection(db, "bbs"), orderBy("time", "desc"));
+  const snapshot = await getDocs(q);
+
+  let html = "";
+
+  snapshot.forEach(doc => {
+    const d = doc.data();
+    html += `
+      <p>
+      <b>${d.name}</b><br>
+      ${d.msg}
+      </p><hr>
+    `;
+  });
+
+  document.getElementById("bbsArea").innerHTML = html;
+}
+
+// 初期読み込み
+loadMessages();
+</script>    
+<hr>
 
 /* 🔴 YouTube */
 const API_KEY="AIzaSyDQq60pEFFz8KhlaF-GqIebY9C069qaT1s";
