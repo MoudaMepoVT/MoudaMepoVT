@@ -43,7 +43,7 @@ body{
 }
 .content{
  padding:10px;
- max-height:300px;
+ max-height:320px;
  overflow:auto;
 }
 
@@ -58,6 +58,30 @@ body{
 @keyframes fall{
  from{transform:translateY(-10vh);}
  to{transform:translateY(110vh);}
+}
+
+/* LIVE */
+.live{
+ color:red;
+ font-weight:bold;
+ animation:blink 1s infinite;
+}
+@keyframes blink{50%{opacity:0;}}
+
+/* グッズ */
+.pill{
+ width:60px;height:30px;
+ border-radius:20px;
+ background:linear-gradient(#fff,#cdefff);
+ margin:5px;
+ text-align:center;
+ line-height:30px;
+ cursor:pointer;
+ transition:0.2s;
+}
+.pill:hover{
+ transform:scale(1.1);
+ background:var(--accent);
 }
 
 /* ガチャ */
@@ -78,7 +102,6 @@ body{
  top:0;left:0;
  width:100%;height:100%;
  background:black;
- color:white;
  display:none;
  z-index:9999;
 }
@@ -87,7 +110,6 @@ body{
  bottom:10px;
  right:10px;
  color:red;
- font-size:14px;
 }
 .flash{
  position:absolute;
@@ -118,25 +140,9 @@ for(let i=0;i<50;i++){
 <!-- 左 -->
 <div class="side">
 <p>🦷めぽ情報🌧</p>
-<p> 堕メ天使の妄堕めぽ（Mouda Mepo）🍰11/03</p>
-<p> 天界から追放された堕天使VTuber </p>
-<p> ダメダメなめぽと見張り役の兎田さん（肩のぬいぐるみ）が、インターネットに触れて世界を知る物語</p>
-<p> </p>
-<p> [配信時間]</p>
-<p> 21:00~</p>
-<p> [定期配信]</p>
-<p> 金曜日：歌枠</p>
-<p> ゲーム配信はツイッチ</p>
-<p> 歌枠耐久や雑談など視聴者との交流を大切にしています！</p>
-
-<hr>
-
-<p><a href="https://x.com/sakimr1020" target="_blank">❥お仕立て→さきまる様</a></p>
-<p><a href="https://x.com/kaikaipnsk" target="_blank">❥OP・ED ぽんすけかいかい 様</a></p>
-<p><a href="https://www.youtube.com/@妄堕めぽ-MoudaMepo" target="_blank">❥モデリング→妄堕めぽ</a></p>
-
+<p>堕メ天使VTuber 妄堕めぽ</p>
+<p>配信 21:00〜 / 金曜歌枠</p>
 <p id="counter"></p>
-<p id="kiri" style="color:red;"></p>
 </div>
 
 <!-- メイン -->
@@ -144,8 +150,18 @@ for(let i=0;i<50;i++){
 
 <h1>めぽのお部屋へようこそ⊂( ᴖ ̫ ᴖ )⊃</h1>
 
+<!-- 配信 -->
+<div class="window" id="liveWin" style="top:40px;left:40px;">
+<div class="titlebar">配信情報</div>
+<div class="content">
+<div id="live"></div>
+<div id="upcoming"></div>
+<div id="archive"></div>
+</div>
+</div>
+
 <!-- BBS -->
-<div class="window" id="bbsWin" style="top:100px;left:100px;">
+<div class="window" id="bbsWin" style="top:250px;left:100px;">
 <div class="titlebar">掲示板</div>
 <div class="content">
 <input id="name" placeholder="名前"><br>
@@ -155,19 +171,23 @@ for(let i=0;i<50;i++){
 </div>
 </div>
 
+<!-- グッズ -->
+<div class="window" id="goodsWin" style="top:100px;left:420px;">
+<div class="titlebar">グッズ</div>
+<div class="content">
+<div class="pill" onclick="gacha(event)">アクスタ</div>
+<div class="pill" onclick="gacha(event)">アクキー</div>
+<div class="pill" onclick="gacha(event)">バッジ</div>
+</div>
+</div>
+</div>
+
 </div>
 
 <!-- 右 -->
 <div class="side">
-<h2>🦷リンク🦷</h2>
-<p><a href="https://www.youtube.com/@妄堕めぽ-MoudaMepo" target="_blank">YouTube</a></p>
-<p><a href="https://x.com/hello_mepo" target="_blank">Twitter</a></p>
-<p><a href="https://hello-mepo.booth.pm/">グッズ</a></p>
-
-<hr>
-
-<h2>🪐LOVE💤</h2>
-<a href="https://x.com/layl_kamitsuki_">狼月鬼レイル</a>
+<h2>リンク</h2>
+<a href="https://www.youtube.com/" target="_blank">YouTube</a>
 </div>
 
 </div>
@@ -178,61 +198,9 @@ for(let i=0;i<50;i++){
 <div class="flash" id="flash">堕ちろ</div>
 </div>
 
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-
 <script>
-/* Firebase（自分のに変更） */
-const firebaseConfig={
- apiKey:"YOUR_API_KEY",
- databaseURL:"YOUR_DB_URL"
-};
-firebase.initializeApp(firebaseConfig);
-const db=firebase.database();
 
-/* カウンター */
-const counterRef=db.ref("counter");
-counterRef.transaction(c=>(c||0)+1);
-counterRef.on("value",s=>{
- let c=s.val()||0;
- counter.innerHTML=`あなたは <b>${c}</b> 人目の訪問者`;
- if(c%100===0){kiri.innerHTML="🎉キリ番GET!!!🎉";}
-});
-
-/* BBS */
-function post(){
- let name=nameInput.value||"名無し";
- let msg=msgInput.value;
- if(!msg)return;
- db.ref("bbs").push({name,msg});
- msgInput.value="";
-}
-
-const nameInput=document.getElementById("name");
-const msgInput=document.getElementById("msg");
-
-db.ref("bbs").limitToLast(20).on("value",s=>{
- let html="";
- let d=s.val();
- for(let k in d){
-  html=`<div>${d[k].name}: ${d[k].msg}</div>`+html;
- }
- bbs.innerHTML=html;
-});
-
-/* ガチャ */
-document.addEventListener("click",e=>{
- let r=document.createElement("div");
- r.className="effect";
- r.innerHTML=["🐰","✨","🍰","🦷"][Math.floor(Math.random()*4)];
- r.style.left=e.clientX+"px";
- r.style.top=e.clientY+"px";
- document.body.appendChild(r);
- setTimeout(()=>r.remove(),1000);
-});
-
-/* ドラッグ */
+/* ===== ドラッグ（←これが抜けてた原因） ===== */
 function drag(el){
  let p1=0,p2=0,p3=0,p4=0;
  el.querySelector(".titlebar").onmousedown=e=>{
@@ -246,20 +214,40 @@ function drag(el){
  };
  document.onmouseup=()=>document.onmousemove=null;
 }
+drag(liveWin);
 drag(bbsWin);
+drag(goodsWin);
 
-/* ===== 裏世界（2秒長押し） ===== */
+/* ===== YouTube（簡易） ===== */
+live.innerHTML="🔴LIVEなし";
+archive.innerHTML="📼アーカイブ準備中";
 
-let pressTimer;
+/* ===== ガチャ ===== */
+function gacha(e){
+ let r=document.createElement("div");
+ r.className="effect";
+ r.innerHTML=["🐰","✨","🍰","🦷"][Math.floor(Math.random()*4)];
+ r.style.left=e.clientX+"px";
+ r.style.top=e.clientY+"px";
+ document.body.appendChild(r);
+ setTimeout(()=>r.remove(),1000);
+}
+
+document.addEventListener("click",e=>{
+ gacha(e);
+});
+
+/* ===== 裏世界（どこでも2秒長押し） ===== */
+let timer;
 
 document.addEventListener("mousedown",()=>{
- pressTimer=setTimeout(()=>{
+ timer=setTimeout(()=>{
   enterUra();
- },2000); // ←ここが2秒
+ },2000);
 });
 
 document.addEventListener("mouseup",()=>{
- clearTimeout(pressTimer);
+ clearTimeout(timer);
 });
 
 function enterUra(){
@@ -289,6 +277,7 @@ document.getElementById("ura").addEventListener("click",()=>{
  o.start();
  setTimeout(()=>o.stop(),50);
 });
+
 </script>
 
 </body>
