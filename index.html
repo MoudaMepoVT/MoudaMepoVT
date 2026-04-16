@@ -5,13 +5,37 @@
 <title>妄堕めぽのお部屋⊂( ᴖ ̫ ᴖ )⊃</title>
 
 <style>
+:root{
+ --main:#7fe3ff;
+ --accent:#ffb3da;
+ --bg:#eaffff;
+}
+
 body{
  margin:0;
  font-family:"MS Gothic";
- background:linear-gradient(#eaffff,#bdefff);
+ background:linear-gradient(var(--bg),#bdefff);
  overflow:hidden;
 }
 
+/* レトロ感 */
+.window{
+ position:absolute;
+ width:320px;
+ background:#eaf6ff;
+ border:2px solid #8ecfff;
+ border-radius:6px;
+ box-shadow:2px 2px 0 #6aaed6;
+}
+
+.titlebar{
+ background:linear-gradient(#bdefff,#7fe3ff);
+ padding:5px;
+ cursor:move;
+ font-weight:bold;
+}
+
+/* レイアウト */
 .container{display:flex;height:100vh;}
 .side{
  width:20%;
@@ -21,21 +45,13 @@ body{
 }
 .main{width:60%;position:relative;}
 
-.window{
- position:absolute;
- width:320px;
- background:rgba(255,255,255,0.4);
- border:2px solid #7fe3ff;
- border-radius:12px;
- box-shadow:0 0 15px #7fe3ff;
+.content{
+ padding:10px;
+ max-height:500px;
+ overflow:auto;
 }
-.titlebar{
- background:linear-gradient(90deg,#7fe3ff,#ffb3da);
- padding:5px;
- cursor:move;
-}
-.content{padding:10px;max-height:400px;overflow:auto;}
 
+/* 星 */
 .star{
  position:fixed;
  width:6px;height:6px;
@@ -48,9 +64,30 @@ body{
  to{transform:translateY(110vh);}
 }
 
+/* LIVE */
+.live{
+ color:red;
+ font-weight:bold;
+ animation:blink 1s infinite;
+}
+@keyframes blink{50%{opacity:0;}}
+
+/* グッズ */
+.pill{
+ width:60px;height:30px;
+ border-radius:20px;
+ background:linear-gradient(#fff,#cdefff);
+ display:inline-block;
+ cursor:pointer;
+ text-align:center;
+ line-height:30px;
+ margin:5px;
+}
+
+/* 🐰 */
 .rabbit{
  position:fixed;
- font-size:28px;
+ font-size:30px;
  pointer-events:none;
  animation:rabbit 1s forwards;
 }
@@ -60,6 +97,7 @@ body{
  100%{opacity:0;transform:translateY(-40px)}
 }
 
+/* 裏世界 */
 #ura{
  position:fixed;
  top:0;left:0;
@@ -100,40 +138,58 @@ for(let i=0;i<50;i++){
 
 <div class="container">
 
-<!-- 左 -->
+<!-- 左（そのまま維持） -->
 <div class="side">
 <p>🦷めぽ情報🌧</p>
-<p>堕メ天使VTuber 妄堕めぽ</p>
+<p> 堕メ天使の妄堕めぽ（Mouda Mepo）🍰11/03</p>
+<p> 天界から追放された堕天使VTuber </p>
+<p> ダメダメなめぽと見張り役の兎田さん（肩のぬいぐるみ）が、インターネットに触れて世界を知る物語</p>
+
 <hr>
+
+<p><a href="https://x.com/sakimr1020" target="_blank">❥お仕立て→さきまる様</a></p>
+<p><a href="https://x.com/kaikaipnsk" target="_blank">❥OP・ED ぽんすけかいかい 様</a></p>
+<p><a href="https://www.youtube.com/@妄堕めぽ-MoudaMepo" target="_blank">❥モデリング→妄堕めぽ</a></p>
+
 <p id="counter"></p>
 </div>
 
 <!-- メイン -->
 <div class="main">
 
+<!-- 配信 -->
 <div class="window" id="liveWin" style="top:40px;left:40px;">
 <div class="titlebar">配信情報</div>
 <div class="content">
 <div id="live"></div>
+<div id="archive"></div>
 </div>
 </div>
 
-<div class="window" id="bbsWin" style="top:200px;left:100px;">
-<div class="titlebar">掲示板</div>
+<!-- Twitter表示（埋め込み） -->
+<div class="window" style="top:40px;left:400px;">
+<div class="titlebar">最新ツイート</div>
 <div class="content">
-<input id="name" placeholder="名前"><br>
-<textarea id="msg"></textarea><br>
-<button onclick="post()">書き込む</button>
-<div id="bbs"></div>
+<a class="twitter-timeline" data-height="300"
+ href="https://twitter.com/hello_mepo">Tweets</a>
+</div>
+</div>
+
+<!-- グッズ -->
+<div class="window" id="goodsWin" style="top:250px;left:200px;">
+<div class="titlebar">グッズ</div>
+<div class="content">
+<div class="pill" onclick="buy(event)">アクスタ</div>
+<div class="pill" onclick="buy(event)">アクキー</div>
 </div>
 </div>
 
 </div>
 
-<!-- 右 -->
+<!-- 右（そのまま） -->
 <div class="side">
-<h2>リンク</h2>
-<a href="https://www.youtube.com/@妄堕めぽ-MoudaMepo" target="_blank">YouTube</a>
+<h2>🦷リンク🦷</h2>
+<p><a href="https://x.com/hello_mepo" target="_blank">Twitter</a></p>
 </div>
 
 </div>
@@ -141,7 +197,7 @@ for(let i=0;i<50;i++){
 <!-- 裏世界 -->
 <div id="ura">
 <div id="uraTime"></div>
-<div id="flash" class="flash">堕ちろ</div>
+<div class="flash" id="flash">堕ちろ</div>
 </div>
 
 <!-- Firebase -->
@@ -150,10 +206,10 @@ for(let i=0;i<50;i++){
 
 <script>
 
-/* ===== Firebase ===== */
+/* Firebase */
 const firebaseConfig={
- apiKey:"ここに自分のAPIキー",
- databaseURL:"ここにDB URL"
+ apiKey:"YOUR_KEY",
+ databaseURL:"YOUR_DB"
 };
 firebase.initializeApp(firebaseConfig);
 const db=firebase.database();
@@ -165,34 +221,13 @@ counterRef.on("value",s=>{
  counter.innerHTML=`訪問者 ${s.val()||0}`;
 });
 
-/* BBS */
-function post(){
- let name=nameInput.value||"名無し";
- let msg=msgInput.value;
- if(!msg)return;
-
- db.ref("bbs").push({name,msg});
- msgInput.value="";
-}
-const nameInput=document.getElementById("name");
-const msgInput=document.getElementById("msg");
-
-db.ref("bbs").limitToLast(20).on("value",s=>{
- let html="";
- let d=s.val();
- for(let k in d){
-  html=`<div>${d[k].name}:${d[k].msg}</div>`+html;
- }
- bbs.innerHTML=html;
-});
-
 /* 🐰 */
 function rabbit(x,y){
  let r=document.createElement("div");
  r.className="rabbit";
  r.innerHTML=["🐰","🩵","🦷"][Math.floor(Math.random()*3)];
- r.style.left=x+"px;
- r.style.top=y+"px;
+ r.style.left=x+"px";
+ r.style.top=y+"px";
  document.body.appendChild(r);
  setTimeout(()=>r.remove(),1000);
 }
@@ -200,31 +235,48 @@ document.addEventListener("click",e=>{
  rabbit(e.clientX,e.clientY);
 });
 
+/* YouTube API */
+const API_KEY="YOUR_YOUTUBE_KEY";
+const CHANNEL_ID="UCmUlzug_w0WqRdTsEMJHjFw";
+
+async function loadYT(){
+ let res=await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL_ID}&order=date&type=video&key=${API_KEY}`);
+ let data=await res.json();
+
+ let html="";
+ data.items.slice(0,5).forEach(v=>{
+  html+=`<div>
+  <img src="${v.snippet.thumbnails.medium.url}" width="200"><br>
+  ${v.snippet.title}
+  </div><hr>`;
+ });
+ archive.innerHTML=html;
+}
+loadYT();
+
 /* ドラッグ */
 function drag(el){
- let x=0,y=0;
+ let p1=0,p2=0,p3=0,p4=0;
  el.querySelector(".titlebar").onmousedown=e=>{
-  x=e.clientX;y=e.clientY;
+  p3=e.clientX;p4=e.clientY;
   document.onmousemove=e=>{
-   el.style.left=(el.offsetLeft+(e.clientX-x))+"px";
-   el.style.top=(el.offsetTop+(e.clientY-y))+"px";
-   x=e.clientX;y=e.clientY;
+   p1=p3-e.clientX;p2=p4-e.clientY;
+   p3=e.clientX;p4=e.clientY;
+   el.style.top=(el.offsetTop-p2)+"px";
+   el.style.left=(el.offsetLeft-p1)+"px";
   };
  };
  document.onmouseup=()=>document.onmousemove=null;
 }
 drag(liveWin);
-drag(bbsWin);
+drag(goodsWin);
 
-/* ===== 裏世界 ===== */
+/* 裏世界（2秒長押し） */
 let timer;
-
 document.addEventListener("mousedown",()=>{
  timer=setTimeout(()=>enterUra(),2000);
 });
-document.addEventListener("mouseup",()=>{
- clearTimeout(timer);
-});
+document.addEventListener("mouseup",()=>clearTimeout(timer));
 
 function enterUra(){
  ura.style.display="block";
@@ -248,13 +300,14 @@ ura.addEventListener("click",()=>{
  const o=ctx.createOscillator();
  const g=ctx.createGain();
  o.connect(g);g.connect(ctx.destination);
- o.frequency.value=120;
  g.gain.value=0.02;
  o.start();
  setTimeout(()=>o.stop(),50);
 });
-
 </script>
+
+<!-- Twitter script -->
+<script async src="https://platform.twitter.com/widgets.js"></script>
 
 </body>
 </html>
