@@ -194,8 +194,13 @@ for(let i=0;i<40;i++){
 <div class="window" id="liveWin" style="top:40px;left:40px;">
 <div class="titlebar">配信情報</div>
 <div class="content">
+<h3>🔴 LIVE中</h3>
 <div id="live"></div>
+
+<h3>⏰ 配信予定</h3>
 <div id="upcoming"></div>
+
+<h3>📼 アーカイブ</h3>
 <div id="archive"></div>
 </div>
 </div>
@@ -313,7 +318,7 @@ db.ref("bbs").on("value",s=>{
 });
 
 /* 🔴 YouTube */
-const API_KEY="AIzaSyCmr9aBctApaLbONMDKhSv6tWWbngexKRo";
+const API_KEY="AIzaSyCWEQ1J0mEq8EFo7Cw5UYHpGRhYbC0Tu88";
 const CHANNEL_ID="UCmUlzug_w0WqRdTsEMJHjFw";
 
 async function loadYT(){
