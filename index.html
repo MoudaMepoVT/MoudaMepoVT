@@ -18,24 +18,6 @@ body{
  overflow:hidden;
 }
 
-/* レトロ感 */
-.window{
- position:absolute;
- width:320px;
- background:#eaf6ff;
- border:2px solid #8ecfff;
- border-radius:6px;
- box-shadow:2px 2px 0 #6aaed6;
-}
-
-.titlebar{
- background:linear-gradient(#bdefff,#7fe3ff);
- padding:5px;
- cursor:move;
- font-weight:bold;
-}
-
-/* レイアウト */
 .container{display:flex;height:100vh;}
 .side{
  width:20%;
@@ -45,6 +27,20 @@ body{
 }
 .main{width:60%;position:relative;}
 
+/* ウィンドウ */
+.window{
+ position:absolute;
+ width:320px;
+ background:rgba(255,255,255,0.4);
+ border:2px solid var(--main);
+ border-radius:12px;
+ box-shadow:0 0 15px var(--main);
+}
+.titlebar{
+ background:linear-gradient(90deg,var(--main),var(--accent));
+ padding:5px;
+ cursor:move;
+}
 .content{
  padding:10px;
  max-height:500px;
@@ -73,15 +69,38 @@ body{
 @keyframes blink{50%{opacity:0;}}
 
 /* グッズ */
+.pill-sheet{
+ display:grid;
+ grid-template-columns:repeat(3,60px);
+ gap:10px;
+ justify-content:center;
+}
 .pill{
  width:60px;height:30px;
  border-radius:20px;
  background:linear-gradient(#fff,#cdefff);
- display:inline-block;
+ position:relative;
  cursor:pointer;
+ transition:0.2s;
+}
+.pill:hover{
+ transform:scale(1.1) rotate(-2deg);
+ box-shadow:0 0 15px var(--main);
+}
+.pill::before{
+ content:"";
+ position:absolute;
+ width:50%;
+ height:100%;
+ background:var(--main);
+ border-radius:20px 0 0 20px;
+}
+.pill span{
+ position:absolute;
+ width:100%;
  text-align:center;
- line-height:30px;
- margin:5px;
+ font-size:10px;
+ top:8px;
 }
 
 /* 🐰 */
@@ -125,8 +144,8 @@ body{
 
 <body>
 
-<!-- 星 -->
 <script>
+/* 星 */
 for(let i=0;i<50;i++){
  let s=document.createElement("div");
  s.className="star";
@@ -138,7 +157,7 @@ for(let i=0;i<50;i++){
 
 <div class="container">
 
-<!-- 左（そのまま維持） -->
+<!-- 左（完全維持） -->
 <div class="side">
 <p>🦷めぽ情報🌧</p>
 <p> 堕メ天使の妄堕めぽ（Mouda Mepo）🍰11/03</p>
@@ -151,44 +170,68 @@ for(let i=0;i<50;i++){
 <p><a href="https://x.com/kaikaipnsk" target="_blank">❥OP・ED ぽんすけかいかい 様</a></p>
 <p><a href="https://www.youtube.com/@妄堕めぽ-MoudaMepo" target="_blank">❥モデリング→妄堕めぽ</a></p>
 
-<p id="counter"></p>
+<img src="https://cdn.discordapp.com/attachments/1415958063151841382/1420592506776715274/logo_color02.png"><br>
+
 </div>
 
 <!-- メイン -->
 <div class="main">
+<p id="counter"></p>
+<p id="kiri" style="color:red;"></p>
+
+<h1>
+<a href="https://www.youtube.com/@妄堕めぽ-MoudaMepo" target="_blank">
+めぽのお部屋へようこそ⊂( ᴖ ̫ ᴖ )⊃
+</a>
+</h1>
 
 <!-- 配信 -->
 <div class="window" id="liveWin" style="top:40px;left:40px;">
 <div class="titlebar">配信情報</div>
 <div class="content">
+<h3>🔴 LIVE中</h3>
 <div id="live"></div>
+
+<h3>⏰ 配信予定</h3>
+<div id="upcoming"></div>
+
+<h3>📼 アーカイブ</h3>
 <div id="archive"></div>
 </div>
 </div>
 
-<!-- Twitter表示（埋め込み） -->
-<div class="window" style="top:40px;left:400px;">
-<div class="titlebar">最新ツイート</div>
+<!-- BBS -->
+<div class="window" id="bbsWin" style="top:250px;left:100px;">
+<div class="titlebar">掲示板</div>
 <div class="content">
-<a class="twitter-timeline" data-height="300"
- href="https://twitter.com/hello_mepo">Tweets</a>
+<input id="name" placeholder="名前"><br>
+<textarea id="msg"></textarea><br>
+<button onclick="post()">書き込む</button>
+<div id="bbs"></div>
 </div>
 </div>
 
 <!-- グッズ -->
-<div class="window" id="goodsWin" style="top:250px;left:200px;">
+<div class="window" id="goodsWin" style="top:80px;left:420px;">
 <div class="titlebar">グッズ</div>
 <div class="content">
-<div class="pill" onclick="buy(event)">アクスタ</div>
-<div class="pill" onclick="buy(event)">アクキー</div>
+<img src="img1.jpg" width="200"><br>
+
+<div class="pill-sheet">
+<div class="pill" onclick="buy(event)"><span>アクスタ</span></div>
+<div class="pill" onclick="buy(event)"><span>アクキー</span></div>
+<div class="pill" onclick="buy(event)"><span>アクリルバッヂ</span></div>
+<div class="pill" onclick="buy(event)"><span>ステッカー</span></div>
+</div>
 </div>
 </div>
 
 </div>
 
-<!-- 右（そのまま） -->
+<!-- 右（完全維持） -->
 <div class="side">
 <h2>🦷リンク🦷</h2>
+<p><a href="https://www.youtube.com/@妄堕めぽ-MoudaMepo" target="_blank">YouTube</a></p>
 <p><a href="https://x.com/hello_mepo" target="_blank">Twitter</a></p>
 </div>
 
@@ -200,28 +243,9 @@ for(let i=0;i<50;i++){
 <div class="flash" id="flash">堕ちろ</div>
 </div>
 
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-
 <script>
 
-/* Firebase */
-const firebaseConfig={
- apiKey:"YOUR_KEY",
- databaseURL:"YOUR_DB"
-};
-firebase.initializeApp(firebaseConfig);
-const db=firebase.database();
-
-/* カウンター */
-const counterRef=db.ref("counter");
-counterRef.transaction(c=>(c||0)+1);
-counterRef.on("value",s=>{
- counter.innerHTML=`訪問者 ${s.val()||0}`;
-});
-
-/* 🐰 */
+/* 🐰（そのまま） */
 function rabbit(x,y){
  let r=document.createElement("div");
  r.className="rabbit";
@@ -234,25 +258,6 @@ function rabbit(x,y){
 document.addEventListener("click",e=>{
  rabbit(e.clientX,e.clientY);
 });
-
-/* YouTube API */
-const API_KEY="YOUR_YOUTUBE_KEY";
-const CHANNEL_ID="UCmUlzug_w0WqRdTsEMJHjFw";
-
-async function loadYT(){
- let res=await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL_ID}&order=date&type=video&key=${API_KEY}`);
- let data=await res.json();
-
- let html="";
- data.items.slice(0,5).forEach(v=>{
-  html+=`<div>
-  <img src="${v.snippet.thumbnails.medium.url}" width="200"><br>
-  ${v.snippet.title}
-  </div><hr>`;
- });
- archive.innerHTML=html;
-}
-loadYT();
 
 /* ドラッグ */
 function drag(el){
@@ -269,17 +274,19 @@ function drag(el){
  document.onmouseup=()=>document.onmousemove=null;
 }
 drag(liveWin);
+drag(bbsWin);
 drag(goodsWin);
 
 /* 裏世界（2秒長押し） */
 let timer;
+
 document.addEventListener("mousedown",()=>{
  timer=setTimeout(()=>enterUra(),2000);
 });
 document.addEventListener("mouseup",()=>clearTimeout(timer));
 
 function enterUra(){
- ura.style.display="block";
+ document.getElementById("ura").style.display="block";
  document.querySelector(".container").style.display="none";
 
  setInterval(()=>{
@@ -289,7 +296,7 @@ function enterUra(){
  setInterval(()=>{
   if(Math.random()<0.3){
    flash.style.display="block";
-   setTimeout(()=>flash.style.display="none",100);
+   setTimeout(()=>flash.style.display="none",120);
   }
  },2000);
 }
@@ -304,10 +311,8 @@ ura.addEventListener("click",()=>{
  o.start();
  setTimeout(()=>o.stop(),50);
 });
-</script>
 
-<!-- Twitter script -->
-<script async src="https://platform.twitter.com/widgets.js"></script>
+</script>
 
 </body>
 </html>
