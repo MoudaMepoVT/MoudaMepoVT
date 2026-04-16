@@ -81,6 +81,7 @@ body{
 }
 
 /* 💊 グッズ */
+/* 💊 */
 .pill-sheet{
   display:grid;
   grid-template-columns:repeat(3,60px);
@@ -93,7 +94,6 @@ body{
   background:linear-gradient(#fff,#cdefff);
   position:relative;
   cursor:pointer;
-  transition:0.2s;
 }
 .pill::before{
   content:"";
@@ -101,18 +101,6 @@ body{
   width:50%;
   height:100%;
   background:#7fe3ff;
-  border-radius:20px 0 0 20px;
-}
-.pill:hover{
-  transform:scale(1.1) rotate(-2deg);
-  box-shadow:0 0 15px var(--main);
-}
-.pill::before{
-  content:"";
-  position:absolute;
-  width:50%;
-  height:100%;
-  background:var(--main);
   border-radius:20px 0 0 20px;
 }
 .pill span{
