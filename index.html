@@ -103,17 +103,20 @@ body{
   top:8px;
 }
 
-/* ガチャ */
-.effect{
- position:fixed;
- pointer-events:none;
- animation:pop 1s forwards;
-}
-@keyframes pop{
- 0%{opacity:0;transform:scale(.5)}
- 30%{opacity:1;transform:scale(1.3)}
- 100%{opacity:0;transform:translateY(-40px)}
-}
+/* 🔢 カウンター */
+const counterRef=db.ref("counter");
+counterRef.transaction(c=>(c||0)+1);
+
+counterRef.on("value",s=>{
+ let c=s.val()||0;
+ counter.innerHTML=`あなたは <b>${c}</b> 人目の訪問者`;
+
+ if(c%100===0){
+  kiri.innerHTML="🎉キリ番GET!!!🎉";
+ }
+});
+ 
+ 
 
 /* 裏世界 */
 #ura{
@@ -227,7 +230,9 @@ for(let i=0;i<50;i++){
 <div class="window" id="goodsWin" style="top:80px;left:420px;">
 <div class="titlebar">グッズ</div>
 <div class="content">
+ 
 <img src="img1.jpg" width="200"><br>
+ 
 <div class="pill-sheet">
 <div class="pill" onclick="buy(event)"><span>アクスタ</span></div>
 <div class="pill" onclick="buy(event)"><span>アクキー</span></div>
@@ -377,20 +382,6 @@ function enterUra(){
  },2000);
 }
 
-/* 🔢 カウンター */
-const counterRef=db.ref("counter");
-counterRef.transaction(c=>(c||0)+1);
-
-counterRef.on("value",s=>{
- let c=s.val()||0;
- counter.innerHTML=`あなたは <b>${c}</b> 人目の訪問者`;
-
- if(c%100===0){
-  kiri.innerHTML="🎉キリ番GET!!!🎉";
- }
-});
- 
- 
 /* ノイズ */
 document.getElementById("ura").addEventListener("click",()=>{
  const ctx=new AudioContext();
