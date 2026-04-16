@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,10 +5,17 @@
 <title>妄堕めぽのお部屋</title>
 
 <style>
+:root{
+  --main:#7fe3ff;
+  --sub:#c8f7ff;
+  --accent:#ffb3da;
+  --bg:#eaffff;
+}
+
 body{
   margin:0;
   font-family:"MS Gothic";
-  background:linear-gradient(#dffbff,#bdefff);
+  background:linear-gradient(var(--bg),#bdefff);
   overflow:hidden;
 }
 
@@ -27,14 +33,18 @@ body{
 .window{
   position:absolute;
   width:320px;
-  background:rgba(255,255,255,0.35);
-  border:2px solid #aeefff;
+  background:rgba(255,255,255,0.4);
+  border:2px solid var(--main);
   border-radius:12px;
-  box-shadow:0 0 15px #7fe3ff;
+  box-shadow:0 0 20px var(--main);
   backdrop-filter:blur(12px);
+  transition:0.2s;
+}
+.window:hover{
+  transform:scale(1.02);
 }
 .titlebar{
-  background:linear-gradient(90deg,#7fe3ff,#c8f7ff);
+  background:linear-gradient(90deg,var(--main),var(--accent));
   padding:5px;
   cursor:move;
 }
@@ -44,12 +54,14 @@ body{
   overflow:auto;
 }
 
-/* キラキラ */
+/* ✨ 星強化 */
 .star{
   position:fixed;
-  width:5px;height:5px;
+  width:6px;height:6px;
   background:white;
   border-radius:50%;
+  filter:blur(1px);
+  box-shadow:0 0 10px white;
   animation:fall linear infinite;
 }
 @keyframes fall{
@@ -57,7 +69,7 @@ body{
   to{transform:translateY(110vh);}
 }
 
-/* 立ち絵 */
+/* 🐰 キャラ */
 .character{
   position:fixed;
   right:20px;
@@ -69,7 +81,7 @@ body{
   50%{transform:translateY(-15px);}
 }
 
-/* LIVE点滅 */
+/* LIVE */
 .live{
   color:red;
   font-weight:bold;
@@ -79,7 +91,7 @@ body{
   50%{opacity:0;}
 }
 
-/* 💊 */
+/* 💊 グッズ */
 .pill-sheet{
   display:grid;
   grid-template-columns:repeat(3,60px);
@@ -92,13 +104,18 @@ body{
   background:linear-gradient(#fff,#cdefff);
   position:relative;
   cursor:pointer;
+  transition:0.2s;
+}
+.pill:hover{
+  transform:scale(1.1) rotate(-2deg);
+  box-shadow:0 0 15px var(--main);
 }
 .pill::before{
   content:"";
   position:absolute;
   width:50%;
   height:100%;
-  background:#7fe3ff;
+  background:var(--main);
   border-radius:20px 0 0 20px;
 }
 .pill span{
@@ -109,23 +126,24 @@ body{
   top:8px;
 }
 
-/* 🐰 */
+/* 🐰 エフェクト */
 .rabbit{
   position:fixed;
-  font-size:30px;
   pointer-events:none;
   animation:rabbit 1s forwards;
 }
 @keyframes rabbit{
   0%{opacity:0;transform:scale(.5)}
-  30%{opacity:1;transform:scale(1.2)}
-  100%{opacity:0;transform:translateY(-40px)}
+  30%{opacity:1;transform:scale(1.3)}
+  100%{opacity:0;transform:translateY(-50px)}
 }
 
-/* BBS */
+/* 💬 BBS */
 .bbs-post{
-  border-bottom:1px dashed #7fe3ff;
-  padding:5px;
+  background:rgba(255,255,255,0.6);
+  border-radius:10px;
+  margin-bottom:5px;
+  padding:8px;
   font-size:12px;
 }
 </style>
@@ -134,7 +152,7 @@ body{
 <body>
 
 <script>
-/* 🌟背景 */
+/* ✨ 星 */
 for(let i=0;i<40;i++){
  let s=document.createElement("div");
  s.className="star";
@@ -146,67 +164,14 @@ for(let i=0;i<40;i++){
 
 <div class="container">
 
-<!-- 左 -->
 <div class="side">
 <p>🦷めぽ情報🌧</p>
-<p> 堕メ天使の妄堕めぽ（Mouda Mepo）🍰11/03</p>
-<p> 天界から追放された堕天使VTuber </p>
-<p> ダメダメなめぽと見張り役の兎田さん（肩のぬいぐるみ）が、インターネットに触れて世界を知る物語</p>
-<p> </p>
-<p> [配信時間]</p>
-<p> 21:00~</p>
-<p> [定期配信]</p>
-<p> 金曜日：歌枠</p>
-<p> ゲーム配信はツイッチ</p>
-<p> 歌枠耐久や雑談など視聴者との交流を大切にしています！</p>
-<p> </p>
-
-<hr>
-
-<p> <a href="https://x.com/sakimr1020" target="_blank">
-❥お仕立て→さきまる様
-</a> </p>
-    <p> <a href="https://x.com/kaikaipnsk" target="_blank">
-❥OP・ED ぽんすけかいかい 様
-</a> </p>
-  <p> <a href="https://www.youtube.com/@%E5%A6%84%E5%A0%95%E3%82%81%E3%81%BD-MoudaMepo"_blank">
-❥モデリング→妄堕めぽ
-</a> </p>
-<img src="https://cdn.discordapp.com/attachments/1415958063151841382/1420592506776715274/logo_color02.png?ex=69e0445e&is=69def2de&hm=d589c9d5c77d67ae5cc63303c56c86aec72bc8a7ab78a3211fec7d5006a28a50&"><br>
-
-  
-
+<p>堕メ天使の妄堕めぽ</p>
 </div>
- 
 
-<!-- メイン -->
 <div class="main">
-<p id="counter"></p>
-<p id="kiri" style="color:red;"></p>
 
-<h1>
-  
-<a href="https://www.youtube.com/@%E5%A6%84%E5%A0%95%E3%82%81%E3%81%BD-MoudaMepo" target="_blank">
-めぽのお部屋へようこそ⊂( ᴖ ̫ ᴖ )⊃
-</a>
-
-<!-- 🔴 配信 -->
-<div class="window" id="liveWin" style="top:40px;left:40px;">
-<div class="titlebar">配信情報</div>
-<div class="content">
-<h3>🔴 LIVE中</h3>
-<div id="live"></div>
-
-<h3>⏰ 配信予定</h3>
-<div id="upcoming"></div>
-
-<h3>📼 アーカイブ</h3>
-<div id="archive"></div>
-</div>
-</div>
-
-<!-- 💬 BBS -->
-<div class="window" id="bbsWin" style="top:220px;left:120px;">
+<div class="window" id="bbsWin" style="top:120px;left:120px;">
 <div class="titlebar">掲示板</div>
 <div class="content">
 <input id="name" placeholder="名前"><br>
@@ -216,157 +181,65 @@ for(let i=0;i<40;i++){
 </div>
 </div>
 
-<!-- 💊 グッズ -->
-<div class="window" id="goodsWin" style="top:80px;left:420px;">
+<div class="window" style="top:60px;left:400px;">
 <div class="titlebar">グッズ</div>
 <div class="content">
-
-<img src="img1.jpg" width="200"><br>
-
 <div class="pill-sheet">
 <div class="pill" onclick="buy(event)"><span>アクスタ</span></div>
 <div class="pill" onclick="buy(event)"><span>アクキー</span></div>
-<div class="pill" onclick="buy(event)"><span>アクリルバッヂ</span></div>
-<div class="pill" onclick="buy(event)"><span>ステッカー</span></div>
+<div class="pill" onclick="buy(event)"><span>バッヂ</span></div>
+</div>
+</div>
 </div>
 
 </div>
-</div>
-
-</div>
-
-<!-- 右 -->
-<div class="side">
-<h2>🦷リンク🦷</h2>
-<p> <a href="https://www.youtube.com/@%E5%A6%84%E5%A0%95%E3%82%81%E3%81%BD-MoudaMepo" target="_blank">YouTube</a> </p>
-  <p> <a href="https://www.youtube.com/channel/UCmUlzug_w0WqRdTsEMJHjFw/join" target="_blank">メンバーシップ</a> </p>
-<p> <a href="https://x.com/hello_mepo" target="_blank">Twitter</a> </p>
-<p> <a href="https://hello-mepo.booth.pm/">グッズ</a> </p>
-<p> <a href="https://m.twitch.tv/m3p0r4n14n/home">ツイッチ</a> </p>
-<p> <a href="https://skeb.jp/@hello_mepo">skeb</a> </p>
-<p> <a href="https://marshmallow-qa.com/1reiy9f9z1yefbj?t=Ga7kBj&amp;utm_medium=url_text&amp;utm_source=promotion" _blank"="">マシュマロ</a> </p>
-<p> <a href="https://raidori.com/@hello_mepo" target="_blank">ファンクラブ</a> </p>
-
-<hr>
-
-<!-- 🔗 リンク -->
-<h2>🪐LOVE💤</h2>
-<a href="https://x.com/layl_kamitsuki_">狼月鬼レイル🪐💤ショタVTuber🐺🧛</a>
-<p> 『くゅ』ことショタVTuber<a href="https://www.youtube.com/@KamitsukiLayl" _blank"="">
-狼月鬼レイル
-</a> </p>
- <div>
-<img src="./妄堕めぽのお部屋⊂( ᴖ ̫ ᴖ )⊃_files/mepolaylHP.jpg" width="200"><br>
-</div><hr>
-
-</div>
-
 </div>
 
 <img class="character" src="https://via.placeholder.com/200">
 
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-
 <script>
-const firebaseConfig={
- apiKey:"AIzaSyCJNWWipkTzo_CoWjCrJJG0rAXK_rfU9_c",
- authDomain:"moudamepo-e3239.firebaseapp.com",
- projectId:"moudamepo-e3239"
-};
-firebase.initializeApp(firebaseConfig);
-const db=firebase.database();
+/* 🔒 XSS対策 */
+function escapeHTML(str){
+ return str.replace(/[&<>"']/g, m => ({
+  "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"
+ }[m]));
+}
 
-/* 🔢 カウンター */
-const counterRef=db.ref("counter");
-counterRef.transaction(c=>(c||0)+1);
-
-counterRef.on("value",s=>{
- let c=s.val()||0;
- counter.innerHTML=`あなたは <b>${c}</b> 人目の訪問者`;
-
- if(c%100===0){
-  kiri.innerHTML="🎉キリ番GET!!!🎉";
- }
-});
-
-/* 💬 BBS */
+/* 💬 ダミーBBS */
 function post(){
  let name=document.getElementById("name").value||"名無し";
  let msg=document.getElementById("msg").value;
  if(!msg)return;
 
- db.ref("bbs").push({
-  name:name,
-  msg:msg,
-  time:new Date().toLocaleString()
- });
+ let html=`
+ <div class="bbs-post">
+ 💬 <b>${escapeHTML(name)}</b><br>
+ ${escapeHTML(msg)}
+ </div>`;
+
+ bbs.innerHTML=html+bbs.innerHTML;
 
  rabbit(window.innerWidth/2,window.innerHeight/2);
  document.getElementById("msg").value="";
 }
 
-db.ref("bbs").on("value",s=>{
- let html="";
- let d=s.val();
- for(let k in d){
-  let p=d[k];
-  html=`<div class="bbs-post"><b>${p.name}</b> ${p.time}<br>${p.msg}</div>`+html;
- }
- bbs.innerHTML=html;
-});
-
-/* 🔴 YouTube */
-const API_KEY="AIzaSyCWEQ1J0mEq8EFo7Cw5UYHpGRhYbC0Tu88";
-const CHANNEL_ID="UCmUlzug_w0WqRdTsEMJHjFw";
-
-async function loadYT(){
- try{
-  const res=await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL_ID}&order=date&type=video&key=${API_KEY}`);
-  const data=await res.json();
-
-  let liveHTML="",upHTML="",arHTML="";
-
-  data.items.forEach(item=>{
-    let s=item.snippet.liveBroadcastContent;
-    let t=item.snippet.title;
-    let th=item.snippet.thumbnails.medium.url;
-    let id=item.id.videoId;
-
-    let block=`
-    <div>
-      <img src="${th}" width="200"><br>
-      ${t}<br>
-      <a href="https://youtube.com/watch?v=${id}" target="_blank">▶見る</a>
-    </div><hr>`;
-
-    if(s==="live") liveHTML+=`<p class="live">🔴LIVE中</p>`+block;
-    else if(s==="upcoming") upHTML+=block;
-    else arHTML+=block;
-  });
-
-  live.innerHTML=liveHTML||"配信なし";
-  upcoming.innerHTML=upHTML||"予定なし";
-  archive.innerHTML=arHTML||"なし";
-
- }catch(e){
-  live.innerHTML="読み込み失敗";
- }
-}
-loadYT();
-setInterval(loadYT,60000);
-
-/* 🐰 */
+/* 🐰 クリックガチャ */
 function rabbit(x,y){
  let r=document.createElement("div");
  r.className="rabbit";
- r.innerHTML=["🐰","🩵","🦷"][Math.floor(Math.random()*3)];
+
+ const items=["🐰","🩵","🦷","✨","🍰"];
+ const rare=Math.random()<0.1 ? "💖" : items[Math.floor(Math.random()*items.length)];
+
+ r.innerHTML=rare;
  r.style.left=x+"px";
  r.style.top=y+"px";
+ r.style.fontSize = rare==="💖" ? "40px" : "26px";
+
  document.body.appendChild(r);
  setTimeout(()=>r.remove(),1000);
 }
+
 document.addEventListener("click",e=>{
  rabbit(e.clientX,e.clientY);
 });
@@ -376,7 +249,7 @@ function buy(e){
  rabbit(e.clientX,e.clientY);
 }
 
-/* 🪟 */
+/* 🪟 ドラッグ */
 function drag(el){
  let p1=0,p2=0,p3=0,p4=0;
  el.querySelector(".titlebar").onmousedown=e=>{
@@ -390,7 +263,7 @@ function drag(el){
  };
  document.onmouseup=()=>document.onmousemove=null;
 }
-drag(liveWin);drag(bbsWin);drag(goodsWin);
+drag(bbsWin);
 </script>
 
 </body>
