@@ -4,71 +4,81 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>妄堕めぽのお部屋⊂( ᴖ ̫ ᴖ )⊃</title>
+<title>妄堕めぽのお部屋</title>
 
 <style>
-:root{
- --main:#7fe3ff;
- --accent:#ffb3da;
- --bg:#eaffff;
-}
-
 body{
- margin:0;
- font-family:"MS Gothic";
- background:linear-gradient(var(--bg),#bdefff);
- overflow:hidden;
+  margin:0;
+  font-family:"MS Gothic";
+  background:linear-gradient(#dffbff,#bdefff);
+  overflow:hidden;
 }
 
+/* レイアウト */
 .container{display:flex;height:100vh;}
 .side{
- width:20%;
- padding:10px;
- background:rgba(255,255,255,0.3);
- backdrop-filter:blur(10px);
+  width:20%;
+  padding:10px;
+  background:rgba(255,255,255,0.3);
+  backdrop-filter:blur(10px);
 }
 .main{width:60%;position:relative;}
 
 /* ウィンドウ */
 .window{
- position:absolute;
- width:320px;
- background:rgba(255,255,255,0.4);
- border:2px solid var(--main);
- border-radius:12px;
- box-shadow:0 0 15px var(--main);
+  position:absolute;
+  width:320px;
+  background:rgba(255,255,255,0.35);
+  border:2px solid #aeefff;
+  border-radius:12px;
+  box-shadow:0 0 15px #7fe3ff;
+  backdrop-filter:blur(12px);
 }
 .titlebar{
- background:linear-gradient(90deg,var(--main),var(--accent));
- padding:5px;
- cursor:move;
+  background:linear-gradient(90deg,#7fe3ff,#c8f7ff);
+  padding:5px;
+  cursor:move;
 }
 .content{
- padding:10px;
- max-height:500px;
- overflow:auto;
+  padding:10px;
+  max-height:320px;
+  overflow:auto;
 }
 
-/* 星 */
+/* キラキラ */
 .star{
- position:fixed;
- width:6px;height:6px;
- background:white;
- border-radius:50%;
- animation:fall linear infinite;
+  position:fixed;
+  width:5px;height:5px;
+  background:white;
+  border-radius:50%;
+  animation:fall linear infinite;
 }
 @keyframes fall{
- from{transform:translateY(-10vh);}
- to{transform:translateY(110vh);}
+  from{transform:translateY(-10vh);}
+  to{transform:translateY(110vh);}
 }
 
-/* LIVE */
-.live{
- color:red;
- font-weight:bold;
- animation:blink 1s infinite;
+/* 立ち絵 */
+.character{
+  position:fixed;
+  right:20px;
+  bottom:0;
+  width:200px;
+  animation:float 3s infinite;
 }
-@keyframes blink{50%{opacity:0;}}
+@keyframes float{
+  50%{transform:translateY(-15px);}
+}
+
+/* LIVE点滅 */
+.live{
+  color:red;
+  font-weight:bold;
+  animation:blink 1s infinite;
+}
+@keyframes blink{
+  50%{opacity:0;}
+}
 
 /* 💊 グッズ */
 .pill-sheet{
@@ -105,20 +115,6 @@ body{
   top:8px;
 }
 
-/* 🔢 カウンター */
-const counterRef=db.ref("counter");
-counterRef.transaction(c=>(c||0)+1);
-
-counterRef.on("value",s=>{
- let c=s.val()||0;
- counter.innerHTML=`あなたは <b>${c}</b> 人目の訪問者`;
-
- if(c%100===0){
-  kiri.innerHTML="🎉キリ番GET!!!🎉";
- }
-});
- 
-
 /* 🐰 */
 .rabbit{
   position:fixed;
@@ -132,41 +128,11 @@ counterRef.on("value",s=>{
   100%{opacity:0;transform:translateY(-40px)}
 }
 
-/* 🐰 */
-function rabbit(x,y){
- let r=document.createElement("div");
- r.className="rabbit";
- r.innerHTML=["🐰","🩵","🦷"][Math.floor(Math.random()*3)];
- r.style.left=x+"px";
- r.style.top=y+"px";
- document.body.appendChild(r);
- setTimeout(()=>r.remove(),1000);
-}
-document.addEventListener("click",e=>{
- rabbit(e.clientX,e.clientY);
- 
-/* 裏世界 */
-#ura{
- position:fixed;
- top:0;left:0;
- width:100%;height:100%;
- background:black;
- display:none;
- z-index:9999;
-}
-#uraTime{
- position:absolute;
- bottom:10px;
- right:10px;
- color:red;
-}
-.flash{
- position:absolute;
- top:50%;left:50%;
- transform:translate(-50%,-50%);
- color:red;
- font-size:40px;
- display:none;
+/* BBS */
+.bbs-post{
+  border-bottom:1px dashed #7fe3ff;
+  padding:5px;
+  font-size:12px;
 }
 </style>
 </head>
@@ -174,8 +140,8 @@ document.addEventListener("click",e=>{
 <body>
 
 <script>
-/* 星 */
-for(let i=0;i<50;i++){
+/* 🌟背景 */
+for(let i=0;i<40;i++){
  let s=document.createElement("div");
  s.className="star";
  s.style.left=Math.random()*100+"vw";
@@ -214,7 +180,10 @@ for(let i=0;i<50;i++){
 </a> </p>
 <img src="https://cdn.discordapp.com/attachments/1415958063151841382/1420592506776715274/logo_color02.png?ex=69e0445e&is=69def2de&hm=d589c9d5c77d67ae5cc63303c56c86aec72bc8a7ab78a3211fec7d5006a28a50&"><br>
 
+  
+
 </div>
+ 
 
 <!-- メイン -->
 <div class="main">
@@ -227,7 +196,7 @@ for(let i=0;i<50;i++){
 めぽのお部屋へようこそ⊂( ᴖ ̫ ᴖ )⊃
 </a>
 
-<!-- 配信 -->
+<!-- 🔴 配信 -->
 <div class="window" id="liveWin" style="top:40px;left:40px;">
 <div class="titlebar">配信情報</div>
 <div class="content">
@@ -242,8 +211,8 @@ for(let i=0;i<50;i++){
 </div>
 </div>
 
-<!-- BBS -->
-<div class="window" id="bbsWin" style="top:250px;left:100px;">
+<!-- 💬 BBS -->
+<div class="window" id="bbsWin" style="top:220px;left:120px;">
 <div class="titlebar">掲示板</div>
 <div class="content">
 <input id="name" placeholder="名前"><br>
@@ -253,7 +222,7 @@ for(let i=0;i<50;i++){
 </div>
 </div>
 
-<!-- グッズ -->
+<!-- 💊 グッズ -->
 <div class="window" id="goodsWin" style="top:80px;left:420px;">
 <div class="titlebar">グッズ</div>
 <div class="content">
@@ -265,7 +234,6 @@ for(let i=0;i<50;i++){
 <div class="pill" onclick="buy(event)"><span>アクキー</span></div>
 <div class="pill" onclick="buy(event)"><span>アクリルバッヂ</span></div>
 <div class="pill" onclick="buy(event)"><span>ステッカー</span></div>
-</div>
 </div>
 </div>
 
@@ -294,37 +262,66 @@ for(let i=0;i<50;i++){
  <div>
 <img src="./妄堕めぽのお部屋⊂( ᴖ ̫ ᴖ )⊃_files/mepolaylHP.jpg" width="200"><br>
 </div><hr>
-</div>
 
 </div>
 
-<!-- 裏世界 -->
-<div id="ura">
-<div id="uraTime"></div>
-<div class="flash" id="flash">堕ちろ</div>
 </div>
+
+<img class="character" src="https://via.placeholder.com/200">
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
 <script>
+const firebaseConfig={
+ apiKey:"AIzaSyCJNWWipkTzo_CoWjCrJJG0rAXK_rfU9_c",
+ authDomain:"moudamepo-e3239.firebaseapp.com",
+ projectId:"moudamepo-e3239"
+};
+firebase.initializeApp(firebaseConfig);
+const db=firebase.database();
 
-/* ===== ドラッグ（←これが抜けてた原因） ===== */
-function drag(el){
- let p1=0,p2=0,p3=0,p4=0;
- el.querySelector(".titlebar").onmousedown=e=>{
-  p3=e.clientX;p4=e.clientY;
-  document.onmousemove=e=>{
-   p1=p3-e.clientX;p2=p4-e.clientY;
-   p3=e.clientX;p4=e.clientY;
-   el.style.top=(el.offsetTop-p2)+"px";
-   el.style.left=(el.offsetLeft-p1)+"px";
-  };
- };
- document.onmouseup=()=>document.onmousemove=null;
+/* 🔢 カウンター */
+const counterRef=db.ref("counter");
+counterRef.transaction(c=>(c||0)+1);
+
+counterRef.on("value",s=>{
+ let c=s.val()||0;
+ counter.innerHTML=`あなたは <b>${c}</b> 人目の訪問者`;
+
+ if(c%100===0){
+  kiri.innerHTML="🎉キリ番GET!!!🎉";
+ }
+});
+
+/* 💬 BBS */
+function post(){
+ let name=document.getElementById("name").value||"名無し";
+ let msg=document.getElementById("msg").value;
+ if(!msg)return;
+
+ db.ref("bbs").push({
+  name:name,
+  msg:msg,
+  time:new Date().toLocaleString()
+ });
+
+ rabbit(window.innerWidth/2,window.innerHeight/2);
+ document.getElementById("msg").value="";
 }
-drag(liveWin);
-drag(bbsWin);
-drag(goodsWin);
 
-/* ===== YouTube（簡易） ===== */
+db.ref("bbs").on("value",s=>{
+ let html="";
+ let d=s.val();
+ for(let k in d){
+  let p=d[k];
+  html=`<div class="bbs-post"><b>${p.name}</b> ${p.time}<br>${p.msg}</div>`+html;
+ }
+ bbs.innerHTML=html;
+});
+
+/* 🔴 YouTube */
 const API_KEY="AIzaSyCWEQ1J0mEq8EFo7Cw5UYHpGRhYbC0Tu88";
 const CHANNEL_ID="UCmUlzug_w0WqRdTsEMJHjFw";
 
@@ -358,55 +355,46 @@ async function loadYT(){
   archive.innerHTML=arHTML||"なし";
 
  }catch(e){
-  live.innerHTML="準備中…";
+  live.innerHTML="読み込み失敗";
  }
 }
 loadYT();
 setInterval(loadYT,60000);
 
-
-
-/* ===== 裏世界（どこでも2秒長押し） ===== */
-let timer;
-
-document.addEventListener("mousedown",()=>{
- timer=setTimeout(()=>{
-  enterUra();
- },6000);
+/* 🐰 */
+function rabbit(x,y){
+ let r=document.createElement("div");
+ r.className="rabbit";
+ r.innerHTML=["🐰","🩵","🦷"][Math.floor(Math.random()*3)];
+ r.style.left=x+"px";
+ r.style.top=y+"px";
+ document.body.appendChild(r);
+ setTimeout(()=>r.remove(),1000);
+}
+document.addEventListener("click",e=>{
+ rabbit(e.clientX,e.clientY);
 });
 
-document.addEventListener("mouseup",()=>{
- clearTimeout(timer);
-});
-
-function enterUra(){
- document.getElementById("ura").style.display="block";
- document.querySelector(".container").style.display="none";
-
- setInterval(()=>{
-  uraTime.innerText=new Date().toLocaleTimeString();
- },1000);
-
- setInterval(()=>{
-  if(Math.random()<0.3){
-   flash.style.display="block";
-   setTimeout(()=>flash.style.display="none",120);
-  }
- },2000);
+/* 💊 */
+function buy(e){
+ rabbit(e.clientX,e.clientY);
 }
 
-/* ノイズ */
-document.getElementById("ura").addEventListener("click",()=>{
- const ctx=new AudioContext();
- const o=ctx.createOscillator();
- const g=ctx.createGain();
- o.connect(g);g.connect(ctx.destination);
- o.frequency.value=120;
- g.gain.value=0.02;
- o.start();
- setTimeout(()=>o.stop(),50);
-});
-
+/* 🪟 */
+function drag(el){
+ let p1=0,p2=0,p3=0,p4=0;
+ el.querySelector(".titlebar").onmousedown=e=>{
+  p3=e.clientX;p4=e.clientY;
+  document.onmousemove=e=>{
+   p1=p3-e.clientX;p2=p4-e.clientY;
+   p3=e.clientX;p4=e.clientY;
+   el.style.top=(el.offsetTop-p2)+"px";
+   el.style.left=(el.offsetLeft-p1)+"px";
+  };
+ };
+ document.onmouseup=()=>document.onmousemove=null;
+}
+drag(liveWin);drag(bbsWin);drag(goodsWin);
 </script>
 
 </body>
