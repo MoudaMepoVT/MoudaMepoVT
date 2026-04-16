@@ -117,18 +117,6 @@ counterRef.on("value",s=>{
  }
 });
  
-/* 🐰 */
-function rabbit(x,y){
- let r=document.createElement("div");
- r.className="rabbit";
- r.innerHTML=["🐰","🩵","🦷"][Math.floor(Math.random()*3)];
- r.style.left=x+"px";
- r.style.top=y+"px";
- document.body.appendChild(r);
- setTimeout(()=>r.remove(),1000);
-}
-document.addEventListener("click",e=>{
- rabbit(e.clientX,e.clientY);
 
 /* 🐰 */
 .rabbit{
@@ -142,6 +130,19 @@ document.addEventListener("click",e=>{
   30%{opacity:1;transform:scale(1.2)}
   100%{opacity:0;transform:translateY(-40px)}
 }
+
+/* 🐰 */
+function rabbit(x,y){
+ let r=document.createElement("div");
+ r.className="rabbit";
+ r.innerHTML=["🐰","🩵","🦷"][Math.floor(Math.random()*3)];
+ r.style.left=x+"px";
+ r.style.top=y+"px";
+ document.body.appendChild(r);
+ setTimeout(()=>r.remove(),1000);
+}
+document.addEventListener("click",e=>{
+ rabbit(e.clientX,e.clientY);
  
 /* 裏世界 */
 #ura{
