@@ -1,18 +1,326 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>妄堕めぽのお部屋⊂( ᴖ ̫ ᴖ )⊃</title>
+
+<style>
+:root{
+  --main:#7fe3ff;
+  --accent:#ffb3da;
+}
+
+body{
+  margin:0;
+  font-family:"MS Gothic";
+  background:linear-gradient(#dffbff,#bdefff);
+  overflow:hidden;
+}
+
+/* レイアウト */
+.container{display:flex;height:100vh;}
+.side{
+  width:20%;
+  padding:10px;
+  background:rgba(255,255,255,0.3);
+  backdrop-filter:blur(10px);
+  font-size:13px;
+}
+.main{width:60%;position:relative;}
+
+/* ウィンドウ */
+.window{
+  position:absolute;
+  width:320px;
+  background:rgba(255,255,255,0.4);
+  border:2px solid var(--main);
+  border-radius:12px;
+  box-shadow:0 0 20px var(--main);
+  backdrop-filter:blur(12px);
+}
+.titlebar{
+  background:linear-gradient(90deg,var(--main),var(--accent));
+  padding:5px;
+  cursor:move;
+}
+.content{padding:10px;max-height:320px;overflow:auto;}
+
+/* 星 */
+.star{
+  position:fixed;
+  width:6px;height:6px;
+  background:white;
+  border-radius:50%;
+  box-shadow:0 0 10px white;
+  animation:fall linear infinite;
+}
+@keyframes fall{
+  from{transform:translateY(-10vh);}
+  to{transform:translateY(110vh);}
+}
+
+/* LIVE */
+.live{color:red;animation:blink 1s infinite;}
+@keyframes blink{50%{opacity:0;}}
+
+/* グッズ */
+.pill{
+  width:60px;height:30px;
+  border-radius:20px;
+  background:linear-gradient(#fff,#cdefff);
+  cursor:pointer;
+  margin:5px;
+}
+
+/* エフェクト */
+.rabbit{
+  position:fixed;
+  font-size:28px;
+  pointer-events:none;
+  animation:rabbit 1s forwards;
+}
+@keyframes rabbit{
+  0%{opacity:0;transform:scale(.5)}
+  30%{opacity:1;transform:scale(1.2)}
+  100%{opacity:0;transform:translateY(-40px)}
+}
+
+/* 裏モード */
+body.ura{
+  background:black;
+  color:white;
+}
+body.ura *{
+  display:none !important;
+}
+body.ura::after{
+  content:"";
+  display:block;
+}
+</style>
+</head>
+
+<body>
+
 <script>
-/* ⏳ 長押しで裏 */
+/* 星 */
+for(let i=0;i<40;i++){
+ let s=document.createElement("div");
+ s.className="star";
+ s.style.left=Math.random()*100+"vw";
+ s.style.animationDuration=(2+Math.random()*3)+"s";
+ document.body.appendChild(s);
+}
+</script>
+
+<div class="container">
+
+<!-- 左 -->
+<div class="side">
+<p>🦷めぽ情報🌧</p>
+<p>堕メ天使の妄堕めぽ（Mouda Mepo）🍰11/03</p>
+<p>天界から追放された堕天使VTuber</p>
+
+<hr>
+
+<p>[配信時間] 21:00~</p>
+<p>金曜日：歌枠</p>
+
+<hr>
+
+<p><a href="https://x.com/hello_mepo" target="_blank">Twitter</a></p>
+<p><a href="https://hello-mepo.booth.pm/">グッズ</a></p>
+
+<p id="counter"></p>
+<p id="kiri" style="color:red;"></p>
+</div>
+
+<!-- メイン -->
+<div class="main">
+
+<h1>めぽのお部屋へようこそ⊂( ᴖ ̫ ᴖ )⊃</h1>
+
+<div class="window" id="liveWin" style="top:40px;left:40px;">
+<div class="titlebar">Live.exe</div>
+<div class="content">
+<div id="live"></div>
+<div id="archive"></div>
+</div>
+</div>
+
+<div class="window" id="bbsWin" style="top:220px;left:120px;">
+<div class="titlebar">掲示板</div>
+<div class="content">
+<input id="name"><br>
+<textarea id="msg"></textarea><br>
+<button onclick="post()">書き込む</button>
+<div id="bbs"></div>
+</div>
+</div>
+
+<div class="window" id="goodsWin" style="top:80px;left:420px;">
+<div class="titlebar">Goods.exe</div>
+<div class="content">
+<div class="pill" onclick="buy(event)">アクスタ</div>
+<div class="pill" onclick="buy(event)">アクキー</div>
+</div>
+</div>
+
+</div>
+
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
+<script>
+const firebaseConfig={
+ apiKey:"YOUR_API_KEY",
+ databaseURL:"YOUR_DB_URL"
+};
+firebase.initializeApp(firebaseConfig);
+const db=firebase.database();
+
+/* カウンター */
+db.ref("counter").transaction(c=>(c||0)+1);
+db.ref("counter").on("value",s=>{
+ counter.innerHTML=`訪問者 ${s.val()||0}`;
+});
+
+/* BBS */
+function post(){
+ let name=document.getElementById("name").value||"名無し";
+ let msg=document.getElementById("msg").value;
+ if(!msg)return;
+ db.ref("bbs").push({name,msg});
+}
+
+/* 表示 */
+db.ref("bbs").limitToLast(20).on("value",s=>{
+ let html="";
+ let d=s.val();
+ for(let k in d){
+  html=`<div>${d[k].name}:${d[k].msg}</div>`+html;
+ }
+ bbs.innerHTML=html;
+});
+
+/* YouTube */
+const API_KEY="YOUR_YOUTUBE_KEY";
+const CHANNEL_ID="UCmUlzug_w0WqRdTsEMJHjFw";
+
+async function loadYT(){
+ let res=await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL_ID}&order=date&type=video&key=${API_KEY}`);
+ let data=await res.json();
+ let html="";
+ data.items.forEach(v=>{
+  html+=`<div>${v.snippet.title}</div>`;
+ });
+ archive.innerHTML=html;
+}
+loadYT();
+
+/* 🐰 */
+function rabbit(x,y){
+ let r=document.createElement("div");
+ r.className="rabbit";
+ r.innerHTML=["🐰","✨","🍰"][Math.floor(Math.random()*3)];
+ r.style.left=x+"px";
+ r.style.top=y+"px";
+ document.body.appendChild(r);
+ setTimeout(()=>r.remove(),1000);
+}
+document.addEventListener("click",e=>rabbit(e.clientX,e.clientY));
+function buy(e){rabbit(e.clientX,e.clientY);}
+
+/* 🪟 */
+function drag(el){
+ let p3,p4;
+ el.querySelector(".titlebar").onmousedown=e=>{
+  p3=e.clientX;p4=e.clientY;
+  document.onmousemove=e=>{
+   el.style.left=(el.offsetLeft-(p3-e.clientX))+"px";
+   el.style.top=(el.offsetTop-(p4-e.clientY))+"px";
+   p3=e.clientX;p4=e.clientY;
+  };
+ };
+ document.onmouseup=()=>document.onmousemove=null;
+}
+drag(liveWin);drag(bbsWin);drag(goodsWin);
+
+/* 💀 裏世界（長押し） */
 let pressTimer;
 
-document.addEventListener("mousedown", () => {
-  pressTimer = setTimeout(() => {
-    window.location.href = "ura.html";
-  }, 2000); // 2秒長押し
+document.addEventListener("mousedown",()=>{
+ pressTimer=setTimeout(()=>{
+   enterUra();
+ },2000);
 });
 
-document.addEventListener("mouseup", () => {
-  clearTimeout(pressTimer);
-});
+document.addEventListener("mouseup",()=>clearTimeout(pressTimer));
 
-document.addEventListener("mouseleave", () => {
-  clearTimeout(pressTimer);
-});
+function enterUra(){
+ document.body.classList.add("ura");
+
+ // ノイズ生成
+ setInterval(()=>{
+  let d=document.createElement("div");
+  d.style.position="absolute";
+  d.style.width="2px";
+  d.style.height="2px";
+  d.style.background="white";
+  d.style.left=Math.random()*100+"vw";
+  d.style.top=Math.random()*100+"vh";
+  document.body.appendChild(d);
+  setTimeout(()=>d.remove(),200);
+ },100);
+
+ // 時間表示
+ let t=document.createElement("div");
+ t.style.position="fixed";
+ t.style.bottom="10px";
+ t.style.right="10px";
+ t.style.display="block";
+ document.body.appendChild(t);
+
+ setInterval(()=>{
+  t.innerText=new Date().toLocaleTimeString();
+ },1000);
+
+ // ノイズ音
+ function noise(){
+  let ctx=new AudioContext();
+  let buffer=ctx.createBuffer(1,1000,44100);
+  let data=buffer.getChannelData(0);
+  for(let i=0;i<data.length;i++){
+    data[i]=Math.random()*2-1;
+  }
+  let src=ctx.createBufferSource();
+  src.buffer=buffer;
+  src.connect(ctx.destination);
+  src.start();
+ }
+
+ // クリック
+ document.addEventListener("click",()=>{
+  noise();
+
+  if(Math.random()<0.2){
+    let g=document.createElement("div");
+    g.innerText="堕ちろ";
+    g.style.color="red";
+    g.style.position="fixed";
+    g.style.top="40%";
+    g.style.left="50%";
+    g.style.transform="translate(-50%,-50%)";
+    g.style.display="block";
+    document.body.appendChild(g);
+    setTimeout(()=>g.remove(),120);
+  }
+ });
+
+}
 </script>
+
+</body>
+</html>
