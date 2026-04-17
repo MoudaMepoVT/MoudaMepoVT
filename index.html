@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>妄堕めぽのお部屋</title>
+<title>めぽのお部屋</title>
 
 <style>
 *{box-sizing:border-box;}
@@ -13,7 +13,6 @@ body{
   font-size:14px;
   background-color:#ccffff;
   background-image:url("https://www.transparenttextures.com/patterns/stardust.png");
-  cursor:url("https://cur.cursors-4u.net/cursors/cur-2/cur116.cur"),auto;
 }
 
 .container{display:flex;height:100vh;}
@@ -28,6 +27,7 @@ body{
   position:relative;
 }
 
+/* レトロウィンドウ */
 .window{
   position:absolute;
   width:320px;
@@ -40,7 +40,7 @@ body{
   color:white;
   font-weight:bold;
   padding:5px;
-  cursor:move;
+  cursor:move; /* ←ここがドラッグできる部分 */
 }
 
 .content{
@@ -49,9 +49,7 @@ body{
   overflow:auto;
 }
 
-.blink{animation:blink 0.5s infinite;}
-@keyframes blink{50%{opacity:0;}}
-
+/* グッズ */
 .pill{
   width:70px;height:36px;
   border:2px solid #00ffff;
@@ -61,77 +59,43 @@ body{
   margin:5px;
   cursor:pointer;
 }
-
 .pill.empty{opacity:0.3;}
 
-.rabbit{
-  position:fixed;
-  font-size:30px;
-  pointer-events:none;
-  animation:rabbit 1s forwards;
-}
-@keyframes rabbit{
-  0%{opacity:0;transform:scale(.5)}
-  30%{opacity:1;transform:scale(1.2)}
-  100%{opacity:0;transform:translateY(-40px)}
-}
-
+/* 掲示板 */
 .bbs-post{
   border-bottom:1px dashed #00ffff;
   font-size:12px;
 }
+
 </style>
 </head>
 
 <body>
 
-<marquee>💀ようこそめぽのお部屋へ💀キリ番踏み逃げ禁止💀</marquee>
-
 <div class="container">
 
+<!-- 左 -->
 <div class="side">
-<h3>🦷めぽ情報🌧</h3>
-<p> 堕メ天使の妄堕めぽ（Mouda Mepo）🍰11/03</p>
-<p> 天界から追放された堕天使VTuber </p>
-<p> ダメダメなめぽと見張り役の兎田さん（肩のぬいぐるみ）が、インターネットに触れて世界を知る物語</p>
-<p> </p>
-<p> [配信時間]</p>
-<p> 21:00~</p>
-<p> [定期配信]</p>
-<p> 金曜日：歌枠</p>
-<p> ゲーム配信はツイッチ</p>
-<p> 歌枠耐久や雑談など視聴者との交流を大切にしています！</p>
-<p> </p>
+<h3>プロフィール</h3>
+<p>堕天使VTuber めぽ</p>
 
-<hr>
-
-<p> <a href="https://x.com/sakimr1020" target="_blank">
-❥お仕立て→さきまる様
-</a> </p>
-    <p> <a href="https://x.com/kaikaipnsk" target="_blank">
-❥OP・ED ぽんすけかいかい 様
-</a> </p>
-  <p> <a href="https://www.youtube.com/@%E5%A6%84%E5%A0%95%E3%82%81%E3%81%BD-MoudaMepo"_blank">
-❥モデリング→妄堕めぽ
-</a> </p>
-<img src="https://cdn.discordapp.com/attachments/1415958063151841382/1420592506776715274/logo_color02.png?ex=69e0445e&is=69def2de&hm=d589c9d5c77d67ae5cc63303c56c86aec72bc8a7ab78a3211fec7d5006a28a50&"><br>
-
-<img src="https://i.imgur.com/jV5Xb.gif"><br>
-
-
+<img src="https://i.imgur.com/9QO7Z.gif"><br>
+<p>相互リンク募集中</p>
 
 <img src="https://i.imgur.com/2yaf2wb.gif">
-<p>このページは工事中です…</p>
+<p>工事中</p>
 </div>
 
+<!-- メイン -->
 <div class="main">
 
-<h1 class="blink">めぽのお部屋</h1>
+<h1>めぽのお部屋</h1>
 
 <p id="counter"></p>
 
+<!-- 掲示板ウィンドウ -->
 <div class="window" id="bbsWin" style="top:100px;left:100px;">
-<div class="titlebar">掲示板</div>
+<div class="titlebar">掲示板（ドラッグで動く）</div>
 <div class="content">
 <input id="name" placeholder="名前"><br>
 <textarea id="msg"></textarea><br>
@@ -140,8 +104,9 @@ body{
 </div>
 </div>
 
-<div class="window" style="top:100px;left:450px;">
-<div class="titlebar">グッズ</div>
+<!-- グッズウィンドウ -->
+<div class="window" id="goodsWin" style="top:100px;left:450px;">
+<div class="titlebar">グッズ（ドラッグで動く）</div>
 <div class="content">
 <div class="pill" onclick="buy(event)">アクスタ</div>
 <div class="pill" onclick="buy(event)">アクキー</div>
@@ -151,32 +116,21 @@ body{
 
 </div>
 
+<!-- 右 -->
 <div class="side">
 <h3>リンク</h3>
-<p> <a href="https://www.youtube.com/@%E5%A6%84%E5%A0%95%E3%82%81%E3%81%BD-MoudaMepo" target="_blank">YouTube</a> </p>
-  <p> <a href="https://www.youtube.com/channel/UCmUlzug_w0WqRdTsEMJHjFw/join" target="_blank">メンバーシップ</a> </p>
-<p> <a href="https://x.com/hello_mepo" target="_blank">Twitter</a> </p>
-<p> <a href="https://hello-mepo.booth.pm/">グッズ</a> </p>
-<p> <a href="https://m.twitch.tv/m3p0r4n14n/home">ツイッチ</a> </p>
-<p> <a href="https://skeb.jp/@hello_mepo">skeb</a> </p>
-<p> <a href="https://marshmallow-qa.com/1reiy9f9z1yefbj?t=Ga7kBj&amp;utm_medium=url_text&amp;utm_source=promotion" _blank"="">マシュマロ</a> </p>
-<p> <a href="https://raidori.com/@hello_mepo" target="_blank">ファンクラブ</a> </p>
+<a href="#">YouTube</a><br>
+<a href="#">Twitter</a>
+
 <hr>
 
 <h3>LOVE</h3>
-<a href="#">🪐LOVE💤</a>
-<a href="https://x.com/layl_kamitsuki_">狼月鬼レイル🪐💤ショタVTuber🐺🧛</a>
-<p> 『くゅ』ことショタVTuber<a href="https://www.youtube.com/@KamitsukiLayl" _blank"="">
-狼月鬼レイル
-</a> </p>
+<a href="#">推しVTuber</a>
 </div>
 
 </div>
 
-<audio autoplay loop>
-<source src="bgm.mp3">
-</audio>
-
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
@@ -189,6 +143,7 @@ const firebaseConfig={
 firebase.initializeApp(firebaseConfig);
 const db=firebase.database();
 
+/* カウンター */
 const counterRef=db.ref("counter");
 counterRef.transaction(c=>(c||0)+1);
 
@@ -196,13 +151,13 @@ counterRef.on("value",s=>{
  counter.innerHTML="あなたは "+(s.val()||0)+" 人目";
 });
 
+/* 掲示板 */
 function post(){
  let name=document.getElementById("name").value||"名無し";
  let msg=document.getElementById("msg").value;
  if(!msg)return;
 
- db.ref("bbs").push({name,msg,time:new Date().toLocaleString()});
- rabbit(window.innerWidth/2,window.innerHeight/2);
+ db.ref("bbs").push({name,msg});
  document.getElementById("msg").value="";
 }
 
@@ -216,25 +171,36 @@ db.ref("bbs").on("value",s=>{
  bbs.innerHTML=html;
 });
 
-function rabbit(x,y){
- let r=document.createElement("div");
- r.className="rabbit";
- r.innerHTML=["🐰","🦷","★"][Math.floor(Math.random()*3)];
- r.style.left=x+"px";
- r.style.top=y+"px";
- document.body.appendChild(r);
- setTimeout(()=>r.remove(),1000);
-}
-
+/* グッズ */
 function buy(e){
  e.target.classList.add("empty");
 }
 
-window.addEventListener("load",()=>{
- document.querySelectorAll(".pill").forEach(p=>{
-  if(Math.random()<0.3)p.classList.add("empty");
- });
-});
+/* ウィンドウを動かす処理（重要） */
+function drag(el){
+ let p1=0,p2=0,p3=0,p4=0;
+
+ el.querySelector(".titlebar").onmousedown=e=>{
+  p3=e.clientX;
+  p4=e.clientY;
+
+  document.onmousemove=e=>{
+   p1=p3-e.clientX;
+   p2=p4-e.clientY;
+   p3=e.clientX;
+   p4=e.clientY;
+
+   el.style.top=(el.offsetTop-p2)+"px";
+   el.style.left=(el.offsetLeft-p1)+"px";
+  };
+ };
+
+ document.onmouseup=()=>document.onmousemove=null;
+}
+
+/* ここで適用 */
+drag(bbsWin);
+drag(goodsWin);
 
 </script>
 
