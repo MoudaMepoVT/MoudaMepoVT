@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>めぽのお部屋</title>
+<title>めぽOS</title>
 
 <style>
 *{box-sizing:border-box;}
@@ -10,15 +10,12 @@
 body{
   margin:0;
   font-family:"MS Gothic","MS PGothic",monospace;
-  font-size:14px;
-  background-color:#ccffff;
-  background-image:url("https://www.transparenttextures.com/patterns/stardust.png");
+  background:#008080; /* デスクトップ色 */
 }
 
-.container{display:flex;height:100vh;}
-.side{width:20%;padding:10px;}
-.main{width:60%;position:relative;}
+.container{position:relative;height:100vh;}
 
+/* ウィンドウ */
 .window{
   position:absolute;
   width:320px;
@@ -40,8 +37,34 @@ body{
   cursor:pointer;
 }
 
-.content{padding:10px;max-height:320px;overflow:auto;}
+.content{padding:10px;max-height:300px;overflow:auto;}
 .hidden{display:none;}
+
+/* タスクバー */
+.taskbar{
+  position:fixed;
+  bottom:0;
+  left:0;
+  width:100%;
+  height:40px;
+  background:#c0c0c0;
+  border-top:3px ridge #fff;
+  display:flex;
+  align-items:center;
+  padding:5px;
+}
+
+.task-btn{
+  margin-right:5px;
+  padding:3px 8px;
+  background:#e0e0e0;
+  border:2px outset #fff;
+  cursor:pointer;
+}
+
+.clock{
+  margin-left:auto;
+}
 
 </style>
 </head>
@@ -50,16 +73,8 @@ body{
 
 <div class="container">
 
-<div class="side">
-<h3>プロフィール</h3>
-<p>堕天使VTuber めぽ</p>
-</div>
-
-<div class="main">
-<h1>めぽのお部屋</h1>
-<p id="clock"></p>
-
-<div class="window" id="bbsWin" style="top:100px;left:100px;">
+<!-- ウィンドウ1 -->
+<div class="window" id="bbsWin" style="top:50px;left:50px;">
 <div class="titlebar" ondblclick="maximize(bbsWin)">
 掲示板
 <div class="buttons">
@@ -75,7 +90,8 @@ body{
 </div>
 </div>
 
-<div class="window" id="goodsWin" style="top:100px;left:450px;">
+<!-- ウィンドウ2 -->
+<div class="window" id="goodsWin" style="top:80px;left:400px;">
 <div class="titlebar" ondblclick="maximize(goodsWin)">
 グッズ
 <div class="buttons">
@@ -83,17 +99,16 @@ body{
 <span onclick="closeWin(goodsWin)">×</span>
 </div>
 </div>
-<div class="content">
-グッズ一覧
-</div>
+<div class="content">グッズ一覧</div>
 </div>
 
 </div>
 
-<div class="side">
-<h3>リンク</h3>
-</div>
-
+<!-- タスクバー -->
+<div class="taskbar">
+<div class="task-btn" onclick="restoreWin(bbsWin)">掲示板</div>
+<div class="task-btn" onclick="restoreWin(goodsWin)">グッズ</div>
+<div class="clock" id="clock"></div>
 </div>
 
 <script>
@@ -124,47 +139,43 @@ function drag(el){
  document.onmouseup=()=>document.onmousemove=null;
 }
 
-/* 閉じる */
 function closeWin(el){
  el.style.display="none";
 }
 
-/* 最小化 */
 function minimize(el){
- el.querySelector(".content").classList.toggle("hidden");
+ el.style.display="none";
 }
 
-/* 最大化 */
+function restoreWin(el){
+ el.style.display="block";
+ bringToFront(el);
+}
+
 function maximize(el){
  if(!el.classList.contains("max")){
   el.dataset.top=el.style.top;
   el.dataset.left=el.style.left;
-  el.dataset.width=el.style.width;
-  el.dataset.height=el.style.height;
-
   el.style.top="0";
   el.style.left="0";
   el.style.width="100%";
-  el.style.height="100%";
+  el.style.height="calc(100% - 40px)";
   el.classList.add("max");
  }else{
   el.style.top=el.dataset.top;
   el.style.left=el.dataset.left;
-  el.style.width=el.dataset.width;
-  el.style.height=el.dataset.height;
+  el.style.width="320px";
+  el.style.height="auto";
   el.classList.remove("max");
  }
 }
 
-/* 時計 */
 function updateClock(){
- const now=new Date();
- clock.innerHTML=now.toLocaleString();
+ clock.innerHTML=new Date().toLocaleTimeString();
 }
 setInterval(updateClock,1000);
 updateClock();
 
-/* 掲示板 */
 function post(){
  let name=document.getElementById("name").value||"名無し";
  let msg=document.getElementById("msg").value;
