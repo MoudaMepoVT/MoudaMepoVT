@@ -10,10 +10,31 @@
 body{
   margin:0;
   font-family:"MS Gothic","MS PGothic",monospace;
-  background:#008080; /* デスクトップ色 */
+  background:#008080;
 }
 
 .container{position:relative;height:100vh;}
+
+/* デスクトップアイコン */
+.desktop{
+  position:absolute;
+  top:10px;
+  left:10px;
+}
+
+.icon{
+  width:80px;
+  text-align:center;
+  color:white;
+  margin-bottom:20px;
+  cursor:pointer;
+}
+
+.icon img{
+  width:48px;
+  display:block;
+  margin:auto;
+}
 
 /* ウィンドウ */
 .window{
@@ -21,6 +42,7 @@ body{
   width:320px;
   background:#e0ffff;
   border:3px ridge #00ffff;
+  display:none;
 }
 
 .titlebar{
@@ -38,17 +60,14 @@ body{
 }
 
 .content{padding:10px;max-height:300px;overflow:auto;}
-.hidden{display:none;}
 
 /* タスクバー */
 .taskbar{
   position:fixed;
   bottom:0;
-  left:0;
   width:100%;
   height:40px;
   background:#c0c0c0;
-  border-top:3px ridge #fff;
   display:flex;
   align-items:center;
   padding:5px;
@@ -62,9 +81,7 @@ body{
   cursor:pointer;
 }
 
-.clock{
-  margin-left:auto;
-}
+.clock{margin-left:auto;}
 
 </style>
 </head>
@@ -73,8 +90,23 @@ body{
 
 <div class="container">
 
-<!-- ウィンドウ1 -->
-<div class="window" id="bbsWin" style="top:50px;left:50px;">
+<!-- デスクトップアイコン -->
+<div class="desktop">
+
+<div class="icon" ondblclick="openWin(bbsWin)">
+<img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png">
+掲示板
+</div>
+
+<div class="icon" ondblclick="openWin(goodsWin)">
+<img src="https://cdn-icons-png.flaticon.com/512/1041/1041885.png">
+グッズ
+</div>
+
+</div>
+
+<!-- ウィンドウ -->
+<div class="window" id="bbsWin" style="top:80px;left:120px;">
 <div class="titlebar" ondblclick="maximize(bbsWin)">
 掲示板
 <div class="buttons">
@@ -90,8 +122,7 @@ body{
 </div>
 </div>
 
-<!-- ウィンドウ2 -->
-<div class="window" id="goodsWin" style="top:80px;left:400px;">
+<div class="window" id="goodsWin" style="top:120px;left:420px;">
 <div class="titlebar" ondblclick="maximize(goodsWin)">
 グッズ
 <div class="buttons">
@@ -114,23 +145,16 @@ body{
 <script>
 let topZ=1;
 
-function bringToFront(el){
- topZ++;
- el.style.zIndex=topZ;
-}
+function bringToFront(el){topZ++;el.style.zIndex=topZ;}
 
 function drag(el){
  let p1=0,p2=0,p3=0,p4=0;
-
  el.onmousedown=()=>bringToFront(el);
-
  el.querySelector(".titlebar").onmousedown=e=>{
   bringToFront(el);
   p3=e.clientX;p4=e.clientY;
-
   document.onmousemove=e=>{
-   p1=p3-e.clientX;
-   p2=p4-e.clientY;
+   p1=p3-e.clientX;p2=p4-e.clientY;
    p3=e.clientX;p4=e.clientY;
    el.style.top=(el.offsetTop-p2)+"px";
    el.style.left=(el.offsetLeft-p1)+"px";
@@ -139,18 +163,14 @@ function drag(el){
  document.onmouseup=()=>document.onmousemove=null;
 }
 
-function closeWin(el){
- el.style.display="none";
-}
-
-function minimize(el){
- el.style.display="none";
-}
-
-function restoreWin(el){
+function openWin(el){
  el.style.display="block";
  bringToFront(el);
 }
+
+function closeWin(el){el.style.display="none";}
+function minimize(el){el.style.display="none";}
+function restoreWin(el){el.style.display="block";bringToFront(el);} 
 
 function maximize(el){
  if(!el.classList.contains("max")){
@@ -170,9 +190,7 @@ function maximize(el){
  }
 }
 
-function updateClock(){
- clock.innerHTML=new Date().toLocaleTimeString();
-}
+function updateClock(){clock.innerHTML=new Date().toLocaleTimeString();}
 setInterval(updateClock,1000);
 updateClock();
 
@@ -186,7 +204,6 @@ function post(){
  document.getElementById("msg").value="";
 }
 
-/* 適用 */
 drag(bbsWin);
 drag(goodsWin);
 
