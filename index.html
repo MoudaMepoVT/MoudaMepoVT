@@ -16,18 +16,9 @@ body{
 }
 
 .container{display:flex;height:100vh;}
+.side{width:20%;padding:10px;}
+.main{width:60%;position:relative;}
 
-.side{
-  width:20%;
-  padding:10px;
-}
-
-.main{
-  width:60%;
-  position:relative;
-}
-
-/* レトロウィンドウ */
 .window{
   position:absolute;
   width:320px;
@@ -38,34 +29,19 @@ body{
 .titlebar{
   background:#0000cc;
   color:white;
-  font-weight:bold;
   padding:5px;
-  cursor:move; /* ←ここがドラッグできる部分 */
+  cursor:move;
+  display:flex;
+  justify-content:space-between;
 }
 
-.content{
-  padding:10px;
-  max-height:320px;
-  overflow:auto;
-}
-
-/* グッズ */
-.pill{
-  width:70px;height:36px;
-  border:2px solid #00ffff;
-  display:inline-block;
-  text-align:center;
-  line-height:36px;
-  margin:5px;
+.buttons span{
+  margin-left:5px;
   cursor:pointer;
 }
-.pill.empty{opacity:0.3;}
 
-/* 掲示板 */
-.bbs-post{
-  border-bottom:1px dashed #00ffff;
-  font-size:12px;
-}
+.content{padding:10px;max-height:320px;overflow:auto;}
+.hidden{display:none;}
 
 </style>
 </head>
@@ -74,131 +50,132 @@ body{
 
 <div class="container">
 
-<!-- 左 -->
 <div class="side">
 <h3>プロフィール</h3>
 <p>堕天使VTuber めぽ</p>
-
-<img src="https://i.imgur.com/9QO7Z.gif"><br>
-<p>相互リンク募集中</p>
-
-<img src="https://i.imgur.com/2yaf2wb.gif">
-<p>工事中</p>
 </div>
 
-<!-- メイン -->
 <div class="main">
-
 <h1>めぽのお部屋</h1>
+<p id="clock"></p>
 
-<p id="counter"></p>
-
-<!-- 掲示板ウィンドウ -->
 <div class="window" id="bbsWin" style="top:100px;left:100px;">
-<div class="titlebar">掲示板（ドラッグで動く）</div>
+<div class="titlebar" ondblclick="maximize(bbsWin)">
+掲示板
+<div class="buttons">
+<span onclick="minimize(bbsWin)">＿</span>
+<span onclick="closeWin(bbsWin)">×</span>
+</div>
+</div>
 <div class="content">
-<input id="name" placeholder="名前"><br>
+<input id="name"><br>
 <textarea id="msg"></textarea><br>
 <button onclick="post()">書き込む</button>
 <div id="bbs"></div>
 </div>
 </div>
 
-<!-- グッズウィンドウ -->
 <div class="window" id="goodsWin" style="top:100px;left:450px;">
-<div class="titlebar">グッズ（ドラッグで動く）</div>
+<div class="titlebar" ondblclick="maximize(goodsWin)">
+グッズ
+<div class="buttons">
+<span onclick="minimize(goodsWin)">＿</span>
+<span onclick="closeWin(goodsWin)">×</span>
+</div>
+</div>
 <div class="content">
-<div class="pill" onclick="buy(event)">アクスタ</div>
-<div class="pill" onclick="buy(event)">アクキー</div>
-<div class="pill" onclick="buy(event)">バッヂ</div>
+グッズ一覧
 </div>
 </div>
 
 </div>
 
-<!-- 右 -->
 <div class="side">
 <h3>リンク</h3>
-<a href="#">YouTube</a><br>
-<a href="#">Twitter</a>
-
-<hr>
-
-<h3>LOVE</h3>
-<a href="#">推しVTuber</a>
 </div>
 
 </div>
-
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
 <script>
-const firebaseConfig={
- apiKey:"",
- authDomain:"",
- projectId:""
-};
-firebase.initializeApp(firebaseConfig);
-const db=firebase.database();
+let topZ=1;
 
-/* カウンター */
-const counterRef=db.ref("counter");
-counterRef.transaction(c=>(c||0)+1);
+function bringToFront(el){
+ topZ++;
+ el.style.zIndex=topZ;
+}
 
-counterRef.on("value",s=>{
- counter.innerHTML="あなたは "+(s.val()||0)+" 人目";
-});
+function drag(el){
+ let p1=0,p2=0,p3=0,p4=0;
+
+ el.onmousedown=()=>bringToFront(el);
+
+ el.querySelector(".titlebar").onmousedown=e=>{
+  bringToFront(el);
+  p3=e.clientX;p4=e.clientY;
+
+  document.onmousemove=e=>{
+   p1=p3-e.clientX;
+   p2=p4-e.clientY;
+   p3=e.clientX;p4=e.clientY;
+   el.style.top=(el.offsetTop-p2)+"px";
+   el.style.left=(el.offsetLeft-p1)+"px";
+  };
+ };
+ document.onmouseup=()=>document.onmousemove=null;
+}
+
+/* 閉じる */
+function closeWin(el){
+ el.style.display="none";
+}
+
+/* 最小化 */
+function minimize(el){
+ el.querySelector(".content").classList.toggle("hidden");
+}
+
+/* 最大化 */
+function maximize(el){
+ if(!el.classList.contains("max")){
+  el.dataset.top=el.style.top;
+  el.dataset.left=el.style.left;
+  el.dataset.width=el.style.width;
+  el.dataset.height=el.style.height;
+
+  el.style.top="0";
+  el.style.left="0";
+  el.style.width="100%";
+  el.style.height="100%";
+  el.classList.add("max");
+ }else{
+  el.style.top=el.dataset.top;
+  el.style.left=el.dataset.left;
+  el.style.width=el.dataset.width;
+  el.style.height=el.dataset.height;
+  el.classList.remove("max");
+ }
+}
+
+/* 時計 */
+function updateClock(){
+ const now=new Date();
+ clock.innerHTML=now.toLocaleString();
+}
+setInterval(updateClock,1000);
+updateClock();
 
 /* 掲示板 */
 function post(){
  let name=document.getElementById("name").value||"名無し";
  let msg=document.getElementById("msg").value;
  if(!msg)return;
-
- db.ref("bbs").push({name,msg});
+ let div=document.createElement("div");
+ div.innerHTML="<b>"+name+"</b>:"+msg;
+ bbs.prepend(div);
  document.getElementById("msg").value="";
 }
 
-db.ref("bbs").on("value",s=>{
- let html="";
- let d=s.val();
- for(let k in d){
-  let p=d[k];
-  html=`<div class="bbs-post"><b>${p.name}</b><br>${p.msg}</div>`+html;
- }
- bbs.innerHTML=html;
-});
-
-/* グッズ */
-function buy(e){
- e.target.classList.add("empty");
-}
-
-/* ウィンドウを動かす処理（重要） */
-function drag(el){
- let p1=0,p2=0,p3=0,p4=0;
-
- el.querySelector(".titlebar").onmousedown=e=>{
-  p3=e.clientX;
-  p4=e.clientY;
-
-  document.onmousemove=e=>{
-   p1=p3-e.clientX;
-   p2=p4-e.clientY;
-   p3=e.clientX;
-   p4=e.clientY;
-
-   el.style.top=(el.offsetTop-p2)+"px";
-   el.style.left=(el.offsetLeft-p1)+"px";
-  };
- };
-
- document.onmouseup=()=>document.onmousemove=null;
-}
-
-/* ここで適用 */
+/* 適用 */
 drag(bbsWin);
 drag(goodsWin);
 
