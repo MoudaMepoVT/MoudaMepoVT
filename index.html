@@ -1,6 +1,3 @@
-
-
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,195 +5,65 @@
 <title>妄堕めぽのお部屋</title>
 
 <style>
+*{box-sizing:border-box;}
+
 body{
   margin:0;
-  font-family:"MS Gothic";
-  background:linear-gradient(#dffbff,#bdefff);
-  overflow:hidden;
+  font-family:"MS Gothic","MS PGothic",monospace;
+  font-size:14px;
+  background-color:#ccffff;
+  background-image:url("https://www.transparenttextures.com/patterns/stardust.png");
+  cursor:url("https://cur.cursors-4u.net/cursors/cur-2/cur116.cur"),auto;
 }
 
-/* レイアウト */
 .container{display:flex;height:100vh;}
+
 .side{
   width:20%;
   padding:10px;
-  background:rgba(255,255,255,0.3);
-  backdrop-filter:blur(10px);
 }
-.main{width:60%;position:relative;}
 
-/* ウィンドウ */
+.main{
+  width:60%;
+  position:relative;
+}
+
 .window{
   position:absolute;
   width:320px;
-  background:rgba(255,255,255,0.35);
-  border:2px solid #aeefff;
-  border-radius:12px;
-  box-shadow:0 0 15px #7fe3ff;
-  backdrop-filter:blur(12px);
+  background:#e0ffff;
+  border:3px ridge #00ffff;
 }
+
 .titlebar{
-  background:linear-gradient(90deg,#7fe3ff,#c8f7ff);
+  background:#0000cc;
+  color:white;
+  font-weight:bold;
   padding:5px;
   cursor:move;
 }
+
 .content{
   padding:10px;
   max-height:320px;
   overflow:auto;
 }
 
-/* キラキラ */
-.star{
-  position:fixed;
-  width:5px;height:5px;
-  background:white;
-  border-radius:50%;
-  animation:fall linear infinite;
-}
-@keyframes fall{
-  from{transform:translateY(-10vh);}
-  to{transform:translateY(110vh);}
-}
+.blink{animation:blink 0.5s infinite;}
+@keyframes blink{50%{opacity:0;}}
 
-/* 立ち絵 */
-.character{
-  position:fixed;
-  right:20px;
-  bottom:0;
-  width:200px;
-  animation:float 3s infinite;
-}
-@keyframes float{
-  50%{transform:translateY(-15px);}
-}
-
-/* LIVE点滅 */
-.live{
-  color:red;
-  font-weight:bold;
-  animation:blink 1s infinite;
-}
-@keyframes blink{
-  50%{opacity:0;}
-}
-
-/* 💊 シート全体 */
-.pill-sheet{
-  display:grid;
-  grid-template-columns:repeat(3,70px);
-  gap:14px;
-  justify-content:center;
-  padding:12px;
-
-  background:linear-gradient(#eaf8ff,#d7f0ff);
-  border-radius:12px;
-
-  /* シートの凹み感 */
-  box-shadow:
-    inset 0 0 12px rgba(0,0,0,0.15),
-    0 4px 10px rgba(0,0,0,0.1);
-}
-
-/* 💊 カプセル本体 */
 .pill{
-  width:70px;
-  height:36px;
-  border-radius:20px;
-  position:relative;
-  cursor:pointer;
-  overflow:hidden;
-
-  background:linear-gradient(#ffffff,#dff4ff);
-
-  /* ぷっくり感 */
-  box-shadow:
-    inset 0 3px 6px rgba(255,255,255,0.9),
-    inset 0 -3px 8px rgba(0,0,0,0.2),
-    0 2px 6px rgba(0,0,0,0.25);
-
-  transition:all 0.15s;
-}
-
-/* 半分カラー（薬っぽさ） */
-.pill::before{
-  content:"";
-  position:absolute;
-  width:50%;
-  height:100%;
-  left:0;
-  top:0;
-
-  background:linear-gradient(#7fe3ff,#4ecbff);
-
-  border-radius:20px 0 0 20px;
-
-  box-shadow:
-    inset 0 0 6px rgba(0,0,0,0.25);
-}
-
-/* 光沢（ガラス感） */
-.pill::after{
-  content:"";
-  position:absolute;
-  width:100%;
-  height:100%;
-  top:0;
-  left:0;
-
-  background:
-    radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8), transparent 60%),
-    linear-gradient(to bottom, rgba(255,255,255,0.3), transparent);
-
-  pointer-events:none;
-}
-
-/* 文字 */
-.pill span{
-  position:absolute;
-  width:100%;
+  width:70px;height:36px;
+  border:2px solid #00ffff;
+  display:inline-block;
   text-align:center;
-  font-size:10px;
-  top:10px;
-  color:#333;
-  z-index:2;
+  line-height:36px;
+  margin:5px;
+  cursor:pointer;
 }
 
-/* 押したとき */
-.pill:active{
-  transform:scale(0.9);
+.pill.empty{opacity:0.3;}
 
-  box-shadow:
-    inset 0 4px 10px rgba(0,0,0,0.4);
-}
-
-/* ホバーでちょい違和感 */
-.pill:hover{
-  filter:brightness(1.1) contrast(1.05);
-}
-
-/* 💀 “飲まれた後” */
-.pill.empty{
-  opacity:0.25;
-
-  /* 中身消えた感じ */
-  background:linear-gradient(#f0f0f0,#dddddd);
-
-  box-shadow:
-    inset 0 3px 6px rgba(255,255,255,0.6),
-    inset 0 -3px 6px rgba(0,0,0,0.1);
-}
-
-/* 空カプセルの左半分も薄く */
-.pill.empty::before{
-  background:rgba(200,200,200,0.3);
-}
-
-/* 空カプセルは文字も薄い */
-.pill.empty span{
-  color:#888;
-}
-/* 🐰 */
 .rabbit{
   position:fixed;
   font-size:30px;
@@ -209,10 +76,8 @@ body{
   100%{opacity:0;transform:translateY(-40px)}
 }
 
-/* BBS */
 .bbs-post{
-  border-bottom:1px dashed #7fe3ff;
-  padding:5px;
+  border-bottom:1px dashed #00ffff;
   font-size:12px;
 }
 </style>
@@ -220,23 +85,13 @@ body{
 
 <body>
 
-<script>
-/* 🌟背景 */
-for(let i=0;i<40;i++){
- let s=document.createElement("div");
- s.className="star";
- s.style.left=Math.random()*100+"vw";
- s.style.animationDuration=(2+Math.random()*3)+"s";
- document.body.appendChild(s);
-}
-</script>
+<marquee>💀ようこそめぽのお部屋へ💀キリ番踏み逃げ禁止💀</marquee>
 
 <div class="container">
 
-<!-- 左 -->
- <div class="side">
- <p>🦷めぽ情報🌧</p>
- <p> 堕メ天使の妄堕めぽ（Mouda Mepo）🍰11/03</p>
+<div class="side">
+<h3>🦷めぽ情報🌧</h3>
+<p> 堕メ天使の妄堕めぽ（Mouda Mepo）🍰11/03</p>
 <p> 天界から追放された堕天使VTuber </p>
 <p> ダメダメなめぽと見張り役の兎田さん（肩のぬいぐるみ）が、インターネットに触れて世界を知る物語</p>
 <p> </p>
@@ -261,39 +116,21 @@ for(let i=0;i<40;i++){
 </a> </p>
 <img src="https://cdn.discordapp.com/attachments/1415958063151841382/1420592506776715274/logo_color02.png?ex=69e0445e&is=69def2de&hm=d589c9d5c77d67ae5cc63303c56c86aec72bc8a7ab78a3211fec7d5006a28a50&"><br>
 
-  
+<img src="https://i.imgur.com/jV5Xb.gif"><br>
 
+
+
+<img src="https://i.imgur.com/2yaf2wb.gif">
+<p>このページは工事中です…</p>
 </div>
- 
 
-<!-- メイン -->
 <div class="main">
+
+<h1 class="blink">めぽのお部屋</h1>
+
 <p id="counter"></p>
-<p id="kiri" style="color:red;"></p>
 
-<h1>
-  
-<a href="https://www.youtube.com/@%E5%A6%84%E5%A0%95%E3%82%81%E3%81%BD-MoudaMepo" target="_blank">
-めぽのお部屋へようこそ⊂( ᴖ ̫ ᴖ )⊃
-</a>
-
-<!-- 🔴 配信 -->
-<div class="window" id="liveWin" style="top:40px;left:40px;">
-<div class="titlebar">配信情報</div>
-<div class="content">
-<h3>🔴 LIVE中</h3>
-<div id="live"></div>
-
-<h3>⏰ 配信予定</h3>
-<div id="upcoming"></div>
-
-<h3>📼 アーカイブ</h3>
-<div id="archive"></div>
-</div>
-</div>
-
-<!-- 💬 BBS -->
-<div class="window" id="bbsWin" style="top:220px;left:120px;">
+<div class="window" id="bbsWin" style="top:100px;left:100px;">
 <div class="titlebar">掲示板</div>
 <div class="content">
 <input id="name" placeholder="名前"><br>
@@ -303,27 +140,19 @@ for(let i=0;i<40;i++){
 </div>
 </div>
 
-<!-- 💊 グッズ -->
-<div class="window" id="goodsWin" style="top:80px;left:420px;">
+<div class="window" style="top:100px;left:450px;">
 <div class="titlebar">グッズ</div>
 <div class="content">
- 
-<img src="img1.jpg" width="200"><br>
- 
-<div class="pill-sheet">
-<div class="pill" onclick="buy(event)"><span>アクスタ</span></div>
-<div class="pill" onclick="buy(event)"><span>アクキー</span></div>
-<div class="pill" onclick="buy(event)"><span>アクリルバッヂ</span></div>
-<div class="pill" onclick="buy(event)"><span>ステッカー</span></div>
+<div class="pill" onclick="buy(event)">アクスタ</div>
+<div class="pill" onclick="buy(event)">アクキー</div>
+<div class="pill" onclick="buy(event)">バッヂ</div>
 </div>
 </div>
 
 </div>
 
- <!-- 右 -->
-  <div class="side">
-    <!-- 🔗 リンク -->
- <h2>🦷リンク🦷</h2>
+<div class="side">
+<h3>リンク</h3>
 <p> <a href="https://www.youtube.com/@%E5%A6%84%E5%A0%95%E3%82%81%E3%81%BD-MoudaMepo" target="_blank">YouTube</a> </p>
   <p> <a href="https://www.youtube.com/channel/UCmUlzug_w0WqRdTsEMJHjFw/join" target="_blank">メンバーシップ</a> </p>
 <p> <a href="https://x.com/hello_mepo" target="_blank">Twitter</a> </p>
@@ -332,59 +161,47 @@ for(let i=0;i<40;i++){
 <p> <a href="https://skeb.jp/@hello_mepo">skeb</a> </p>
 <p> <a href="https://marshmallow-qa.com/1reiy9f9z1yefbj?t=Ga7kBj&amp;utm_medium=url_text&amp;utm_source=promotion" _blank"="">マシュマロ</a> </p>
 <p> <a href="https://raidori.com/@hello_mepo" target="_blank">ファンクラブ</a> </p>
+<hr>
 
-    <hr>
-
-    <!-- 🪐LOVE -->
-    <h2>🪐LOVE💤</h2>
+<h3>LOVE</h3>
+<a href="#">🪐LOVE💤</a>
 <a href="https://x.com/layl_kamitsuki_">狼月鬼レイル🪐💤ショタVTuber🐺🧛</a>
-<p> 『くゅ』ことショタVTuber<a href="https://www.youtube.com/@KamitsukiLayl"_blank">
+<p> 『くゅ』ことショタVTuber<a href="https://www.youtube.com/@KamitsukiLayl" _blank"="">
 狼月鬼レイル
 </a> </p>
- </div>
+</div>
 
 </div>
-  
-<img class="character" src="https://via.placeholder.com/200">
 
-<!-- Firebase -->
+<audio autoplay loop>
+<source src="bgm.mp3">
+</audio>
+
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
 <script>
 const firebaseConfig={
- apiKey:"AIzaSyCJNWWipkTzo_CoWjCrJJG0rAXK_rfU9_c",
- authDomain:"moudamepo-e3239.firebaseapp.com",
- projectId:"moudamepo-e3239"
+ apiKey:"",
+ authDomain:"",
+ projectId:""
 };
 firebase.initializeApp(firebaseConfig);
 const db=firebase.database();
 
-/* 🔢 カウンター */
 const counterRef=db.ref("counter");
 counterRef.transaction(c=>(c||0)+1);
 
 counterRef.on("value",s=>{
- let c=s.val()||0;
- counter.innerHTML=`あなたは <b>${c}</b> 人目の訪問者`;
-
- if(c%100===0){
-  kiri.innerHTML="🎉キリ番GET!!!🎉";
- }
+ counter.innerHTML="あなたは "+(s.val()||0)+" 人目";
 });
 
-/* 💬 BBS */
 function post(){
  let name=document.getElementById("name").value||"名無し";
  let msg=document.getElementById("msg").value;
  if(!msg)return;
 
- db.ref("bbs").push({
-  name:name,
-  msg:msg,
-  time:new Date().toLocaleString()
- });
-
+ db.ref("bbs").push({name,msg,time:new Date().toLocaleString()});
  rabbit(window.innerWidth/2,window.innerHeight/2);
  document.getElementById("msg").value="";
 }
@@ -394,89 +211,31 @@ db.ref("bbs").on("value",s=>{
  let d=s.val();
  for(let k in d){
   let p=d[k];
-  html=`<div class="bbs-post"><b>${p.name}</b> ${p.time}<br>${p.msg}</div>`+html;
+  html=`<div class="bbs-post"><b>${p.name}</b><br>${p.msg}</div>`+html;
  }
  bbs.innerHTML=html;
 });
 
-/* 🔴 YouTube */
-const API_KEY="AIzaSyCWEQ1J0mEq8EFo7Cw5UYHpGRhYbC0Tu88";
-const CHANNEL_ID="UCmUlzug_w0WqRdTsEMJHjFw";
-
-async function loadYT(){
- try{
-  const res=await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL_ID}&order=date&type=video&key=${API_KEY}`);
-  const data=await res.json();
-
-  let liveHTML="",upHTML="",arHTML="";
-
-  data.items.forEach(item=>{
-    let s=item.snippet.liveBroadcastContent;
-    let t=item.snippet.title;
-    let th=item.snippet.thumbnails.medium.url;
-    let id=item.id.videoId;
-
-    let block=`
-    <div>
-      <img src="${th}" width="200"><br>
-      ${t}<br>
-      <a href="https://youtube.com/watch?v=${id}" target="_blank">▶見る</a>
-    </div><hr>`;
-
-    if(s==="live") liveHTML+=`<p class="live">🔴LIVE中</p>`+block;
-    else if(s==="upcoming") upHTML+=block;
-    else arHTML+=block;
-  });
-
-  live.innerHTML=liveHTML||"配信なし";
-  upcoming.innerHTML=upHTML||"予定なし";
-  archive.innerHTML=arHTML||"なし";
-
- }catch(e){
-  live.innerHTML="読み込み失敗";
- }
-}
-loadYT();
-setInterval(loadYT,60000);
-
-/* 🐰 */
 function rabbit(x,y){
  let r=document.createElement("div");
  r.className="rabbit";
- r.innerHTML=["🐰","🩵","🦷"][Math.floor(Math.random()*3)];
+ r.innerHTML=["🐰","🦷","★"][Math.floor(Math.random()*3)];
  r.style.left=x+"px";
  r.style.top=y+"px";
  document.body.appendChild(r);
  setTimeout(()=>r.remove(),1000);
 }
-document.addEventListener("click",e=>{
- rabbit(e.clientX,e.clientY);
-});
 
-/* 💊 空カプセル生成 */
-window.addEventListener("load",()=>{
-  document.querySelectorAll(".pill").forEach(p=>{
-    if(Math.random() < 0.25){
-      p.classList.add("empty");
-    }
-  });
-});
-
-/* 🪟 */
-function drag(el){
- let p1=0,p2=0,p3=0,p4=0;
- el.querySelector(".titlebar").onmousedown=e=>{
-  p3=e.clientX;p4=e.clientY;
-  document.onmousemove=e=>{
-   p1=p3-e.clientX;p2=p4-e.clientY;
-   p3=e.clientX;p4=e.clientY;
-   el.style.top=(el.offsetTop-p2)+"px";
-   el.style.left=(el.offsetLeft-p1)+"px";
-  };
- };
- document.onmouseup=()=>document.onmousemove=null;
+function buy(e){
+ e.target.classList.add("empty");
 }
-drag(liveWin);drag(bbsWin);drag(goodsWin);
+
+window.addEventListener("load",()=>{
+ document.querySelectorAll(".pill").forEach(p=>{
+  if(Math.random()<0.3)p.classList.add("empty");
+ });
+});
+
 </script>
 
 </body>
