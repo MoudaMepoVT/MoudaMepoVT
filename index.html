@@ -1,245 +1,46 @@
-<!DOCTYPE html>
-
-<html>
-<head>
-<meta charset="UTF-8">
-<title>めぽOS 完全版</title>
-
-<style>
-*{box-sizing:border-box;}
-body{margin:0;font-family:"MS Gothic";}
-
-/* 🔵 ブルースクリーン */
-.desktop-screen{
-  display:none;
-  height:100vh;
-  background:#0000AA;
-  color:white;
-}
-
-/* アイコン */
-.desktop{position:absolute;top:10px;left:10px;}
-.icon{width:80px;text-align:center;color:white;margin-bottom:20px;cursor:pointer;}
-.icon img{width:48px;display:block;margin:auto;}
-
-/* ウィンドウ */
-.window{
-  position:absolute;
-  width:340px;
-  background:#0000AA;
-  border:2px solid white;
-  display:none;
-}
-
-.titlebar{
-  background:#0000AA;
-  padding:4px;
-  display:flex;
-  justify-content:space-between;
-  cursor:move;
-  border-bottom:1px solid white;
-}
-
-.content{
-  padding:10px;
-  height:300px;
-  overflow:auto;
-}
-
-/* タスクバー */
-.taskbar{
-  position:fixed;
-  bottom:0;
-  width:100%;
-  height:40px;
-  background:#0000AA;
-  border-top:1px solid white;
-  display:flex;
-  align-items:center;
-}
-
-.start{margin:5px;border:1px solid white;padding:5px;cursor:pointer;}
-.task-btn{margin-left:5px;border:1px solid white;padding:3px 8px;cursor:pointer;}
-.clock{margin-left:auto;padding:5px;}
-
-.start-menu{
-  position:absolute;
-  bottom:40px;
-  left:5px;
-  background:#0000AA;
-  border:1px solid white;
-  display:none;
-}
-
-.start-menu div{padding:5px;cursor:pointer;}
-.start-menu div:hover{background:white;color:#0000AA;}
-
-</style>
-
-</head>
-
-<body>
-
-<!-- 起動 -->
-
-<div id="boot" style="position:fixed;inset:0;background:black;color:lime;display:flex;align-items:center;justify-content:center;flex-direction:column;">
-<p>Starting MepoOS...</p>
-</div>
-
-<div class="desktop-screen" id="desktop">
-
-<!-- アイコン -->
-
-<div class="desktop">
-
-<div class="icon" ondblclick="openWin(bbsWin)">
-<img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png">掲示板
-</div>
-
-<div class="icon" ondblclick="openWin(ytWin)">
-<img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png">YouTube
-</div>
-
-<div class="icon" ondblclick="openWin(imgWin)">
-<img src="https://cdn-icons-png.flaticon.com/512/1829/1829586.png">画像
-</div>
-
-</div>
-
-<!-- 💬 BBS -->
-
-<div class="window" id="bbsWin" style="top:80px;left:120px;">
-<div class="titlebar">掲示板</div>
-<div class="content">
-<input id="name" placeholder="名前"><br>
-<textarea id="msg"></textarea><br>
-<button onclick="post()">書き込む</button>
-<div id="bbs"></div>
-</div>
-</div>
-
-<!-- 📺 YouTube -->
-
-<div class="window" id="ytWin" style="top:100px;left:400px;">
-<div class="titlebar">YouTube</div>
-<div class="content">
-<div id="yt"></div>
-</div>
-</div>
-
-<!-- 🖼 画像 -->
-
-<div class="window" id="imgWin" style="top:150px;left:700px;">
-<div class="titlebar">画像ビューア</div>
-<div class="content">
-<img src="https://via.placeholder.com/250" width="100%">
-</div>
-</div>
-
-<!-- タスクバー -->
-
-<div class="taskbar">
-<div class="start" onclick="toggleStart()">スタート</div>
-<div class="task-btn" onclick="restoreWin(bbsWin)">掲示板</div>
-<div class="task-btn" onclick="restoreWin(ytWin)">YouTube</div>
-<div class="task-btn" onclick="restoreWin(imgWin)">画像</div>
-<div class="clock" id="clock"></div>
-</div>
-
-<div class="start-menu" id="startMenu">
-<div onclick="openWin(bbsWin)">掲示板</div>
-<div onclick="openWin(ytWin)">YouTube</div>
-<div onclick="openWin(imgWin)">画像</div>
-</div>
-
-</div>
-
-<!-- Firebase -->
-
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-
-<script>
-/* 起動 */
-setTimeout(()=>{
- boot.style.display="none";
- desktop.style.display="block";
-},1500);
-
-/* 前面 */
-let topZ=1;
-function bringToFront(el){topZ++;el.style.zIndex=topZ;}
-function openWin(el){el.style.display="block";bringToFront(el);}
-function restoreWin(el){openWin(el);}
-
-/* ドラッグ */
-function drag(el){
- el.querySelector(".titlebar").onmousedown=e=>{
-  let x=e.clientX,y=e.clientY;
-  document.onmousemove=e=>{
-   el.style.top=(el.offsetTop+(e.clientY-y))+"px";
-   el.style.left=(el.offsetLeft+(e.clientX-x))+"px";
-   x=e.clientX;y=e.clientY;
-  };
- };
- document.onmouseup=()=>document.onmousemove=null;
-}
-
-/* 適用 */
-drag(bbsWin);drag(ytWin);drag(imgWin);
-
-/* Firebase */
-firebase.initializeApp({
- apiKey:"YOUR_KEY",
- authDomain:"YOUR_DOMAIN",
- databaseURL:"YOUR_DB_URL"
-});
-const db=firebase.database();
-
-/* 投稿 */
-function post(){
- let name=nameInput.value||"名無し";
- let msg=msgInput.value;
- if(!msg)return;
-
- db.ref("bbs").push({name,msg,time:Date.now()});
- msgInput.value="";
-}
-
-/* 表示 */
-db.ref("bbs").on("value",s=>{
- let html="";
- let d=s.val();
- for(let k in d){
-  html="<div>"+d[k].name+"："+d[k].msg+"</div>"+html;
- }
- bbs.innerHTML=html;
-});
-
-/* YouTube */
-const API_KEY="YOUR_YOUTUBE_KEY";
-const CHANNEL="UCmUlzug_w0WqRdTsEMJHjFw";
-
 async function loadYT(){
- let res=await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL}&order=date&type=video&key=${API_KEY}`);
- let data=await res.json();
- let html="";
- data.items.slice(0,5).forEach(v=>{
-  html+=`<div><img src="${v.snippet.thumbnails.default.url}"><br>${v.snippet.title}</div><hr>`;
- });
- yt.innerHTML=html;
+ try{
+  let res = await fetch(
+   `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL}&order=date&type=video&key=${API_KEY}`
+  );
+  let data = await res.json();
+
+  let liveHTML="";
+  let upHTML="";
+  let arHTML="";
+
+  data.items.forEach(v=>{
+   let s = v.snippet.liveBroadcastContent;
+   let t = v.snippet.title;
+   let th = v.snippet.thumbnails.medium.url;
+   let id = v.id.videoId;
+
+   let block = `
+   <div>
+    <img src="${th}" width="200"><br>
+    ${t}<br>
+    <a href="https://youtube.com/watch?v=${id}" target="_blank">▶見る</a>
+   </div><hr>`;
+
+   if(s==="live"){
+    liveHTML += "<b>🔴 LIVE中</b><br>" + block;
+   }else if(s==="upcoming"){
+    upHTML += block;
+   }else{
+    arHTML += block;
+   }
+  });
+
+  yt.innerHTML = `
+    <h3>🔴 LIVE</h3>
+    ${liveHTML || "配信なし"}
+    <h3>⏰ 予定</h3>
+    ${upHTML || "なし"}
+    <h3>📼 アーカイブ</h3>
+    ${arHTML || "なし"}
+  `;
+
+ }catch{
+  yt.innerHTML="読み込み失敗";
+ }
 }
-loadYT();
-
-/* UI */
-function toggleStart(){
- startMenu.style.display = startMenu.style.display==="block"?"none":"block";
-}
-
-/* 時計 */
-setInterval(()=>clock.innerHTML=new Date().toLocaleTimeString(),1000);
-</script>
-
-</body>
-</html>
