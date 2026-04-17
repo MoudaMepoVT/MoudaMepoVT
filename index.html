@@ -3,82 +3,47 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>めぽOS</title>
+<title>めぽOS 完全版</title>
 
 <style>
 *{box-sizing:border-box;}
+body{margin:0;font-family:"MS Gothic";}
 
-body{
-  margin:0;
-  font-family:"MS Gothic","MS PGothic",monospace;
-}
-
-/* 起動画面 */
-.boot{
-  position:fixed;
-  inset:0;
-  background:#000;
-  color:#0f0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  flex-direction:column;
-  font-size:20px;
-  z-index:9999;
-}
-
-/* 🔵 ブルースクリーン背景 */
+/* 🔵 ブルースクリーン */
 .desktop-screen{
   display:none;
   height:100vh;
   background:#0000AA;
   color:white;
-  font-size:14px;
-  line-height:1.6;
 }
 
+/* アイコン */
 .desktop{position:absolute;top:10px;left:10px;}
-.icon{
-  width:80px;
-  text-align:center;
-  color:white;
-  margin-bottom:20px;
-  cursor:pointer;
-}
+.icon{width:80px;text-align:center;color:white;margin-bottom:20px;cursor:pointer;}
 .icon img{width:48px;display:block;margin:auto;}
 
-/* ウィンドウ（ブルーに統一） */
+/* ウィンドウ */
 .window{
   position:absolute;
-  width:320px;
+  width:340px;
   background:#0000AA;
   border:2px solid white;
   display:none;
-  color:white;
 }
 
 .titlebar{
   background:#0000AA;
-  color:white;
   padding:4px;
-  cursor:move;
   display:flex;
   justify-content:space-between;
-  font-size:12px;
+  cursor:move;
   border-bottom:1px solid white;
-}
-
-.buttons span{
-  margin-left:4px;
-  border:1px solid white;
-  padding:0 4px;
-  cursor:pointer;
 }
 
 .content{
   padding:10px;
-  background:#0000AA;
-  color:white;
+  height:300px;
+  overflow:auto;
 }
 
 /* タスクバー */
@@ -93,44 +58,21 @@ body{
   align-items:center;
 }
 
-.start{
-  border:1px solid white;
-  padding:5px 10px;
-  margin:5px;
-  cursor:pointer;
-}
+.start{margin:5px;border:1px solid white;padding:5px;cursor:pointer;}
+.task-btn{margin-left:5px;border:1px solid white;padding:3px 8px;cursor:pointer;}
+.clock{margin-left:auto;padding:5px;}
 
 .start-menu{
   position:absolute;
   bottom:40px;
   left:5px;
-  width:160px;
   background:#0000AA;
   border:1px solid white;
   display:none;
 }
 
-.start-menu div{
-  padding:5px;
-  cursor:pointer;
-}
-
-.start-menu div:hover{
-  background:white;
-  color:#0000AA;
-}
-
-.task-btn{
-  margin-left:5px;
-  padding:3px 8px;
-  border:1px solid white;
-  cursor:pointer;
-}
-
-.clock{
-  margin-left:auto;
-  padding:5px;
-}
+.start-menu div{padding:5px;cursor:pointer;}
+.start-menu div:hover{background:white;color:#0000AA;}
 
 </style>
 
@@ -138,56 +80,60 @@ body{
 
 <body>
 
-<!-- 起動画面 -->
+<!-- 起動 -->
 
-<div class="boot" id="boot">
+<div id="boot" style="position:fixed;inset:0;background:black;color:lime;display:flex;align-items:center;justify-content:center;flex-direction:column;">
 <p>Starting MepoOS...</p>
-<p>Loading system...</p>
 </div>
-
-<!-- デスクトップ -->
 
 <div class="desktop-screen" id="desktop">
 
+<!-- アイコン -->
+
 <div class="desktop">
+
 <div class="icon" ondblclick="openWin(bbsWin)">
-<img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png">
-掲示板
+<img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png">掲示板
 </div>
 
-<div class="icon" ondblclick="openWin(goodsWin)">
-<img src="https://cdn-icons-png.flaticon.com/512/1041/1041885.png">
-グッズ
+<div class="icon" ondblclick="openWin(ytWin)">
+<img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png">YouTube
 </div>
 
-<div class="icon" onclick="trash()">
-<img src="https://cdn-icons-png.flaticon.com/512/3096/3096673.png">
-ゴミ箱
-</div>
+<div class="icon" ondblclick="openWin(imgWin)">
+<img src="https://cdn-icons-png.flaticon.com/512/1829/1829586.png">画像
 </div>
 
-<!-- ウィンドウ -->
+</div>
+
+<!-- 💬 BBS -->
 
 <div class="window" id="bbsWin" style="top:80px;left:120px;">
-<div class="titlebar" ondblclick="maximize(bbsWin)">
-掲示板
-<div class="buttons">
-<span onclick="minimize(bbsWin)">＿</span>
-<span onclick="closeWin(bbsWin)">×</span>
+<div class="titlebar">掲示板</div>
+<div class="content">
+<input id="name" placeholder="名前"><br>
+<textarea id="msg"></textarea><br>
+<button onclick="post()">書き込む</button>
+<div id="bbs"></div>
 </div>
-</div>
-<div class="content">ブルースクリーン掲示板</div>
 </div>
 
-<div class="window" id="goodsWin" style="top:120px;left:420px;">
-<div class="titlebar" ondblclick="maximize(goodsWin)">
-グッズ
-<div class="buttons">
-<span onclick="minimize(goodsWin)">＿</span>
-<span onclick="closeWin(goodsWin)">×</span>
+<!-- 📺 YouTube -->
+
+<div class="window" id="ytWin" style="top:100px;left:400px;">
+<div class="titlebar">YouTube</div>
+<div class="content">
+<div id="yt"></div>
 </div>
 </div>
-<div class="content">ブルースクリーングッズ</div>
+
+<!-- 🖼 画像 -->
+
+<div class="window" id="imgWin" style="top:150px;left:700px;">
+<div class="titlebar">画像ビューア</div>
+<div class="content">
+<img src="https://via.placeholder.com/250" width="100%">
+</div>
 </div>
 
 <!-- タスクバー -->
@@ -195,108 +141,104 @@ body{
 <div class="taskbar">
 <div class="start" onclick="toggleStart()">スタート</div>
 <div class="task-btn" onclick="restoreWin(bbsWin)">掲示板</div>
-<div class="task-btn" onclick="restoreWin(goodsWin)">グッズ</div>
+<div class="task-btn" onclick="restoreWin(ytWin)">YouTube</div>
+<div class="task-btn" onclick="restoreWin(imgWin)">画像</div>
 <div class="clock" id="clock"></div>
 </div>
 
-<!-- スタートメニュー -->
-
 <div class="start-menu" id="startMenu">
 <div onclick="openWin(bbsWin)">掲示板</div>
-<div onclick="openWin(goodsWin)">グッズ</div>
-<div onclick="shutdown()">シャットダウン</div>
+<div onclick="openWin(ytWin)">YouTube</div>
+<div onclick="openWin(imgWin)">画像</div>
 </div>
 
 </div>
+
+<!-- Firebase -->
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
 <script>
-let topZ=1;
-
 /* 起動 */
 setTimeout(()=>{
- document.getElementById("boot").style.display="none";
- document.getElementById("desktop").style.display="block";
-},2000);
+ boot.style.display="none";
+ desktop.style.display="block";
+},1500);
 
-function bringToFront(el){
- topZ++;
- el.style.zIndex=topZ;
-}
+/* 前面 */
+let topZ=1;
+function bringToFront(el){topZ++;el.style.zIndex=topZ;}
+function openWin(el){el.style.display="block";bringToFront(el);}
+function restoreWin(el){openWin(el);}
 
+/* ドラッグ */
 function drag(el){
- let p1=0,p2=0,p3=0,p4=0;
-
- el.onmousedown=()=>bringToFront(el);
-
  el.querySelector(".titlebar").onmousedown=e=>{
-  bringToFront(el);
-  p3=e.clientX;p4=e.clientY;
-
+  let x=e.clientX,y=e.clientY;
   document.onmousemove=e=>{
-   p1=p3-e.clientX;
-   p2=p4-e.clientY;
-   p3=e.clientX;
-   p4=e.clientY;
-
-   el.style.top=(el.offsetTop-p2)+"px";
-   el.style.left=(el.offsetLeft-p1)+"px";
+   el.style.top=(el.offsetTop+(e.clientY-y))+"px";
+   el.style.left=(el.offsetLeft+(e.clientX-x))+"px";
+   x=e.clientX;y=e.clientY;
   };
  };
-
  document.onmouseup=()=>document.onmousemove=null;
 }
 
-function openWin(el){
- el.style.display="block";
- bringToFront(el);
+/* 適用 */
+drag(bbsWin);drag(ytWin);drag(imgWin);
+
+/* Firebase */
+firebase.initializeApp({
+ apiKey:"YOUR_KEY",
+ authDomain:"YOUR_DOMAIN",
+ databaseURL:"YOUR_DB_URL"
+});
+const db=firebase.database();
+
+/* 投稿 */
+function post(){
+ let name=nameInput.value||"名無し";
+ let msg=msgInput.value;
+ if(!msg)return;
+
+ db.ref("bbs").push({name,msg,time:Date.now()});
+ msgInput.value="";
 }
 
-function closeWin(el){el.style.display="none";}
-function minimize(el){el.style.display="none";}
-function restoreWin(el){el.style.display="block";bringToFront(el);}
-
-function maximize(el){
- if(!el.classList.contains("max")){
-  el.dataset.top=el.style.top;
-  el.dataset.left=el.style.left;
-  el.style.top="0";
-  el.style.left="0";
-  el.style.width="100%";
-  el.style.height="calc(100% - 40px)";
-  el.classList.add("max");
- }else{
-  el.style.top=el.dataset.top;
-  el.style.left=el.dataset.left;
-  el.style.width="320px";
-  el.style.height="auto";
-  el.classList.remove("max");
+/* 表示 */
+db.ref("bbs").on("value",s=>{
+ let html="";
+ let d=s.val();
+ for(let k in d){
+  html="<div>"+d[k].name+"："+d[k].msg+"</div>"+html;
  }
-}
+ bbs.innerHTML=html;
+});
 
+/* YouTube */
+const API_KEY="YOUR_YOUTUBE_KEY";
+const CHANNEL="UCmUlzug_w0WqRdTsEMJHjFw";
+
+async function loadYT(){
+ let res=await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL}&order=date&type=video&key=${API_KEY}`);
+ let data=await res.json();
+ let html="";
+ data.items.slice(0,5).forEach(v=>{
+  html+=`<div><img src="${v.snippet.thumbnails.default.url}"><br>${v.snippet.title}</div><hr>`;
+ });
+ yt.innerHTML=html;
+}
+loadYT();
+
+/* UI */
 function toggleStart(){
- let m=document.getElementById("startMenu");
- m.style.display = (m.style.display==="block") ? "none" : "block";
+ startMenu.style.display = startMenu.style.display==="block"?"none":"block";
 }
 
-function shutdown(){
- document.getElementById("desktop").style.display="none";
- let boot=document.getElementById("boot");
- boot.style.display="flex";
- boot.innerHTML="<p>A problem has been detected</p><p>System halted.</p>";
-}
-
-function trash(){
- alert("ゴミ箱は空です");
-}
-
-function updateClock(){
- clock.innerHTML=new Date().toLocaleTimeString();
-}
-setInterval(updateClock,1000);
-updateClock();
-
-drag(bbsWin);
-drag(goodsWin);
+/* 時計 */
+setInterval(()=>clock.innerHTML=new Date().toLocaleTimeString(),1000);
 </script>
 
 </body>
