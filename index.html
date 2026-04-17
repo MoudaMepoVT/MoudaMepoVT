@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html>
 <head>
 <meta charset="UTF-8">
@@ -7,7 +8,10 @@
 <style>
 *{box-sizing:border-box;}
 
-body{margin:0;font-family:"MS Gothic","MS PGothic",monospace;}
+body{
+  margin:0;
+  font-family:"MS Gothic","MS PGothic",monospace;
+}
 
 /* 起動画面 */
 .boot{
@@ -23,43 +27,126 @@ body{margin:0;font-family:"MS Gothic","MS PGothic",monospace;}
   z-index:9999;
 }
 
-/* デスクトップ */
+/* 🔵 ブルースクリーン背景 */
 .desktop-screen{
   display:none;
   height:100vh;
-  background:url("https://i.imgur.com/9QZ6K6R.jpg") center/cover;
+  background:#0000AA;
+  color:white;
+  font-size:14px;
+  line-height:1.6;
 }
 
 .desktop{position:absolute;top:10px;left:10px;}
-.icon{width:80px;text-align:center;color:white;margin-bottom:20px;cursor:pointer;}
+.icon{
+  width:80px;
+  text-align:center;
+  color:white;
+  margin-bottom:20px;
+  cursor:pointer;
+}
 .icon img{width:48px;display:block;margin:auto;}
 
-.window{position:absolute;width:320px;background:#e0ffff;border:2px solid #000;display:none;}
-.titlebar{background:linear-gradient(to right,#000080,#1084d0);color:white;padding:4px;cursor:move;display:flex;justify-content:space-between;font-size:12px;}
-.buttons span{margin-left:4px;background:#c0c0c0;border:1px solid #000;padding:0 4px;cursor:pointer;}
-.content{padding:10px;background:white;}
+/* ウィンドウ（ブルーに統一） */
+.window{
+  position:absolute;
+  width:320px;
+  background:#0000AA;
+  border:2px solid white;
+  display:none;
+  color:white;
+}
 
-.taskbar{position:fixed;bottom:0;width:100%;height:40px;background:#c0c0c0;display:flex;align-items:center;}
-.start{background:#c0c0c0;border:2px outset #fff;padding:5px 10px;margin:5px;cursor:pointer;}
-.start-menu{position:absolute;bottom:40px;left:5px;width:160px;background:#c0c0c0;border:2px outset #fff;display:none;}
-.start-menu div{padding:5px;cursor:pointer;}
-.start-menu div:hover{background:#000080;color:white;}
+.titlebar{
+  background:#0000AA;
+  color:white;
+  padding:4px;
+  cursor:move;
+  display:flex;
+  justify-content:space-between;
+  font-size:12px;
+  border-bottom:1px solid white;
+}
 
-.task-btn{margin-left:5px;padding:3px 8px;background:#e0e0e0;border:2px outset #fff;cursor:pointer;}
-.clock{margin-left:auto;padding:5px;}
+.buttons span{
+  margin-left:4px;
+  border:1px solid white;
+  padding:0 4px;
+  cursor:pointer;
+}
+
+.content{
+  padding:10px;
+  background:#0000AA;
+  color:white;
+}
+
+/* タスクバー */
+.taskbar{
+  position:fixed;
+  bottom:0;
+  width:100%;
+  height:40px;
+  background:#0000AA;
+  border-top:1px solid white;
+  display:flex;
+  align-items:center;
+}
+
+.start{
+  border:1px solid white;
+  padding:5px 10px;
+  margin:5px;
+  cursor:pointer;
+}
+
+.start-menu{
+  position:absolute;
+  bottom:40px;
+  left:5px;
+  width:160px;
+  background:#0000AA;
+  border:1px solid white;
+  display:none;
+}
+
+.start-menu div{
+  padding:5px;
+  cursor:pointer;
+}
+
+.start-menu div:hover{
+  background:white;
+  color:#0000AA;
+}
+
+.task-btn{
+  margin-left:5px;
+  padding:3px 8px;
+  border:1px solid white;
+  cursor:pointer;
+}
+
+.clock{
+  margin-left:auto;
+  padding:5px;
+}
 
 </style>
+
 </head>
 
 <body>
 
 <!-- 起動画面 -->
+
 <div class="boot" id="boot">
 <p>Starting MepoOS...</p>
 <p>Loading system...</p>
 </div>
 
 <!-- デスクトップ -->
+
 <div class="desktop-screen" id="desktop">
 
 <div class="desktop">
@@ -67,15 +154,19 @@ body{margin:0;font-family:"MS Gothic","MS PGothic",monospace;}
 <img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png">
 掲示板
 </div>
+
 <div class="icon" ondblclick="openWin(goodsWin)">
 <img src="https://cdn-icons-png.flaticon.com/512/1041/1041885.png">
 グッズ
 </div>
+
 <div class="icon" onclick="trash()">
 <img src="https://cdn-icons-png.flaticon.com/512/3096/3096673.png">
 ゴミ箱
 </div>
 </div>
+
+<!-- ウィンドウ -->
 
 <div class="window" id="bbsWin" style="top:80px;left:120px;">
 <div class="titlebar" ondblclick="maximize(bbsWin)">
@@ -85,7 +176,7 @@ body{margin:0;font-family:"MS Gothic","MS PGothic",monospace;}
 <span onclick="closeWin(bbsWin)">×</span>
 </div>
 </div>
-<div class="content">掲示板内容</div>
+<div class="content">ブルースクリーン掲示板</div>
 </div>
 
 <div class="window" id="goodsWin" style="top:120px;left:420px;">
@@ -96,8 +187,10 @@ body{margin:0;font-family:"MS Gothic","MS PGothic",monospace;}
 <span onclick="closeWin(goodsWin)">×</span>
 </div>
 </div>
-<div class="content">グッズ一覧</div>
+<div class="content">ブルースクリーングッズ</div>
 </div>
+
+<!-- タスクバー -->
 
 <div class="taskbar">
 <div class="start" onclick="toggleStart()">スタート</div>
@@ -105,6 +198,8 @@ body{margin:0;font-family:"MS Gothic","MS PGothic",monospace;}
 <div class="task-btn" onclick="restoreWin(goodsWin)">グッズ</div>
 <div class="clock" id="clock"></div>
 </div>
+
+<!-- スタートメニュー -->
 
 <div class="start-menu" id="startMenu">
 <div onclick="openWin(bbsWin)">掲示板</div>
@@ -117,34 +212,48 @@ body{margin:0;font-family:"MS Gothic","MS PGothic",monospace;}
 <script>
 let topZ=1;
 
-/* 起動処理 */
+/* 起動 */
 setTimeout(()=>{
  document.getElementById("boot").style.display="none";
  document.getElementById("desktop").style.display="block";
 },2000);
 
-function bringToFront(el){topZ++;el.style.zIndex=topZ;}
+function bringToFront(el){
+ topZ++;
+ el.style.zIndex=topZ;
+}
 
 function drag(el){
  let p1=0,p2=0,p3=0,p4=0;
+
  el.onmousedown=()=>bringToFront(el);
+
  el.querySelector(".titlebar").onmousedown=e=>{
   bringToFront(el);
   p3=e.clientX;p4=e.clientY;
+
   document.onmousemove=e=>{
-   p1=p3-e.clientX;p2=p4-e.clientY;
-   p3=e.clientX;p4=e.clientY;
+   p1=p3-e.clientX;
+   p2=p4-e.clientY;
+   p3=e.clientX;
+   p4=e.clientY;
+
    el.style.top=(el.offsetTop-p2)+"px";
    el.style.left=(el.offsetLeft-p1)+"px";
   };
  };
+
  document.onmouseup=()=>document.onmousemove=null;
 }
 
-function openWin(el){el.style.display="block";bringToFront(el);} 
-function closeWin(el){el.style.display="none";} 
-function minimize(el){el.style.display="none";} 
-function restoreWin(el){el.style.display="block";bringToFront(el);} 
+function openWin(el){
+ el.style.display="block";
+ bringToFront(el);
+}
+
+function closeWin(el){el.style.display="none";}
+function minimize(el){el.style.display="none";}
+function restoreWin(el){el.style.display="block";bringToFront(el);}
 
 function maximize(el){
  if(!el.classList.contains("max")){
@@ -171,22 +280,23 @@ function toggleStart(){
 
 function shutdown(){
  document.getElementById("desktop").style.display="none";
- document.getElementById("boot").style.display="flex";
- document.getElementById("boot").innerHTML="<p>Shutting down...</p>";
+ let boot=document.getElementById("boot");
+ boot.style.display="flex";
+ boot.innerHTML="<p>A problem has been detected</p><p>System halted.</p>";
 }
 
 function trash(){
  alert("ゴミ箱は空です");
 }
 
-function updateClock(){clock.innerHTML=new Date().toLocaleTimeString();}
+function updateClock(){
+ clock.innerHTML=new Date().toLocaleTimeString();
+}
 setInterval(updateClock,1000);
 updateClock();
 
-/* 適用 */
 drag(bbsWin);
 drag(goodsWin);
-
 </script>
 
 </body>
