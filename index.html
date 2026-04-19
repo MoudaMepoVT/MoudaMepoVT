@@ -1,9 +1,9 @@
-
+```html
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>妄堕めぽのお部屋</title>
+<title>めぽOS</title>
 
 <style>
 *{box-sizing:border-box;}
@@ -11,21 +11,14 @@ body{
   margin:0;
   font-family:"MS UI Gothic","MS Gothic",monospace;
   font-size:14px;
-  color:black;
 }
 
-/* デスクトップ背景 */
+/* 🌤 水色グラデ背景（平成HP） */
 .desktop-screen{
   display:none;
   height:100vh;
-  background:
-    repeating-linear-gradient(
-      45deg,
-      #000080,
-      #000080 10px,
-      #000060 10px,
-      #000060 20px
-    );
+  background: linear-gradient(to bottom,#87cefa,#b0e0ff,#e0ffff);
+  background-attachment: fixed;
 }
 
 /* アイコン */
@@ -33,7 +26,7 @@ body{
 .icon{width:80px;text-align:center;color:white;margin-bottom:20px;cursor:pointer;}
 .icon img{width:48px;display:block;margin:auto;}
 
-/* ウィンドウ（Windows95風） */
+/* ウィンドウ（95風） */
 .window{
   position:absolute;
   width:340px;
@@ -74,15 +67,6 @@ button:active{
   height:300px;
   overflow:auto;
   background:#fff;
-}
-
-/* スクロール */
-::-webkit-scrollbar{width:12px;}
-::-webkit-scrollbar-thumb{
-  background:#c0c0c0;
-  border:2px solid #fff;
-  border-right-color:#404040;
-  border-bottom-color:#404040;
 }
 
 /* タスクバー */
@@ -131,27 +115,16 @@ button:active{
 }
 
 /* Y2Kネオン */
-.win-clock{
-  text-shadow:0 0 5px cyan;
-}
-a{
-  color:#00ffff;
-  text-shadow:0 0 5px #00ffff;
-}
+.win-clock{text-shadow:0 0 5px cyan;}
+a{color:#00ffff;text-shadow:0 0 5px #00ffff;}
 
-/* GIFバナー */
-.banner{
-  text-align:center;
-}
-.banner img{
-  width:200px;
-}
-
-/* カウンター */
-.counter{
-  font-size:12px;
-  text-align:center;
-  margin-top:5px;
+/* スライド */
+.slideshow{text-align:center;}
+.slideshow img{
+  width:280px;
+  border:3px solid #fff;
+  border-right-color:#404040;
+  border-bottom-color:#404040;
 }
 </style>
 </head>
@@ -162,9 +135,7 @@ a{
 <div id="boot" style="position:fixed;inset:0;background:black;color:lime;display:flex;align-items:center;justify-content:center;">
 <pre>
 MepoOS v1.0
-Loading system...
-[##########] 100%
-Welcome...
+Loading...
 </pre>
 </div>
 
@@ -172,13 +143,8 @@ Welcome...
 
 <!-- アイコン -->
 <div class="desktop">
-<div class="icon" ondblclick="openWin(bbsWin)">
-<img src="https://win98icons.alexmeub.com/icons/png/notepad-0.png">掲示板
-</div>
-
-<div class="icon" ondblclick="openWin(ytWin)">
-<img src="https://win98icons.alexmeub.com/icons/png/cd_player-0.png">配信
-</div>
+<div class="icon" ondblclick="openWin(bbsWin)">掲示板</div>
+<div class="icon" ondblclick="openWin(ytWin)">配信</div>
 </div>
 
 <!-- BBS -->
@@ -194,14 +160,14 @@ Welcome...
 
 <div class="content">
 
-<div class="banner">
-  <img src="https://discord.com/channels/1409891351797039174/1409891352828841996/1495464256634753034">
-<img src="https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif">
-<br>★ 工事中 ★
-</div>
+<!-- スライド -->
+<h3>📷 スライドショー</h3>
 
-<div class="counter">
-あなたは <span id="count">0</span> 人目の訪問者です
+<div class="slideshow">
+  <img id="slide" src="https://via.placeholder.com/300">
+  <br>
+  <button onclick="prev()">←</button>
+  <button onclick="next()">→</button>
 </div>
 
 <hr>
@@ -218,7 +184,7 @@ Welcome...
 <!-- YouTube -->
 <div class="window" id="ytWin" style="top:100px;left:400px;">
 <div class="titlebar">
-<span>配信情報</span>
+<span>配信</span>
 <span class="win-clock"></span>
 <div>
 <button onclick="maximizeWin(ytWin)">□</button>
@@ -229,7 +195,7 @@ Welcome...
 <div class="content">
 <h3>🔴 LIVE</h3>
 <div id="live"></div>
-<h3>⏰ 配信予定</h3>
+<h3>⏰ 予定</h3>
 <div id="upcoming"></div>
 <h3>📼 アーカイブ</h3>
 <div id="archive"></div>
@@ -239,7 +205,7 @@ Welcome...
 <!-- テロップ -->
 <div class="ticker">
 <div class="ticker-text">
-★☆★ NEW!! ★☆★ めぽのお部屋へようこそ ★☆★
+★☆★ NEW!! ★☆★ めぽOSへようこそ！！！ ★☆★
 </div>
 </div>
 
@@ -318,14 +284,37 @@ function post(){
  msgInput.value="";
 }
 
-/* カウンター（ローカル） */
-let c=localStorage.getItem("count")||0;
-c++;
-localStorage.setItem("count",c);
-count.innerText=c;
+/* 📷 スライド */
+const images=[
+ "https://via.placeholder.com/300/ff0000",
+ "https://via.placeholder.com/300/00ff00",
+ "https://via.placeholder.com/300/0000ff",
+ "https://via.placeholder.com/300/ffff00"
+];
+
+let i=0;
+
+setInterval(()=>{
+ i=(i+1)%images.length;
+ slide.src=images[i];
+},2000);
+
+function prev(){
+ i=(i-1+images.length)%images.length;
+ slide.src=images[i];
+}
+function next(){
+ i=(i+1)%images.length;
+ slide.src=images[i];
+}
+
+/* 点滅タイトル */
+setInterval(()=>{
+ document.title = document.title==="めぽOS" ? "★めぽOS★" : "めぽOS";
+},1000);
 
 /* YouTube */
-const API_KEY="AIzaSyCWEQ1J0mEq8EFo7Cw5UYHpGRhYbC0Tu88";
+const API_KEY="YOUR_YOUTUBE_KEY";
 const CHANNEL_ID="UCmUlzug_w0WqRdTsEMJHjFw";
 
 async function loadYT(type,target){
