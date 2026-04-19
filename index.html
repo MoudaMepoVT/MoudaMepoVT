@@ -1,20 +1,31 @@
-
+```html
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>めぽOS 完全版</title>
+<title>めぽOS Y2K 平成版</title>
 
 <style>
 *{box-sizing:border-box;}
-body{margin:0;font-family:"MS Gothic";}
+body{
+  margin:0;
+  font-family:"MS UI Gothic","MS Gothic",monospace;
+  font-size:14px;
+  color:black;
+}
 
-/* デスクトップ */
+/* デスクトップ背景（平成＋Y2K） */
 .desktop-screen{
   display:none;
   height:100vh;
-  background:#0000AA;
-  color:white;
+  background:
+    repeating-linear-gradient(
+      45deg,
+      #000080,
+      #000080 10px,
+      #000060 10px,
+      #000060 20px
+    );
 }
 
 /* アイコン */
@@ -22,34 +33,56 @@ body{margin:0;font-family:"MS Gothic";}
 .icon{width:80px;text-align:center;color:white;margin-bottom:20px;cursor:pointer;}
 .icon img{width:48px;display:block;margin:auto;}
 
-/* ウィンドウ */
+/* ウィンドウ（Windows95風） */
 .window{
   position:absolute;
   width:340px;
-  background:#0000AA;
-  border:2px solid white;
+  background:#c0c0c0;
+  border:2px solid #fff;
+  border-right-color:#404040;
+  border-bottom-color:#404040;
   display:none;
+  box-shadow:inset -2px -2px #000, inset 2px 2px #fff;
 }
 
 .titlebar{
-  background:#0000AA;
+  background:linear-gradient(to right,#000080,#1084d0);
+  color:white;
   padding:4px;
   display:flex;
   justify-content:space-between;
   align-items:center;
   cursor:move;
-  border-bottom:1px solid white;
 }
 
-.titlebar button{
-  margin-left:5px;
+/* ボタン */
+button{
+  background:#c0c0c0;
+  border:2px solid #fff;
+  border-right-color:#404040;
+  border-bottom-color:#404040;
   cursor:pointer;
+}
+button:active{
+  border:2px solid #404040;
+  border-right-color:#fff;
+  border-bottom-color:#fff;
 }
 
 .content{
   padding:10px;
   height:300px;
   overflow:auto;
+  background:#fff;
+}
+
+/* スクロール */
+::-webkit-scrollbar{width:12px;}
+::-webkit-scrollbar-thumb{
+  background:#c0c0c0;
+  border:2px solid #fff;
+  border-right-color:#404040;
+  border-bottom-color:#404040;
 }
 
 /* タスクバー */
@@ -58,57 +91,67 @@ body{margin:0;font-family:"MS Gothic";}
   bottom:0;
   width:100%;
   height:40px;
-  background:#0000AA;
-  border-top:1px solid white;
+  background:#c0c0c0;
+  border-top:2px solid #fff;
   display:flex;
   align-items:center;
 }
-
-.start{margin:5px;border:1px solid white;padding:5px;cursor:pointer;}
-.task-btn{margin-left:5px;border:1px solid white;padding:3px 8px;cursor:pointer;}
+.start{margin:5px;padding:5px;border:2px solid #fff;cursor:pointer;}
+.task-btn{margin-left:5px;padding:3px 8px;border:2px solid #fff;cursor:pointer;}
 .clock{margin-left:auto;padding:5px;}
 
-/* スタートメニュー */
+/* スタート */
 .start-menu{
   position:absolute;
   bottom:40px;
   left:5px;
-  background:#0000AA;
-  border:1px solid white;
+  background:#c0c0c0;
+  border:2px solid #fff;
   display:none;
 }
-.start-menu div{padding:5px;cursor:pointer;}
-.start-menu div:hover{background:white;color:#0000AA;}
 
 /* テロップ */
 .ticker{
   position:fixed;
   bottom:40px;
   width:100%;
-  background:#0000AA;
-  color:white;
+  background:black;
+  color:lime;
+  font-weight:bold;
+  letter-spacing:2px;
   overflow:hidden;
-  border-top:1px solid white;
 }
 .ticker-text{
-  display:inline-block;
   white-space:nowrap;
   padding-left:100%;
   animation:scroll 15s linear infinite;
 }
 @keyframes scroll{
-  0%{transform:translateX(0);}
   100%{transform:translateX(-100%);}
 }
 
-/* LIVE点滅 */
-.live{
-  color:red;
-  font-weight:bold;
-  animation:blink 1s infinite;
+/* Y2Kネオン */
+.win-clock{
+  text-shadow:0 0 5px cyan;
 }
-@keyframes blink{
-  50%{opacity:0;}
+a{
+  color:#00ffff;
+  text-shadow:0 0 5px #00ffff;
+}
+
+/* GIFバナー */
+.banner{
+  text-align:center;
+}
+.banner img{
+  width:200px;
+}
+
+/* カウンター */
+.counter{
+  font-size:12px;
+  text-align:center;
+  margin-top:5px;
 }
 </style>
 </head>
@@ -117,16 +160,25 @@ body{margin:0;font-family:"MS Gothic";}
 
 <!-- 起動 -->
 <div id="boot" style="position:fixed;inset:0;background:black;color:lime;display:flex;align-items:center;justify-content:center;">
-Starting MepoOS...
+<pre>
+MepoOS v1.0
+Loading system...
+[##########] 100%
+Welcome...
+</pre>
 </div>
 
 <div class="desktop-screen" id="desktop">
 
 <!-- アイコン -->
 <div class="desktop">
-<div class="icon" ondblclick="openWin(bbsWin)">掲示板</div>
-<div class="icon" ondblclick="openWin(ytWin)">YouTube</div>
-<div class="icon" ondblclick="openWin(imgWin)">画像</div>
+<div class="icon" ondblclick="openWin(bbsWin)">
+<img src="https://win98icons.alexmeub.com/icons/png/notepad-0.png">掲示板
+</div>
+
+<div class="icon" ondblclick="openWin(ytWin)">
+<img src="https://win98icons.alexmeub.com/icons/png/cd_player-0.png">配信
+</div>
 </div>
 
 <!-- BBS -->
@@ -139,57 +191,54 @@ Starting MepoOS...
 <button onclick="closeWin(bbsWin)">×</button>
 </div>
 </div>
+
 <div class="content">
+
+<div class="banner">
+<img src="https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif">
+<br>★ 工事中 ★
+</div>
+
+<div class="counter">
+あなたは <span id="count">0</span> 人目の訪問者です
+</div>
+
+<hr>
+
 <input id="nameInput" placeholder="名前"><br>
 <textarea id="msgInput"></textarea><br>
 <button onclick="post()">書き込む</button>
+
 <div id="bbs"></div>
+
 </div>
 </div>
 
 <!-- YouTube -->
 <div class="window" id="ytWin" style="top:100px;left:400px;">
 <div class="titlebar">
-<span>YouTube</span>
+<span>配信情報</span>
 <span class="win-clock"></span>
 <div>
 <button onclick="maximizeWin(ytWin)">□</button>
 <button onclick="closeWin(ytWin)">×</button>
 </div>
 </div>
+
 <div class="content">
-<h2>★配信情報★</h2>
-
-<h3>🔴 LIVE中</h3>
+<h3>🔴 LIVE</h3>
 <div id="live"></div>
-
-<h3>⏰ 配信予定</h3>
+<h3>⏰ 予定</h3>
 <div id="upcoming"></div>
-
 <h3>📼 アーカイブ</h3>
 <div id="archive"></div>
-</div>
-</div>
-
-<!-- 画像 -->
-<div class="window" id="imgWin" style="top:150px;left:700px;">
-<div class="titlebar">
-<span>画像ビューア</span>
-<span class="win-clock"></span>
-<div>
-<button onclick="maximizeWin(imgWin)">□</button>
-<button onclick="closeWin(imgWin)">×</button>
-</div>
-</div>
-<div class="content">
-<img src="https://via.placeholder.com/250" width="100%">
 </div>
 </div>
 
 <!-- テロップ -->
 <div class="ticker">
 <div class="ticker-text">
-妄堕めぽホームページへようこそ！★お知らせ：4/25　19:00~歌枠リレー参加決定！！！
+★☆★ NEW!! ★☆★ めぽOS Y2K版公開中！！！アクセスありがとう！！！ ★☆★
 </div>
 </div>
 
@@ -197,30 +246,24 @@ Starting MepoOS...
 <div class="taskbar">
 <div class="start" onclick="toggleStart()">スタート</div>
 <div class="task-btn" onclick="openWin(bbsWin)">掲示板</div>
-<div class="task-btn" onclick="openWin(ytWin)">YouTube</div>
-<div class="task-btn" onclick="openWin(imgWin)">画像</div>
+<div class="task-btn" onclick="openWin(ytWin)">配信</div>
 <div class="clock" id="clock"></div>
 </div>
 
 <div class="start-menu" id="startMenu">
 <div onclick="openWin(bbsWin)">掲示板</div>
-<div onclick="openWin(ytWin)">YouTube</div>
-<div onclick="openWin(imgWin)">画像</div>
+<div onclick="openWin(ytWin)">配信</div>
 </div>
 
 </div>
 
 <script>
 /* 起動 */
-setTimeout(()=>{
- boot.style.display="none";
- desktop.style.display="block";
-},1500);
+setTimeout(()=>{boot.style.display="none";desktop.style.display="block";},1500);
 
-/* 前面 */
+/* ウィンドウ */
 let topZ=1;
-function bringToFront(el){topZ++;el.style.zIndex=topZ;}
-function openWin(el){el.style.display="block";bringToFront(el);}
+function openWin(el){el.style.display="block";el.style.zIndex=++topZ;}
 function closeWin(el){el.style.display="none";}
 
 /* 最大化 */
@@ -228,7 +271,6 @@ function maximizeWin(el){
  if(el.classList.contains("max")){
   el.classList.remove("max");
   el.style.width="340px";
-  el.style.height="";
  }else{
   el.classList.add("max");
   el.style.top="0";
@@ -250,7 +292,7 @@ function drag(el){
  };
  document.onmouseup=()=>document.onmousemove=null;
 }
-drag(bbsWin);drag(ytWin);drag(imgWin);
+drag(bbsWin);drag(ytWin);
 
 /* 時計 */
 setInterval(()=>{
@@ -261,10 +303,10 @@ setInterval(()=>{
 
 /* スタート */
 function toggleStart(){
- startMenu.style.display = startMenu.style.display==="block"?"none":"block";
+ startMenu.style.display=startMenu.style.display==="block"?"none":"block";
 }
 
-/* BBS（ローカル簡易） */
+/* BBS */
 function post(){
  let name=nameInput.value||"名無し";
  let msg=msgInput.value;
@@ -274,6 +316,12 @@ function post(){
  bbs.prepend(div);
  msgInput.value="";
 }
+
+/* カウンター（ローカル） */
+let c=localStorage.getItem("count")||0;
+c++;
+localStorage.setItem("count",c);
+count.innerText=c;
 
 /* YouTube */
 const API_KEY="AIzaSyCWEQ1J0mEq8EFo7Cw5UYHpGRhYbC0Tu88";
@@ -285,23 +333,21 @@ async function loadYT(type,target){
   const data=await res.json();
 
   let html="";
-  if(!data.items||data.items.length===0){
-    html="なし";
-  }else{
-    data.items.forEach(item=>{
+  if(data.items){
+    data.items.forEach(v=>{
       html+=`
       <div>
-      ${type==="live" ? '<p class="live">🔴 LIVE中！！！</p>' : ""}
-      <img src="${item.snippet.thumbnails.medium.url}" width="200"><br>
-      ${item.snippet.title}<br>
-      <a href="https://youtube.com/watch?v=${item.id.videoId}" target="_blank">▶ 見に行く！</a>
+      <img src="${v.snippet.thumbnails.medium.url}" width="200"><br>
+      ${v.snippet.title}<br>
+      <a href="https://youtube.com/watch?v=${v.id.videoId}" target="_blank">▶ 見る</a>
       </div><hr>`;
     });
   }
 
-  document.getElementById(target).innerHTML=html;
- }catch(e){
-  document.getElementById(target).innerHTML="準備中";
+  document.getElementById(target).innerHTML=html||"なし";
+
+ }catch{
+  document.getElementById(target).innerHTML="失敗";
  }
 }
 
