@@ -1,261 +1,164 @@
+```html
+<!-- ▼ ytWinのcontent部分だけ置き換え -->
+<div class="content">
 
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>妄堕めぽのお部屋</title>
+<h3 id="liveLabel">LIVE</h3>
 
-<style>
-*{box-sizing:border-box;}
-body{
-  margin:0;
-  font-family:"MS UI Gothic","MS Gothic",monospace;
-  font-size:14px;
+<!-- プレイヤー -->
+<div id="playerWrap">
+  <div id="player"></div>
+
+  <!-- 操作ボタン -->
+  <div style="margin-top:5px;">
+    <button onclick="toggleMini()">小窓</button>
+    <button onclick="stopVideo()">停止</button>
+    <button onclick="muteVideo()">ミュート</button>
+  </div>
+</div>
+
+<div id="live"></div>
+
+<h3>⏰ 予定</h3>
+<div id="upcoming"></div>
+
+<h3>📼 アーカイブ</h3>
+<div id="archive"></div>
+
+</div>
+```
+
+```css
+/* ▼ 追加CSS */
+.live-on{
+  color:red;
+  animation:blink 1s infinite;
+}
+@keyframes blink{
+  50%{opacity:0;}
 }
 
-/* 背景 */
-.desktop-screen{
-  display:none;
-  height:100vh;
-  background: linear-gradient(to bottom,#87cefa,#b0e0ff,#e0ffff);
-}
-
-/* アイコン */
-.icon{
-  width:80px;
-  text-align:center;
-  color:white;
-  position:absolute;
-  cursor:move;
-  user-select:none;
-}
-
-/* ウィンドウ */
-.window{
-  position:absolute;
-  width:340px;
-  background:#c0c0c0;
-  border:2px solid #fff;
-  border-right-color:#404040;
-  border-bottom-color:#404040;
-  display:none;
-  box-shadow:3px 3px 0 #000,inset -2px -2px #000,inset 2px 2px #fff;
-}
-
-.titlebar{
-  background:linear-gradient(to right,#000080,#1084d0);
-  color:white;
-  padding:4px;
-  display:flex;
-  justify-content:space-between;
-  cursor:move;
-}
-
-.content{
-  padding:10px;
-  height:300px;
-  overflow:auto;
-  background:#fff;
-}
-
-/* タスクバー */
-.taskbar{
-  position:fixed;
-  bottom:0;
-  width:100%;
-  height:40px;
-  background:#c0c0c0;
-  display:flex;
-  align-items:center;
-}
-
-.task-btn{
-  margin:5px;
-  padding:5px;
-  border:2px solid #fff;
-  cursor:pointer;
-}
-
-/* 右クリック */
-#contextMenu{
-  position:absolute;
-  background:#c0c0c0;
-  border:2px solid #fff;
-  display:none;
+/* 小窓 */
+.mini{
+  position:fixed !important;
+  bottom:60px;
+  right:10px;
+  width:260px !important;
+  height:150px !important;
   z-index:9999;
 }
-#contextMenu div{
-  padding:5px 10px;
+```
+
+```javascript
+/* ▼ YouTube強化版 */
+
+let currentVideo = null;
+let isMini = false;
+let isMuted = false;
+let notified = false;
+
+/* 取得 */
+async function loadYT(type,target){
+ try{
+  const res=await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL_ID}&eventType=${type}&type=video&key=${API_KEY}`);
+  const data=await res.json();
+
+  let html="";
+
+  if(data.items && data.items.length){
+
+    if(type==="live"){
+      // LIVE中
+      liveLabel.innerHTML="🔴 LIVE中！";
+      liveLabel.classList.add("live-on");
+
+      document.querySelector("#ytWin .titlebar span").innerText="🔴 配信中";
+
+      // 初回通知
+      if(!notified){
+        notifyLive();
+        notified = true;
+      }
+
+      playVideo(data.items[0].id.videoId);
+    }
+
+    data.items.forEach(v=>{
+      html+=`
+      <div onclick="playVideo('${v.id.videoId}')" style="cursor:pointer">
+        <img src="${v.snippet.thumbnails.medium.url}" width="200"><br>
+        ${v.snippet.title}
+      </div><hr>`;
+    });
+  }
+
+  document.getElementById(target).innerHTML=html||"なし";
+
+ }catch{
+  document.getElementById(target).innerHTML="失敗";
+ }
 }
-#contextMenu div:hover{
-  background:#000080;
-  color:white;
+
+/* 再生 */
+function playVideo(id){
+ currentVideo = id;
+
+ player.innerHTML=`
+ <iframe id="ytframe" width="100%" height="200"
+ src="https://www.youtube.com/embed/${id}?autoplay=1&enablejsapi=1"
+ frameborder="0"></iframe>
+ `;
 }
-</style>
-</head>
 
-<body>
+/* 小窓化 */
+function toggleMini(){
+ if(!currentVideo)return;
 
-<div id="boot" style="position:fixed;inset:0;background:black;color:lime;display:flex;align-items:center;justify-content:center;">
-MepoOS Loading...
-</div>
+ if(!isMini){
+   ytWin.classList.add("mini");
+ }else{
+   ytWin.classList.remove("mini");
+ }
+ isMini=!isMini;
+}
 
-<div class="desktop-screen" id="desktop">
+/* 停止 */
+function stopVideo(){
+ player.innerHTML="";
+ currentVideo=null;
+}
 
-<!-- アイコン -->
-<div class="icon" id="icon-bbs">掲示板</div>
-<div class="icon" id="icon-yt">配信</div>
-<div class="icon" id="icon-link">リンク</div>
+/* ミュート（簡易） */
+function muteVideo(){
+ let iframe = document.getElementById("ytframe");
+ if(!iframe)return;
 
-<!-- ウィンドウ -->
-<div class="window" id="bbsWin" style="top:80px;left:120px;">
-<div class="titlebar">掲示板 <button onclick="closeWin(bbsWin)">×</button></div>
-<div class="content">BBS</div>
-</div>
+ iframe.contentWindow.postMessage(JSON.stringify({
+   event:"command",
+   func: isMuted ? "unMute" : "mute"
+ }), "*");
 
-<div class="window" id="ytWin" style="top:100px;left:350px;">
-<div class="titlebar">配信 <button onclick="closeWin(ytWin)">×</button></div>
-<div class="content">YouTube</div>
-</div>
+ isMuted = !isMuted;
+}
 
-<div class="window" id="linkWin" style="top:120px;left:200px;">
-<div class="titlebar">リンク <button onclick="closeWin(linkWin)">×</button></div>
-<div class="content">
-<a href="https://youtube.com" target="_blank">YouTube</a>
-</div>
-</div>
+/* 通知 */
+function notifyLive(){
+ const n = document.createElement("div");
+ n.innerText="🔴 配信が始まりました！";
+ n.style.position="fixed";
+ n.style.bottom="50px";
+ n.style.right="10px";
+ n.style.background="#000";
+ n.style.color="lime";
+ n.style.padding="10px";
+ n.style.zIndex="9999";
 
-<!-- タスクバー -->
-<div class="taskbar">
-<div class="task-btn" onclick="openWin(bbsWin)">掲示板</div>
-<div class="task-btn" onclick="openWin(ytWin)">配信</div>
-<div class="task-btn" onclick="openWin(linkWin)">リンク</div>
-</div>
+ document.body.appendChild(n);
 
-<!-- 右クリック -->
-<div id="contextMenu">
-<div onclick="sortIcons()">並べ替え</div>
-<div onclick="deleteIcon()">削除</div>
-</div>
+ setTimeout(()=>n.remove(),4000);
+}
 
-</div>
-
-<script>
 /* 起動 */
-setTimeout(()=>{
- boot.style.display="none";
- desktop.style.display="block";
- initIcons();
-},1200);
-
-/* ウィンドウ */
-let topZ=1;
-function openWin(el){el.style.display="block";el.style.zIndex=++topZ;}
-function closeWin(el){el.style.display="none";}
-
-/* ===== アイコン初期化 ===== */
-function initIcons(){
- const icons=document.querySelectorAll(".icon");
-
- icons.forEach((icon,i)=>{
-  let saved=JSON.parse(localStorage.getItem(icon.id));
-
-  if(saved){
-    icon.style.left=saved.x+"px";
-    icon.style.top=saved.y+"px";
-  }else{
-    icon.style.left="10px";
-    icon.style.top=(10+i*90)+"px";
-  }
-
-  icon.ondblclick=()=>{
-    if(icon.id==="icon-bbs") openWin(bbsWin);
-    if(icon.id==="icon-yt") openWin(ytWin);
-    if(icon.id==="icon-link") openWin(linkWin);
-  };
-
-  dragIcon(icon);
-  setupContext(icon);
- });
-}
-
-/* ドラッグ */
-function dragIcon(el){
- let offsetX,offsetY;
-
- el.onmousedown=e=>{
-  offsetX=e.clientX-el.offsetLeft;
-  offsetY=e.clientY-el.offsetTop;
-
-  document.onmousemove=e=>{
-   el.style.left=(e.clientX-offsetX)+"px";
-   el.style.top=(e.clientY-offsetY)+"px";
-  };
- };
-
- document.onmouseup=()=>{
-  document.onmousemove=null;
-
-  localStorage.setItem(el.id,JSON.stringify({
-    x:el.offsetLeft,
-    y:el.offsetTop
-  }));
- };
-
- el.ondragstart=()=>false;
-}
-
-/* ===== 右クリック ===== */
-let currentIcon=null;
-
-function setupContext(icon){
- icon.addEventListener("contextmenu",e=>{
-  e.preventDefault();
-  currentIcon=icon;
-
-  contextMenu.style.left=e.clientX+"px";
-  contextMenu.style.top=e.clientY+"px";
-  contextMenu.style.display="block";
- });
-}
-
-document.addEventListener("click",()=>{
- contextMenu.style.display="none";
-});
-
-/* 削除 */
-function deleteIcon(){
- if(!currentIcon)return;
-
- localStorage.removeItem(currentIcon.id);
- currentIcon.remove();
- contextMenu.style.display="none";
-}
-
-/* 並べ替え */
-function sortIcons(){
- let icons=document.querySelectorAll(".icon");
-
- let x=10,y=10;
-
- icons.forEach(icon=>{
-  icon.style.left=x+"px";
-  icon.style.top=y+"px";
-
-  localStorage.setItem(icon.id,JSON.stringify({x,y}));
-
-  y+=90;
-
-  if(y>window.innerHeight-100){
-   y=10;
-   x+=100;
-  }
- });
-
- contextMenu.style.display="none";
-}
-</script>
-
-</body>
-</html>
+loadYT("live","live");
+loadYT("upcoming","upcoming");
+loadYT("completed","archive");
 ```
