@@ -1,9 +1,8 @@
-
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>めぽOS</title>
+<title>妄堕めぽのお部屋</title>
 
 <style>
 *{box-sizing:border-box;}
@@ -145,6 +144,7 @@ Loading...
 <div class="desktop">
 <div class="icon" ondblclick="openWin(bbsWin)">掲示板</div>
 <div class="icon" ondblclick="openWin(ytWin)">配信</div>
+<div class="icon" ondblclick="openWin(ytWin)">リンク</div>  
 </div>
 
 <!-- BBS -->
@@ -205,7 +205,7 @@ Loading...
 <!-- テロップ -->
 <div class="ticker">
 <div class="ticker-text">
-★☆★ NEW!! ★☆★ めぽOSへようこそ！！！ ★☆★
+★☆★ NEW!! ★☆★ めぽるーむへようこそ！！！ ★☆★
 </div>
 </div>
 
@@ -214,12 +214,14 @@ Loading...
 <div class="start" onclick="toggleStart()">スタート</div>
 <div class="task-btn" onclick="openWin(bbsWin)">掲示板</div>
 <div class="task-btn" onclick="openWin(ytWin)">配信</div>
+<div class="task-btn" onclick="openWin(ytWin)">リンク</div>  
 <div class="clock" id="clock"></div>
 </div>
 
 <div class="start-menu" id="startMenu">
 <div onclick="openWin(bbsWin)">掲示板</div>
 <div onclick="openWin(ytWin)">配信</div>
+<div onclick="openWin(ytWin)">リンク</div>  
 </div>
 
 </div>
@@ -310,11 +312,11 @@ function next(){
 
 /* 点滅タイトル */
 setInterval(()=>{
- document.title = document.title==="めぽOS" ? "★めぽOS★" : "めぽOS";
+ document.title = document.title==="めぽOS" ? "★めぽるーむ★" : "妄堕めぽのお部屋";
 },1000);
 
 /* YouTube */
-const API_KEY="YOUR_YOUTUBE_KEY";
+const API_KEY="AIzaSyCWEQ1J0mEq8EFo7Cw5UYHpGRhYbC0Tu88";
 const CHANNEL_ID="UCmUlzug_w0WqRdTsEMJHjFw";
 
 async function loadYT(type,target){
