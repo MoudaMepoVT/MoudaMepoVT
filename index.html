@@ -7,16 +7,12 @@
 
 <style>
 *{box-sizing:border-box;}
-body{
-  margin:0;
-  font-family:"MS UI Gothic","MS Gothic",monospace;
-  font-size:14px;
-}
+body{margin:0;font-family:monospace;}
 
 .desktop-screen{
   display:none;
   height:100vh;
-  background: linear-gradient(to bottom,#87cefa,#b0e0ff,#e0ffff);
+  background: linear-gradient(#87cefa,#e0ffff);
 }
 
 /* アイコン */
@@ -24,15 +20,15 @@ body{
   width:80px;
   text-align:center;
   color:white;
-  cursor:move;
   position:absolute;
+  cursor:move;
   user-select:none;
 }
 
 /* ウィンドウ */
 .window{
   position:absolute;
-  width:340px;
+  width:300px;
   background:#c0c0c0;
   border:2px solid #fff;
   border-right-color:#404040;
@@ -41,21 +37,13 @@ body{
 }
 
 .titlebar{
-  background:linear-gradient(to right,#000080,#1084d0);
+  background:#000080;
   color:white;
   padding:4px;
-  display:flex;
-  justify-content:space-between;
   cursor:move;
 }
 
-.content{
-  padding:10px;
-  height:300px;
-  overflow:auto;
-  background:#fff;
-}
-
+/* タスクバー */
 .taskbar{
   position:fixed;
   bottom:0;
@@ -66,21 +54,23 @@ body{
   align-items:center;
 }
 
-.start,.task-btn{
-  margin:5px;
-  padding:5px;
+.task-btn{margin:5px;padding:5px;border:2px solid #fff;cursor:pointer;}
+
+/* 右クリックメニュー */
+#contextMenu{
+  position:absolute;
+  background:#c0c0c0;
   border:2px solid #fff;
+  display:none;
+  z-index:9999;
+}
+#contextMenu div{
+  padding:5px 10px;
   cursor:pointer;
 }
-
-.clock{margin-left:auto;padding:5px;}
-
-.start-menu{
-  position:absolute;
-  bottom:40px;
-  left:5px;
-  background:#c0c0c0;
-  display:none;
+#contextMenu div:hover{
+  background:#000080;
+  color:white;
 }
 </style>
 </head>
@@ -88,7 +78,7 @@ body{
 <body>
 
 <div id="boot" style="position:fixed;inset:0;background:black;color:lime;display:flex;align-items:center;justify-content:center;">
-MepoOS v1.0 Loading...
+MepoOS 起動中...
 </div>
 
 <div class="desktop-screen" id="desktop">
@@ -98,45 +88,35 @@ MepoOS v1.0 Loading...
 <div class="icon" id="icon-yt" ondblclick="openWin(ytWin)">配信</div>
 <div class="icon" id="icon-link" ondblclick="openWin(linkWin)">リンク</div>
 
-<!-- BBS -->
+<!-- ウィンドウ -->
 <div class="window" id="bbsWin" style="top:80px;left:120px;">
 <div class="titlebar">掲示板 <button onclick="closeWin(bbsWin)">×</button></div>
-<div class="content">
-<input id="nameInput" placeholder="名前"><br>
-<textarea id="msgInput"></textarea><br>
-<button onclick="post()">書き込む</button>
-<div id="bbs"></div>
-</div>
+<div style="padding:10px;">BBS</div>
 </div>
 
-<!-- 配信 -->
-<div class="window" id="ytWin" style="top:100px;left:400px;">
+<div class="window" id="ytWin" style="top:100px;left:350px;">
 <div class="titlebar">配信 <button onclick="closeWin(ytWin)">×</button></div>
-<div class="content">YouTubeなど</div>
+<div style="padding:10px;">YouTube</div>
 </div>
 
-<!-- リンク -->
-<div class="window" id="linkWin" style="top:120px;left:250px;">
-<div class="titlebar">リンク集 <button onclick="closeWin(linkWin)">×</button></div>
-<div class="content">
-<a href="https://youtube.com" target="_blank">YouTube</a><br>
-<a href="https://google.com" target="_blank">Google</a>
+<div class="window" id="linkWin" style="top:120px;left:200px;">
+<div class="titlebar">リンク <button onclick="closeWin(linkWin)">×</button></div>
+<div style="padding:10px;">
+<a href="https://youtube.com" target="_blank">YouTube</a>
 </div>
 </div>
 
 <!-- タスクバー -->
 <div class="taskbar">
-<div class="start" onclick="toggleStart()">スタート</div>
 <div class="task-btn" onclick="openWin(bbsWin)">掲示板</div>
 <div class="task-btn" onclick="openWin(ytWin)">配信</div>
 <div class="task-btn" onclick="openWin(linkWin)">リンク</div>
-<div class="clock" id="clock"></div>
 </div>
 
-<div class="start-menu" id="startMenu">
-<div onclick="openWin(bbsWin)">掲示板</div>
-<div onclick="openWin(ytWin)">配信</div>
-<div onclick="openWin(linkWin)">リンク</div>
+<!-- 右クリックメニュー -->
+<div id="contextMenu">
+  <div onclick="sortIcons()">📂 並べ替え</div>
+  <div onclick="deleteIcon()">🗑 削除</div>
 </div>
 
 </div>
@@ -147,79 +127,107 @@ setTimeout(()=>{
  boot.style.display="none";
  desktop.style.display="block";
  initIcons();
-},1500);
+},1200);
 
 /* ウィンドウ */
 let topZ=1;
 function openWin(el){el.style.display="block";el.style.zIndex=++topZ;}
 function closeWin(el){el.style.display="none";}
 
-/* 時計 */
-setInterval(()=>{
- clock.innerHTML=new Date().toLocaleTimeString();
-},1000);
-
-/* スタート */
-function toggleStart(){
- startMenu.style.display = startMenu.style.display==="block"?"none":"block";
-}
-
-/* BBS */
-function post(){
- let name=nameInput.value||"名無し";
- let msg=msgInput.value;
- if(!msg)return;
- let div=document.createElement("div");
- div.innerText=name+"："+msg;
- bbs.prepend(div);
- msgInput.value="";
-}
-
-/* ===== アイコンドラッグ＋保存 ===== */
-
+/* ===== アイコン初期化 ===== */
 function initIcons(){
- const icons=document.querySelectorAll(".icon");
-
- icons.forEach((icon,i)=>{
-   let saved=JSON.parse(localStorage.getItem(icon.id));
+ document.querySelectorAll(".icon").forEach((icon,i)=>{
+   let saved = JSON.parse(localStorage.getItem(icon.id));
 
    if(saved){
      icon.style.left=saved.x+"px";
      icon.style.top=saved.y+"px";
    }else{
      icon.style.left="10px";
-     icon.style.top=(10 + i*90)+"px";
+     icon.style.top=(10+i*90)+"px";
    }
 
    dragIcon(icon);
+   setupContext(icon);
  });
 }
 
+/* ===== ドラッグ ===== */
 function dragIcon(el){
  let offsetX,offsetY;
 
- el.onmousedown=function(e){
-   offsetX=e.clientX - el.offsetLeft;
-   offsetY=e.clientY - el.offsetTop;
+ el.onmousedown=e=>{
+   offsetX=e.clientX-el.offsetLeft;
+   offsetY=e.clientY-el.offsetTop;
 
-   document.onmousemove=function(e){
+   document.onmousemove=e=>{
      el.style.left=(e.clientX-offsetX)+"px";
      el.style.top=(e.clientY-offsetY)+"px";
    };
  };
 
- document.onmouseup=function(){
+ document.onmouseup=()=>{
    document.onmousemove=null;
 
-   // 保存
-   localStorage.setItem(el.id, JSON.stringify({
-     x: el.offsetLeft,
-     y: el.offsetTop
+   localStorage.setItem(el.id,JSON.stringify({
+     x:el.offsetLeft,
+     y:el.offsetTop
    }));
  };
 
- // ダブルクリック干渉防止
  el.ondragstart=()=>false;
+}
+
+/* ===== 右クリック ===== */
+let currentIcon=null;
+
+function setupContext(icon){
+ icon.addEventListener("contextmenu",e=>{
+   e.preventDefault();
+
+   currentIcon=icon;
+
+   contextMenu.style.left=e.clientX+"px";
+   contextMenu.style.top=e.clientY+"px";
+   contextMenu.style.display="block";
+ });
+}
+
+/* メニュー閉じる */
+document.addEventListener("click",()=>{
+ contextMenu.style.display="none";
+});
+
+/* 削除 */
+function deleteIcon(){
+ if(!currentIcon) return;
+
+ localStorage.removeItem(currentIcon.id);
+ currentIcon.remove();
+
+ contextMenu.style.display="none";
+}
+
+/* 並べ替え */
+function sortIcons(){
+ let icons=document.querySelectorAll(".icon");
+
+ let x=10,y=10;
+
+ icons.forEach(icon=>{
+   icon.style.left=x+"px";
+   icon.style.top=y+"px";
+
+   localStorage.setItem(icon.id,JSON.stringify({x,y}));
+
+   y+=90;
+   if(y>window.innerHeight-100){
+     y=10;
+     x+=100;
+   }
+ });
+
+ contextMenu.style.display="none";
 }
 </script>
 
