@@ -7,12 +7,17 @@
 
 <style>
 *{box-sizing:border-box;}
-body{margin:0;font-family:monospace;}
+body{
+  margin:0;
+  font-family:"MS UI Gothic","MS Gothic",monospace;
+  font-size:14px;
+}
 
+/* 背景 */
 .desktop-screen{
   display:none;
   height:100vh;
-  background: linear-gradient(#87cefa,#e0ffff);
+  background: linear-gradient(to bottom,#87cefa,#b0e0ff,#e0ffff);
 }
 
 /* アイコン */
@@ -28,19 +33,29 @@ body{margin:0;font-family:monospace;}
 /* ウィンドウ */
 .window{
   position:absolute;
-  width:300px;
+  width:340px;
   background:#c0c0c0;
   border:2px solid #fff;
   border-right-color:#404040;
   border-bottom-color:#404040;
   display:none;
+  box-shadow:3px 3px 0 #000,inset -2px -2px #000,inset 2px 2px #fff;
 }
 
 .titlebar{
-  background:#000080;
+  background:linear-gradient(to right,#000080,#1084d0);
   color:white;
   padding:4px;
+  display:flex;
+  justify-content:space-between;
   cursor:move;
+}
+
+.content{
+  padding:10px;
+  height:300px;
+  overflow:auto;
+  background:#fff;
 }
 
 /* タスクバー */
@@ -54,9 +69,14 @@ body{margin:0;font-family:monospace;}
   align-items:center;
 }
 
-.task-btn{margin:5px;padding:5px;border:2px solid #fff;cursor:pointer;}
+.task-btn{
+  margin:5px;
+  padding:5px;
+  border:2px solid #fff;
+  cursor:pointer;
+}
 
-/* 右クリックメニュー */
+/* 右クリック */
 #contextMenu{
   position:absolute;
   background:#c0c0c0;
@@ -66,7 +86,6 @@ body{margin:0;font-family:monospace;}
 }
 #contextMenu div{
   padding:5px 10px;
-  cursor:pointer;
 }
 #contextMenu div:hover{
   background:#000080;
@@ -78,30 +97,30 @@ body{margin:0;font-family:monospace;}
 <body>
 
 <div id="boot" style="position:fixed;inset:0;background:black;color:lime;display:flex;align-items:center;justify-content:center;">
-MepoOS 起動中...
+MepoOS Loading...
 </div>
 
 <div class="desktop-screen" id="desktop">
 
 <!-- アイコン -->
-<div class="icon" id="icon-bbs" ondblclick="openWin(bbsWin)">掲示板</div>
-<div class="icon" id="icon-yt" ondblclick="openWin(ytWin)">配信</div>
-<div class="icon" id="icon-link" ondblclick="openWin(linkWin)">リンク</div>
+<div class="icon" id="icon-bbs">掲示板</div>
+<div class="icon" id="icon-yt">配信</div>
+<div class="icon" id="icon-link">リンク</div>
 
 <!-- ウィンドウ -->
 <div class="window" id="bbsWin" style="top:80px;left:120px;">
 <div class="titlebar">掲示板 <button onclick="closeWin(bbsWin)">×</button></div>
-<div style="padding:10px;">BBS</div>
+<div class="content">BBS</div>
 </div>
 
 <div class="window" id="ytWin" style="top:100px;left:350px;">
 <div class="titlebar">配信 <button onclick="closeWin(ytWin)">×</button></div>
-<div style="padding:10px;">YouTube</div>
+<div class="content">YouTube</div>
 </div>
 
 <div class="window" id="linkWin" style="top:120px;left:200px;">
 <div class="titlebar">リンク <button onclick="closeWin(linkWin)">×</button></div>
-<div style="padding:10px;">
+<div class="content">
 <a href="https://youtube.com" target="_blank">YouTube</a>
 </div>
 </div>
@@ -113,10 +132,10 @@ MepoOS 起動中...
 <div class="task-btn" onclick="openWin(linkWin)">リンク</div>
 </div>
 
-<!-- 右クリックメニュー -->
+<!-- 右クリック -->
 <div id="contextMenu">
-  <div onclick="sortIcons()">📂 並べ替え</div>
-  <div onclick="deleteIcon()">🗑 削除</div>
+<div onclick="sortIcons()">並べ替え</div>
+<div onclick="deleteIcon()">削除</div>
 </div>
 
 </div>
@@ -136,43 +155,51 @@ function closeWin(el){el.style.display="none";}
 
 /* ===== アイコン初期化 ===== */
 function initIcons(){
- document.querySelectorAll(".icon").forEach((icon,i)=>{
-   let saved = JSON.parse(localStorage.getItem(icon.id));
+ const icons=document.querySelectorAll(".icon");
 
-   if(saved){
-     icon.style.left=saved.x+"px";
-     icon.style.top=saved.y+"px";
-   }else{
-     icon.style.left="10px";
-     icon.style.top=(10+i*90)+"px";
-   }
+ icons.forEach((icon,i)=>{
+  let saved=JSON.parse(localStorage.getItem(icon.id));
 
-   dragIcon(icon);
-   setupContext(icon);
+  if(saved){
+    icon.style.left=saved.x+"px";
+    icon.style.top=saved.y+"px";
+  }else{
+    icon.style.left="10px";
+    icon.style.top=(10+i*90)+"px";
+  }
+
+  icon.ondblclick=()=>{
+    if(icon.id==="icon-bbs") openWin(bbsWin);
+    if(icon.id==="icon-yt") openWin(ytWin);
+    if(icon.id==="icon-link") openWin(linkWin);
+  };
+
+  dragIcon(icon);
+  setupContext(icon);
  });
 }
 
-/* ===== ドラッグ ===== */
+/* ドラッグ */
 function dragIcon(el){
  let offsetX,offsetY;
 
  el.onmousedown=e=>{
-   offsetX=e.clientX-el.offsetLeft;
-   offsetY=e.clientY-el.offsetTop;
+  offsetX=e.clientX-el.offsetLeft;
+  offsetY=e.clientY-el.offsetTop;
 
-   document.onmousemove=e=>{
-     el.style.left=(e.clientX-offsetX)+"px";
-     el.style.top=(e.clientY-offsetY)+"px";
-   };
+  document.onmousemove=e=>{
+   el.style.left=(e.clientX-offsetX)+"px";
+   el.style.top=(e.clientY-offsetY)+"px";
+  };
  };
 
  document.onmouseup=()=>{
-   document.onmousemove=null;
+  document.onmousemove=null;
 
-   localStorage.setItem(el.id,JSON.stringify({
-     x:el.offsetLeft,
-     y:el.offsetTop
-   }));
+  localStorage.setItem(el.id,JSON.stringify({
+    x:el.offsetLeft,
+    y:el.offsetTop
+  }));
  };
 
  el.ondragstart=()=>false;
@@ -183,28 +210,25 @@ let currentIcon=null;
 
 function setupContext(icon){
  icon.addEventListener("contextmenu",e=>{
-   e.preventDefault();
+  e.preventDefault();
+  currentIcon=icon;
 
-   currentIcon=icon;
-
-   contextMenu.style.left=e.clientX+"px";
-   contextMenu.style.top=e.clientY+"px";
-   contextMenu.style.display="block";
+  contextMenu.style.left=e.clientX+"px";
+  contextMenu.style.top=e.clientY+"px";
+  contextMenu.style.display="block";
  });
 }
 
-/* メニュー閉じる */
 document.addEventListener("click",()=>{
  contextMenu.style.display="none";
 });
 
 /* 削除 */
 function deleteIcon(){
- if(!currentIcon) return;
+ if(!currentIcon)return;
 
  localStorage.removeItem(currentIcon.id);
  currentIcon.remove();
-
  contextMenu.style.display="none";
 }
 
@@ -215,16 +239,17 @@ function sortIcons(){
  let x=10,y=10;
 
  icons.forEach(icon=>{
-   icon.style.left=x+"px";
-   icon.style.top=y+"px";
+  icon.style.left=x+"px";
+  icon.style.top=y+"px";
 
-   localStorage.setItem(icon.id,JSON.stringify({x,y}));
+  localStorage.setItem(icon.id,JSON.stringify({x,y}));
 
-   y+=90;
-   if(y>window.innerHeight-100){
-     y=10;
-     x+=100;
-   }
+  y+=90;
+
+  if(y>window.innerHeight-100){
+   y=10;
+   x+=100;
+  }
  });
 
  contextMenu.style.display="none";
