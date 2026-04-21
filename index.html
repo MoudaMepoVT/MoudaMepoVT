@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html>
 <head>
@@ -12,20 +13,23 @@ body{
   font-size:14px;
 }
 
-/* 🌤 水色グラデ背景（平成HP） */
 .desktop-screen{
   display:none;
   height:100vh;
   background: linear-gradient(to bottom,#87cefa,#b0e0ff,#e0ffff);
-  background-attachment: fixed;
 }
 
 /* アイコン */
-.desktop{position:absolute;top:10px;left:10px;}
-.icon{width:80px;text-align:center;color:white;margin-bottom:20px;cursor:pointer;}
-.icon img{width:48px;display:block;margin:auto;}
+.icon{
+  width:80px;
+  text-align:center;
+  color:white;
+  cursor:move;
+  position:absolute;
+  user-select:none;
+}
 
-/* ウィンドウ（95風） */
+/* ウィンドウ */
 .window{
   position:absolute;
   width:340px;
@@ -34,7 +38,6 @@ body{
   border-right-color:#404040;
   border-bottom-color:#404040;
   display:none;
-  box-shadow:inset -2px -2px #000, inset 2px 2px #fff;
 }
 
 .titlebar{
@@ -43,22 +46,7 @@ body{
   padding:4px;
   display:flex;
   justify-content:space-between;
-  align-items:center;
   cursor:move;
-}
-
-/* ボタン */
-button{
-  background:#c0c0c0;
-  border:2px solid #fff;
-  border-right-color:#404040;
-  border-bottom-color:#404040;
-  cursor:pointer;
-}
-button:active{
-  border:2px solid #404040;
-  border-right-color:#fff;
-  border-bottom-color:#fff;
 }
 
 .content{
@@ -68,144 +56,71 @@ button:active{
   background:#fff;
 }
 
-/* タスクバー */
 .taskbar{
   position:fixed;
   bottom:0;
   width:100%;
   height:40px;
   background:#c0c0c0;
-  border-top:2px solid #fff;
   display:flex;
   align-items:center;
 }
-.start{margin:5px;padding:5px;border:2px solid #fff;cursor:pointer;}
-.task-btn{margin-left:5px;padding:3px 8px;border:2px solid #fff;cursor:pointer;}
+
+.start,.task-btn{
+  margin:5px;
+  padding:5px;
+  border:2px solid #fff;
+  cursor:pointer;
+}
+
 .clock{margin-left:auto;padding:5px;}
 
-/* スタート */
 .start-menu{
   position:absolute;
   bottom:40px;
   left:5px;
   background:#c0c0c0;
-  border:2px solid #fff;
   display:none;
-}
-
-/* テロップ */
-.ticker{
-  position:fixed;
-  bottom:40px;
-  width:100%;
-  background:black;
-  color:lime;
-  font-weight:bold;
-  letter-spacing:2px;
-  overflow:hidden;
-}
-.ticker-text{
-  white-space:nowrap;
-  padding-left:100%;
-  animation:scroll 15s linear infinite;
-}
-@keyframes scroll{
-  100%{transform:translateX(-100%);}
-}
-
-/* Y2Kネオン */
-.win-clock{text-shadow:0 0 5px cyan;}
-a{color:#00ffff;text-shadow:0 0 5px #00ffff;}
-
-/* スライド */
-.slideshow{text-align:center;}
-.slideshow img{
-  width:280px;
-  border:3px solid #fff;
-  border-right-color:#404040;
-  border-bottom-color:#404040;
 }
 </style>
 </head>
 
 <body>
 
-<!-- 起動 -->
 <div id="boot" style="position:fixed;inset:0;background:black;color:lime;display:flex;align-items:center;justify-content:center;">
-<pre>
-MepoOS v1.0
-Loading...
-</pre>
+MepoOS v1.0 Loading...
 </div>
 
 <div class="desktop-screen" id="desktop">
 
 <!-- アイコン -->
-<div class="desktop">
-<div class="icon" ondblclick="openWin(bbsWin)">掲示板</div>
-<div class="icon" ondblclick="openWin(ytWin)">配信</div>
-<div class="icon" ondblclick="openWin(ytWin)">リンク</div>  
-</div>
+<div class="icon" id="icon-bbs" ondblclick="openWin(bbsWin)">掲示板</div>
+<div class="icon" id="icon-yt" ondblclick="openWin(ytWin)">配信</div>
+<div class="icon" id="icon-link" ondblclick="openWin(linkWin)">リンク</div>
 
 <!-- BBS -->
 <div class="window" id="bbsWin" style="top:80px;left:120px;">
-<div class="titlebar">
-<span>掲示板</span>
-<span class="win-clock"></span>
-<div>
-<button onclick="maximizeWin(bbsWin)">□</button>
-<button onclick="closeWin(bbsWin)">×</button>
-</div>
-</div>
-
+<div class="titlebar">掲示板 <button onclick="closeWin(bbsWin)">×</button></div>
 <div class="content">
-
-<!-- スライド -->
-<h3>📷 スライドショー</h3>
-
-<div class="slideshow">
-  <img id="slide" src="https://via.placeholder.com/300">
-  <br>
-  <button onclick="prev()">←</button>
-  <button onclick="next()">→</button>
-</div>
-
-<hr>
-
 <input id="nameInput" placeholder="名前"><br>
 <textarea id="msgInput"></textarea><br>
 <button onclick="post()">書き込む</button>
-
 <div id="bbs"></div>
-
 </div>
 </div>
 
-<!-- YouTube -->
+<!-- 配信 -->
 <div class="window" id="ytWin" style="top:100px;left:400px;">
-<div class="titlebar">
-<span>配信</span>
-<span class="win-clock"></span>
-<div>
-<button onclick="maximizeWin(ytWin)">□</button>
-<button onclick="closeWin(ytWin)">×</button>
-</div>
+<div class="titlebar">配信 <button onclick="closeWin(ytWin)">×</button></div>
+<div class="content">YouTubeなど</div>
 </div>
 
+<!-- リンク -->
+<div class="window" id="linkWin" style="top:120px;left:250px;">
+<div class="titlebar">リンク集 <button onclick="closeWin(linkWin)">×</button></div>
 <div class="content">
-<h3>🔴 LIVE</h3>
-<div id="live"></div>
-<h3>⏰ 予定</h3>
-<div id="upcoming"></div>
-<h3>📼 アーカイブ</h3>
-<div id="archive"></div>
-</div>
-</div>
-
-<!-- テロップ -->
-<div class="ticker">
-<div class="ticker-text">
-★☆★ NEW!! ★☆★ めぽるーむへようこそ！！！ ★☆★
+<a href="https://youtube.com" target="_blank">YouTube</a><br>
+<a href="https://google.com" target="_blank">Google</a>
 </div>
 </div>
 
@@ -214,65 +129,39 @@ Loading...
 <div class="start" onclick="toggleStart()">スタート</div>
 <div class="task-btn" onclick="openWin(bbsWin)">掲示板</div>
 <div class="task-btn" onclick="openWin(ytWin)">配信</div>
-<div class="task-btn" onclick="openWin(ytWin)">リンク</div>  
+<div class="task-btn" onclick="openWin(linkWin)">リンク</div>
 <div class="clock" id="clock"></div>
 </div>
 
 <div class="start-menu" id="startMenu">
 <div onclick="openWin(bbsWin)">掲示板</div>
 <div onclick="openWin(ytWin)">配信</div>
-<div onclick="openWin(ytWin)">リンク</div>  
+<div onclick="openWin(linkWin)">リンク</div>
 </div>
 
 </div>
 
 <script>
 /* 起動 */
-setTimeout(()=>{boot.style.display="none";desktop.style.display="block";},1500);
+setTimeout(()=>{
+ boot.style.display="none";
+ desktop.style.display="block";
+ initIcons();
+},1500);
 
 /* ウィンドウ */
 let topZ=1;
 function openWin(el){el.style.display="block";el.style.zIndex=++topZ;}
 function closeWin(el){el.style.display="none";}
 
-/* 最大化 */
-function maximizeWin(el){
- if(el.classList.contains("max")){
-  el.classList.remove("max");
-  el.style.width="340px";
- }else{
-  el.classList.add("max");
-  el.style.top="0";
-  el.style.left="0";
-  el.style.width="100vw";
-  el.style.height="calc(100vh - 40px)";
- }
-}
-
-/* ドラッグ */
-function drag(el){
- el.querySelector(".titlebar").onmousedown=e=>{
-  let x=e.clientX,y=e.clientY;
-  document.onmousemove=e=>{
-   el.style.top=(el.offsetTop+(e.clientY-y))+"px";
-   el.style.left=(el.offsetLeft+(e.clientX-x))+"px";
-   x=e.clientX;y=e.clientY;
-  };
- };
- document.onmouseup=()=>document.onmousemove=null;
-}
-drag(bbsWin);drag(ytWin);
-
 /* 時計 */
 setInterval(()=>{
- let t=new Date().toLocaleTimeString();
- clock.innerHTML=t;
- document.querySelectorAll(".win-clock").forEach(e=>e.innerHTML=t);
+ clock.innerHTML=new Date().toLocaleTimeString();
 },1000);
 
 /* スタート */
 function toggleStart(){
- startMenu.style.display=startMenu.style.display==="block"?"none":"block";
+ startMenu.style.display = startMenu.style.display==="block"?"none":"block";
 }
 
 /* BBS */
@@ -286,66 +175,52 @@ function post(){
  msgInput.value="";
 }
 
-/* 📷 スライド */
-const images=[
- "https://via.placeholder.com/300/ff0000",
- "https://via.placeholder.com/300/00ff00",
- "https://via.placeholder.com/300/0000ff",
- "https://via.placeholder.com/300/ffff00"
-];
+/* ===== アイコンドラッグ＋保存 ===== */
 
-let i=0;
+function initIcons(){
+ const icons=document.querySelectorAll(".icon");
 
-setInterval(()=>{
- i=(i+1)%images.length;
- slide.src=images[i];
-},2000);
+ icons.forEach((icon,i)=>{
+   let saved=JSON.parse(localStorage.getItem(icon.id));
 
-function prev(){
- i=(i-1+images.length)%images.length;
- slide.src=images[i];
-}
-function next(){
- i=(i+1)%images.length;
- slide.src=images[i];
+   if(saved){
+     icon.style.left=saved.x+"px";
+     icon.style.top=saved.y+"px";
+   }else{
+     icon.style.left="10px";
+     icon.style.top=(10 + i*90)+"px";
+   }
+
+   dragIcon(icon);
+ });
 }
 
-/* 点滅タイトル */
-setInterval(()=>{
- document.title = document.title==="めぽOS" ? "★めぽるーむ★" : "妄堕めぽのお部屋";
-},1000);
+function dragIcon(el){
+ let offsetX,offsetY;
 
-/* YouTube */
-const API_KEY="AIzaSyCWEQ1J0mEq8EFo7Cw5UYHpGRhYbC0Tu88";
-const CHANNEL_ID="UCmUlzug_w0WqRdTsEMJHjFw";
+ el.onmousedown=function(e){
+   offsetX=e.clientX - el.offsetLeft;
+   offsetY=e.clientY - el.offsetTop;
 
-async function loadYT(type,target){
- try{
-  const res=await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL_ID}&eventType=${type}&type=video&key=${API_KEY}`);
-  const data=await res.json();
+   document.onmousemove=function(e){
+     el.style.left=(e.clientX-offsetX)+"px";
+     el.style.top=(e.clientY-offsetY)+"px";
+   };
+ };
 
-  let html="";
-  if(data.items){
-    data.items.forEach(v=>{
-      html+=`
-      <div>
-      <img src="${v.snippet.thumbnails.medium.url}" width="200"><br>
-      ${v.snippet.title}<br>
-      <a href="https://youtube.com/watch?v=${v.id.videoId}" target="_blank">▶ 見る</a>
-      </div><hr>`;
-    });
-  }
+ document.onmouseup=function(){
+   document.onmousemove=null;
 
-  document.getElementById(target).innerHTML=html||"なし";
+   // 保存
+   localStorage.setItem(el.id, JSON.stringify({
+     x: el.offsetLeft,
+     y: el.offsetTop
+   }));
+ };
 
- }catch{
-  document.getElementById(target).innerHTML="失敗";
- }
+ // ダブルクリック干渉防止
+ el.ondragstart=()=>false;
 }
-
-loadYT("live","live");
-loadYT("upcoming","upcoming");
-loadYT("completed","archive");
 </script>
 
 </body>
