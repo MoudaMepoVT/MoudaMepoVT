@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,8 +6,14 @@
 
 <style>
 *{box-sizing:border-box;}
-body{margin:0;font-family:"MS UI Gothic","MS Gothic",monospace;font-size:14px;}
+body{
+  margin:0;
+  font-family:"MS UI Gothic","MS Gothic",monospace;
+  font-size:18px; /* 全体を大きく */
+  transform-origin: top left;
+}
 
+/* デスクトップ背景 */
 .desktop-screen{
   display:none;
   height:100vh;
@@ -16,33 +21,48 @@ body{margin:0;font-family:"MS UI Gothic","MS Gothic",monospace;font-size:14px;}
 }
 
 /* アイコン */
-.desktop{position:absolute;top:10px;left:10px;}
-.icon{width:80px;text-align:center;color:white;margin-bottom:20px;cursor:pointer;}
-.icon img{width:48px;display:block;margin:auto;}
+.desktop{position:absolute;top:20px;left:20px;}
+.icon{
+  width:110px;
+  text-align:center;
+  color:white;
+  margin-bottom:30px;
+  cursor:pointer;
+  font-size:18px;
+}
+.icon img{width:64px;display:block;margin:auto;}
 
 /* ウィンドウ */
 .window{
   position:absolute;
-  width:340px;
+  width:480px;
   background:#c0c0c0;
   border:2px solid #fff;
   border-right-color:#404040;
   border-bottom-color:#404040;
   display:none;
   box-shadow:inset -2px -2px #000, inset 2px 2px #fff;
+  font-size:18px;
 }
 
 .titlebar{
   background:linear-gradient(to right,#000080,#1084d0);
   color:white;
-  padding:4px;
+  padding:6px;
   display:flex;
   justify-content:space-between;
   align-items:center;
   cursor:move;
+  font-size:18px;
 }
 
-.content{padding:10px;height:300px;overflow:auto;background:#fff;}
+.content{
+  padding:12px;
+  height:420px;
+  overflow:auto;
+  background:#fff;
+  font-size:18px;
+}
 
 button{
   background:#c0c0c0;
@@ -50,35 +70,40 @@ button{
   border-right-color:#404040;
   border-bottom-color:#404040;
   cursor:pointer;
+  font-size:16px;
 }
 
 /* タスクバー */
 .taskbar{
-  position:fixed;bottom:0;width:100%;height:40px;
+  position:fixed;bottom:0;width:100%;height:50px;
   background:#c0c0c0;
   display:flex;align-items:center;
+  font-size:18px;
 }
 .start{margin:5px;padding:5px;border:2px solid #fff;cursor:pointer;}
-.task-btn{margin-left:5px;padding:3px 8px;border:2px solid #fff;cursor:pointer;}
+.task-btn{margin-left:5px;padding:5px 10px;border:2px solid #fff;cursor:pointer;}
 .clock{margin-left:auto;padding:5px;}
 
+/* スタートメニュー */
 .start-menu{
   position:absolute;
-  bottom:40px;
+  bottom:50px;
   left:5px;
   background:#c0c0c0;
   border:2px solid #fff;
   display:none;
+  font-size:18px;
 }
 
 /* テロップ */
 .ticker{
   position:fixed;
-  bottom:40px;
+  bottom:50px;
   width:100%;
   background:black;
   color:lime;
   overflow:hidden;
+  font-size:18px;
 }
 .ticker-text{
   white-space:nowrap;
@@ -94,18 +119,46 @@ button{
 /* 小窓 */
 .mini{
   position:fixed!important;
-  bottom:60px;
+  bottom:70px;
   right:10px;
-  width:260px!important;
-  height:180px!important;
+  width:320px!important;
+  height:220px!important;
   z-index:9999;
+}
+
+/* ★ 常時表示アシスタントウィンドウ（カイル風） */
+.assist{
+  position:fixed;
+  right:20px;
+  bottom:80px;
+  width:260px;
+  background:#c0c0c0;
+  border:2px solid #fff;
+  border-right-color:#404040;
+  border-bottom-color:#404040;
+  box-shadow:inset -2px -2px #000, inset 2px 2px #fff;
+  z-index:9999;
+  display:block;
+}
+
+.assist .titlebar{
+  font-size:16px;
+  padding:4px;
+}
+
+.assist .content{
+  height:auto;
+  max-height:none;
+  padding:10px;
+  font-size:16px;
 }
 </style>
 </head>
 
 <body>
 
-<div id="boot" style="position:fixed;inset:0;background:black;color:lime;display:flex;align-items:center;justify-content:center;">
+<!-- 起動画面 -->
+<div id="boot" style="position:fixed;inset:0;background:black;color:lime;display:flex;align-items:center;justify-content:center;font-size:24px;">
 MepoOS Loading...
 </div>
 
@@ -127,7 +180,7 @@ MepoOS Loading...
 </div>
 
 <!-- YouTube -->
-<div class="window" id="ytWin" style="top:100px;left:400px;">
+<div class="window" id="ytWin" style="top:100px;left:500px;">
 <div class="titlebar">
 <span id="ytTitle">配信</span>
 <div>
@@ -173,6 +226,16 @@ MepoOS Loading...
 <div onclick="openWin(ytWin)">配信</div>
 </div>
 
+<!-- ★ カイル風アシスタント常時表示ウィンドウ -->
+<div class="assist">
+  <div class="titlebar">カイル（アシスタント）</div>
+  <div class="content">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Cartoon_dolphin.png/240px-Cartoon_dolphin.png" width="100%">
+    <p>こんにちは！何かお手伝いできることある？</p>
+    <p><a href="https://www.youtube.com/" target="_blank">▶ YouTubeへ</a></p>
+  </div>
+</div>
+
 </div>
 
 <script>
@@ -196,63 +259,4 @@ const CHANNEL_ID="UCmUlzug_w0WqRdTsEMJHjFw";
 let currentVideo=null,isMini=false,isMuted=false,notified=false;
 
 async function loadYT(type,target){
- const res=await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL_ID}&eventType=${type}&type=video&key=${API_KEY}`);
- const data=await res.json();
- let html="";
-
- if(data.items && data.items.length){
-  if(type==="live"){
-    liveLabel.innerHTML="🔴 LIVE中！";
-    liveLabel.classList.add("live-on");
-    ytTitle.innerText="🔴 配信中";
-
-    if(!notified){notifyLive();notified=true;}
-    playVideo(data.items[0].id.videoId);
-  }
-
-  data.items.forEach(v=>{
-    html+=`<div onclick="playVideo('${v.id.videoId}')">
-    <img src="${v.snippet.thumbnails.medium.url}" width="200"><br>
-    ${v.snippet.title}</div><hr>`;
-  });
- }
-
- document.getElementById(target).innerHTML=html||"なし";
-}
-
-function playVideo(id){
- currentVideo=id;
- player.innerHTML=`<iframe id="ytframe" width="100%" height="200"
- src="https://www.youtube.com/embed/${id}?autoplay=1&enablejsapi=1"></iframe>`;
-}
-
-function toggleMini(){
- if(!currentVideo)return;
- ytWin.classList.toggle("mini");
-}
-
-function stopVideo(){player.innerHTML="";}
-
-function muteVideo(){
- let f=document.getElementById("ytframe");
- if(!f)return;
- f.contentWindow.postMessage(JSON.stringify({event:"command",func:isMuted?"unMute":"mute"}),"*");
- isMuted=!isMuted;
-}
-
-function notifyLive(){
- let n=document.createElement("div");
- n.innerText="🔴 配信開始！";
- Object.assign(n.style,{position:"fixed",bottom:"50px",right:"10px",background:"#000",color:"lime",padding:"10px",zIndex:9999});
- document.body.appendChild(n);
- setTimeout(()=>n.remove(),4000);
-}
-
-loadYT("live","live");
-loadYT("upcoming","upcoming");
-loadYT("completed","archive");
-</script>
-
-</body>
-</html>
-```
+ const res=await fetch(`https://www.googleapis.com
