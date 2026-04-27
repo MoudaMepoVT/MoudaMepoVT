@@ -60,14 +60,25 @@ body{margin:0;font-family:"MS UI Gothic";font-size:18px;}
   right:20px;
   bottom:90px;
   width:260px;
+  height:200px; /* ←高さ固定がポイント */
   background:#c0c0c0;
   border:2px solid #fff;
   border-right-color:#404040;
   border-bottom-color:#404040;
   z-index:9999;
+
+  display:flex;           
+  flex-direction:column;  
 }
-.notice .titlebar{cursor:move;}
-.notice .content{height:auto;}
+
+.notice .titlebar{
+  cursor:move;
+}
+
+.notice .content{
+  flex:1;        /* ←ここ重要 */
+  overflow:auto; /* ←中だけスクロール */
+}
 
 /* タスクバー */
 .taskbar{
