@@ -259,4 +259,62 @@ const CHANNEL_ID="UCmUlzug_w0WqRdTsEMJHjFw";
 let currentVideo=null,isMini=false,isMuted=false,notified=false;
 
 async function loadYT(type,target){
- const res=await fetch(`https://www.googleapis.com
+ const res=await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL_ID}&eventType=${type}&type=video&key=${API_KEY}`);
+ const data=await res.json();
+ let html="";
+
+ if(data.items && data.items.length){
+  if(type==="live"){
+    liveLabel.innerHTML="🔴 LIVE中！";
+    liveLabel.classList.add("live-on");
+    ytTitle.innerText="🔴 配信中";
+
+    if(!notified){notifyLive();notified=true;}
+    playVideo(data.items[0].id.videoId);
+  }
+
+  data.items.forEach(v=>{
+    html+=`<div onclick="playVideo('${v.id.videoId}')">
+    <img src="${v.snippet.thumbnails.medium.url}" width="200"><br>
+    ${v.snippet.title}</div><hr>`;
+  });
+ }
+
+ document.getElementById(target).innerHTML=html||"なし";
+}
+
+function playVideo(id){
+ currentVideo=id;
+ player.innerHTML=`<iframe id="ytframe" width="100%" height="260"
+ src="https://www.youtube.com/embed/${id}?autoplay=1&enablejsapi=1"></iframe>`;
+}
+
+function toggleMini(){
+ if(!currentVideo)return;
+ ytWin.classList.toggle("mini");
+}
+
+function stopVideo(){player.innerHTML="";}
+
+function muteVideo(){
+ let f=document.getElementById("ytframe");
+ if(!f)return;
+ f.contentWindow.postMessage(JSON.stringify({event:"command",func:isMuted?"unMute":"mute"}),"*");
+ isMuted=!isMuted;
+}
+
+function notifyLive(){
+ let n=document.createElement("div");
+ n.innerText="🔴 配信開始！";
+ Object.assign(n.style,{position:"fixed",bottom:"60px",right:"10px",background:"#000",color:"lime",padding:"10px",zIndex:9999});
+ document.body.appendChild(n);
+ setTimeout(()=>n.remove(),4000);
+}
+
+loadYT("live","live");
+loadYT("upcoming","upcoming");
+loadYT("completed","archive");
+</script>
+
+</body>
+</html>
