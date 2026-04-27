@@ -54,14 +54,48 @@ body{margin:0;font-family:"MS UI Gothic";font-size:18px;}
   cursor:nwse-resize;
 }
 
+/* ★ お知らせウィンドウ（常時） */
+.notice{
+  position:fixed;
+  right:20px;
+  bottom:90px;
+  width:260px;
+  background:#c0c0c0;
+  border:2px solid #fff;
+  border-right-color:#404040;
+  border-bottom-color:#404040;
+  z-index:9999;
+}
+.notice .titlebar{cursor:move;}
+.notice .content{height:auto;}
+
 /* タスクバー */
 .taskbar{
   position:fixed;bottom:0;width:100%;height:50px;
   background:#c0c0c0;display:flex;align-items:center;
 }
-.task-btn{margin-left:5px;padding:5px;border:2px solid #fff;cursor:pointer;}
-.task-btn.active{background:#808080;}
-.clock{margin-left:auto;padding:5px;}
+
+.task-btn{
+  margin-left:5px;
+  padding:5px;
+  border:2px solid #fff;
+  cursor:pointer;
+}
+
+.link-btn{
+  margin-left:10px;
+  padding:5px;
+  border:2px solid #fff;
+  cursor:pointer;
+}
+
+.clock{
+  margin-left:auto;
+  padding:5px;
+  text-align:right;
+  line-height:1.2;
+  font-size:14px;
+}
 
 .maximized{
   top:0!important;left:0!important;
@@ -79,6 +113,7 @@ MepoOS Loading...
 
 <div id="desktop" class="desktop-screen">
 
+<!-- アイコン -->
 <div class="desktop">
 <div class="icon" ondblclick="openWin(bbsWin)">📄<br>掲示板</div>
 <div class="icon" ondblclick="openWin(ytWin)">📺<br>配信</div>
@@ -116,10 +151,26 @@ MepoOS Loading...
 <div class="resizer"></div>
 </div>
 
+<!-- ★ お知らせ -->
+<div class="notice" id="noticeWin">
+<div class="titlebar">📢 お知らせ</div>
+<div class="content">
+<p>ようこそ めぽるーむへ！</p>
+<p>🔴 配信が始まるとここに表示されるよ</p>
+<p><a href="https://www.youtube.com/" target="_blank">▶ YouTube</a></p>
+</div>
+</div>
+
 <!-- タスクバー -->
 <div class="taskbar">
 <div class="task-btn" onclick="openWin(bbsWin)">掲示板</div>
 <div class="task-btn" onclick="openWin(ytWin)">配信</div>
+
+<!-- 追加リンク -->
+<div class="link-btn" onclick="window.open('https://www.youtube.com/')">YouTube</div>
+<div class="link-btn" onclick="window.open('https://twitter.com/')">X</div>
+
+<!-- 日時 -->
 <div class="clock" id="clock"></div>
 </div>
 
@@ -128,29 +179,21 @@ MepoOS Loading...
 <script>
 setTimeout(()=>{boot.style.display="none";desktop.style.display="block";},1500);
 
-/* 時計 */
-setInterval(()=>clock.innerText=new Date().toLocaleTimeString(),1000);
+/* 時計（日時） */
+function updateClock(){
+ const now=new Date();
+ const date=now.toLocaleDateString();
+ const time=now.toLocaleTimeString();
+ clock.innerHTML=date+"<br>"+time;
+}
+setInterval(updateClock,1000);
+updateClock();
 
-/* ウィンドウ管理 */
+/* ウィンドウ */
 let topZ=1;
-const taskbar=document.querySelector(".taskbar");
-
-function bring(win){
- win.style.zIndex=++topZ;
-}
-
-function openWin(win){
- win.style.display="block";
- bring(win);
-}
-
-function closeWin(btn){
- btn.closest(".window").style.display="none";
-}
-
-function minWin(btn){
- btn.closest(".window").style.display="none";
-}
+function openWin(win){win.style.display="block";win.style.zIndex=++topZ;}
+function closeWin(btn){btn.closest(".window").style.display="none";}
+function minWin(btn){btn.closest(".window").style.display="none";}
 
 function maxWin(btn){
  const win=btn.closest(".window");
@@ -169,44 +212,29 @@ function maxWin(btn){
  }
 }
 
-/* ドラッグ＆リサイズ */
-document.querySelectorAll(".window").forEach(win=>{
+/* ドラッグ */
+document.querySelectorAll(".window, .notice").forEach(win=>{
  const bar=win.querySelector(".titlebar");
- const res=win.querySelector(".resizer");
-
  let drag=false,ox,oy;
+
  bar.onmousedown=e=>{
-  if(win.classList.contains("maximized"))return;
   drag=true;
   ox=e.clientX-win.offsetLeft;
   oy=e.clientY-win.offsetTop;
  };
+
  document.onmousemove=e=>{
   if(drag){
     win.style.left=e.clientX-ox+"px";
     win.style.top=e.clientY-oy+"px";
   }
  };
- document.onmouseup=()=>drag=false;
 
- let resize=false,sx,sy,sw,sh;
- res.onmousedown=e=>{
-  resize=true;
-  sx=e.clientX; sy=e.clientY;
-  sw=win.offsetWidth; sh=win.offsetHeight;
-  e.stopPropagation();
- };
- document.onmousemove=e=>{
-  if(resize){
-    win.style.width=(sw+e.clientX-sx)+"px";
-    win.style.height=(sh+e.clientY-sy)+"px";
-  }
- };
- document.onmouseup=()=>resize=false;
+ document.onmouseup=()=>drag=false;
 });
 
-/* 🔴 LIVE検知 */
-const API_KEY="AIzaSyCWEQ1J0mEq8EFo7Cw5UYHpGRhYbC0Tu88";
+/* LIVE検知（軽量） */
+const API_KEY="ここにAPIキー";
 const CHANNEL_ID="UCmUlzug_w0WqRdTsEMJHjFw";
 
 async function checkLive(){
@@ -219,16 +247,18 @@ async function checkLive(){
     player.innerHTML=`<iframe width="100%" height="260"
     src="https://www.youtube.com/embed/${id}?autoplay=1&mute=1"></iframe>`;
     liveLabel.innerText="🔴 LIVE中";
+
+    noticeWin.querySelector(".content").innerHTML =
+      "🔴 配信中！<br><a href='https://youtube.com/watch?v="+id+"' target='_blank'>今すぐ見る</a>";
+
   }else{
     liveLabel.innerText="配信なし";
   }
- }catch(e){
-  console.log("APIエラー");
- }
+
+ }catch(e){}
 }
 setInterval(checkLive,30000);
 checkLive();
-
 </script>
 
 </body>
