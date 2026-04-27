@@ -9,11 +9,10 @@
 body{
   margin:0;
   font-family:"MS UI Gothic","MS Gothic",monospace;
-  font-size:18px; /* 全体を大きく */
-  transform-origin: top left;
+  font-size:18px;
 }
 
-/* デスクトップ背景 */
+/* デスクトップ */
 .desktop-screen{
   display:none;
   height:100vh;
@@ -28,21 +27,19 @@ body{
   color:white;
   margin-bottom:30px;
   cursor:pointer;
-  font-size:18px;
 }
 .icon img{width:64px;display:block;margin:auto;}
 
 /* ウィンドウ */
 .window{
   position:absolute;
-  width:480px;
+  width:500px;
   background:#c0c0c0;
   border:2px solid #fff;
   border-right-color:#404040;
   border-bottom-color:#404040;
   display:none;
   box-shadow:inset -2px -2px #000, inset 2px 2px #fff;
-  font-size:18px;
 }
 
 .titlebar{
@@ -51,9 +48,7 @@ body{
   padding:6px;
   display:flex;
   justify-content:space-between;
-  align-items:center;
   cursor:move;
-  font-size:18px;
 }
 
 .content{
@@ -61,7 +56,6 @@ body{
   height:420px;
   overflow:auto;
   background:#fff;
-  font-size:18px;
 }
 
 button{
@@ -70,7 +64,6 @@ button{
   border-right-color:#404040;
   border-bottom-color:#404040;
   cursor:pointer;
-  font-size:16px;
 }
 
 /* タスクバー */
@@ -78,13 +71,12 @@ button{
   position:fixed;bottom:0;width:100%;height:50px;
   background:#c0c0c0;
   display:flex;align-items:center;
-  font-size:18px;
 }
 .start{margin:5px;padding:5px;border:2px solid #fff;cursor:pointer;}
 .task-btn{margin-left:5px;padding:5px 10px;border:2px solid #fff;cursor:pointer;}
 .clock{margin-left:auto;padding:5px;}
 
-/* スタートメニュー */
+/* スタート */
 .start-menu{
   position:absolute;
   bottom:50px;
@@ -92,7 +84,6 @@ button{
   background:#c0c0c0;
   border:2px solid #fff;
   display:none;
-  font-size:18px;
 }
 
 /* テロップ */
@@ -103,7 +94,6 @@ button{
   background:black;
   color:lime;
   overflow:hidden;
-  font-size:18px;
 }
 .ticker-text{
   white-space:nowrap;
@@ -116,7 +106,7 @@ button{
 .live-on{color:red;animation:blink 1s infinite;}
 @keyframes blink{50%{opacity:0;}}
 
-/* 小窓 */
+/* ミニ */
 .mini{
   position:fixed!important;
   bottom:70px;
@@ -126,38 +116,27 @@ button{
   z-index:9999;
 }
 
-/* ★ 常時表示アシスタントウィンドウ（カイル風） */
+/* ★ 常時アシスタント */
 .assist{
   position:fixed;
   right:20px;
   bottom:80px;
-  width:260px;
+  width:280px;
   background:#c0c0c0;
   border:2px solid #fff;
   border-right-color:#404040;
   border-bottom-color:#404040;
   box-shadow:inset -2px -2px #000, inset 2px 2px #fff;
   z-index:9999;
-  display:block;
 }
-
-.assist .titlebar{
-  font-size:16px;
-  padding:4px;
-}
-
-.assist .content{
-  height:auto;
-  max-height:none;
-  padding:10px;
-  font-size:16px;
-}
+.assist .titlebar{cursor:move;}
+.assist img{width:100%;}
 </style>
 </head>
 
 <body>
 
-<!-- 起動画面 -->
+<!-- 起動 -->
 <div id="boot" style="position:fixed;inset:0;background:black;color:lime;display:flex;align-items:center;justify-content:center;font-size:24px;">
 MepoOS Loading...
 </div>
@@ -171,16 +150,14 @@ MepoOS Loading...
 </div>
 
 <!-- BBS -->
-<div class="window" id="bbsWin" style="top:80px;left:120px;">
-<div class="titlebar">
-<span>掲示板</span>
-<div><button onclick="closeWin(bbsWin)">×</button></div>
-</div>
-<div class="content">掲示板</div>
+<div class="window" id="bbsWin" style="top:100px;left:150px;">
+<div class="titlebar"><span>掲示板</span>
+<button onclick="closeWin(bbsWin)">×</button></div>
+<div class="content">掲示板（ここに内容）</div>
 </div>
 
 <!-- YouTube -->
-<div class="window" id="ytWin" style="top:100px;left:500px;">
+<div class="window" id="ytWin" style="top:120px;left:500px;">
 <div class="titlebar">
 <span id="ytTitle">配信</span>
 <div>
@@ -192,24 +169,17 @@ MepoOS Loading...
 <div class="content">
 <h3 id="liveLabel">LIVE</h3>
 
-<div id="playerWrap">
 <div id="player"></div>
 <button onclick="stopVideo()">停止</button>
-<button onclick="muteVideo()">ミュート</button>
-</div>
 
 <div id="live"></div>
-<h3>予定</h3>
-<div id="upcoming"></div>
-<h3>アーカイブ</h3>
-<div id="archive"></div>
 </div>
 </div>
 
 <!-- テロップ -->
 <div class="ticker">
 <div class="ticker-text">
-★☆★ NEW!! ★☆★ めぽるーむへようこそ！！！ ★☆★
+★☆★ めぽるーむへようこそ！！！ ★☆★
 </div>
 </div>
 
@@ -226,14 +196,14 @@ MepoOS Loading...
 <div onclick="openWin(ytWin)">配信</div>
 </div>
 
-<!-- ★ カイル風アシスタント常時表示ウィンドウ -->
-<div class="assist">
-  <div class="titlebar">カイル（アシスタント）</div>
-  <div class="content">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Cartoon_dolphin.png/240px-Cartoon_dolphin.png" width="100%">
-    <p>こんにちは！何かお手伝いできることある？</p>
-    <p><a href="https://www.youtube.com/" target="_blank">▶ YouTubeへ</a></p>
-  </div>
+<!-- ★ 常時アシスタント -->
+<div class="assist" id="assistWin">
+<div class="titlebar">カイル</div>
+<div class="content">
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Cartoon_dolphin.png/240px-Cartoon_dolphin.png">
+<p>やあ！クリックして遊んでね</p>
+<a href="https://www.youtube.com/" target="_blank">▶ YouTube</a>
+</div>
 </div>
 
 </div>
@@ -241,10 +211,12 @@ MepoOS Loading...
 <script>
 setTimeout(()=>{boot.style.display="none";desktop.style.display="block";},1500);
 
+/* ウィンドウ操作 */
 let topZ=1;
 function openWin(el){el.style.display="block";el.style.zIndex=++topZ;}
 function closeWin(el){el.style.display="none";}
 
+/* スタート */
 function toggleStart(){
  startMenu.style.display = startMenu.style.display==="block"?"none":"block";
 }
@@ -252,68 +224,42 @@ function toggleStart(){
 /* 時計 */
 setInterval(()=>clock.innerHTML=new Date().toLocaleTimeString(),1000);
 
-/* YouTube */
-const API_KEY="ここにAPIキー";
-const CHANNEL_ID="UCmUlzug_w0WqRdTsEMJHjFw";
-
-let currentVideo=null,isMini=false,isMuted=false,notified=false;
-
-async function loadYT(type,target){
- const res=await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL_ID}&eventType=${type}&type=video&key=${API_KEY}`);
- const data=await res.json();
- let html="";
-
- if(data.items && data.items.length){
-  if(type==="live"){
-    liveLabel.innerHTML="🔴 LIVE中！";
-    liveLabel.classList.add("live-on");
-    ytTitle.innerText="🔴 配信中";
-
-    if(!notified){notifyLive();notified=true;}
-    playVideo(data.items[0].id.videoId);
-  }
-
-  data.items.forEach(v=>{
-    html+=`<div onclick="playVideo('${v.id.videoId}')">
-    <img src="${v.snippet.thumbnails.medium.url}" width="200"><br>
-    ${v.snippet.title}</div><hr>`;
-  });
- }
-
- document.getElementById(target).innerHTML=html||"なし";
-}
-
+/* YouTube（APIなしでも動く） */
 function playVideo(id){
- currentVideo=id;
- player.innerHTML=`<iframe id="ytframe" width="100%" height="260"
- src="https://www.youtube.com/embed/${id}?autoplay=1&enablejsapi=1"></iframe>`;
+ player.innerHTML=`<iframe width="100%" height="260"
+ src="https://www.youtube.com/embed/${id}?autoplay=1&mute=1"></iframe>`;
 }
 
+/* テスト用動画 */
+playVideo("dQw4w9WgXcQ");
+
+/* ミニ */
 function toggleMini(){
- if(!currentVideo)return;
  ytWin.classList.toggle("mini");
 }
 
+/* 停止 */
 function stopVideo(){player.innerHTML="";}
 
-function muteVideo(){
- let f=document.getElementById("ytframe");
- if(!f)return;
- f.contentWindow.postMessage(JSON.stringify({event:"command",func:isMuted?"unMute":"mute"}),"*");
- isMuted=!isMuted;
-}
+/* ドラッグ */
+document.querySelectorAll(".titlebar").forEach(bar=>{
+ let el=bar.parentElement;
+ let offsetX,offsetY,isDown=false;
 
-function notifyLive(){
- let n=document.createElement("div");
- n.innerText="🔴 配信開始！";
- Object.assign(n.style,{position:"fixed",bottom:"60px",right:"10px",background:"#000",color:"lime",padding:"10px",zIndex:9999});
- document.body.appendChild(n);
- setTimeout(()=>n.remove(),4000);
-}
+ bar.onmousedown=e=>{
+  isDown=true;
+  offsetX=e.clientX-el.offsetLeft;
+  offsetY=e.clientY-el.offsetTop;
+ };
 
-loadYT("live","live");
-loadYT("upcoming","upcoming");
-loadYT("completed","archive");
+ document.onmousemove=e=>{
+  if(!isDown)return;
+  el.style.left=e.clientX-offsetX+"px";
+  el.style.top=e.clientY-offsetY+"px";
+ };
+
+ document.onmouseup=()=>isDown=false;
+});
 </script>
 
 </body>
