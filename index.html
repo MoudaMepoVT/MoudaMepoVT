@@ -145,8 +145,10 @@ MepoOS Loading...
 <div class="content">
 <h3 id="liveLabel">確認中...</h3>
 <div id="player"></div>
+</div>
 
-<hr>
+<div class="resizer"></div>
+</div>
 
 <h3>🔴 LIVE</h3>
 <div id="live"></div>
@@ -303,6 +305,13 @@ loadYT("completed","archive");
 setInterval(checkLive,30000);
 checkLive();
 </script>
+
+  document.addEventListener("mousemove",e=>{
+  if(drag){
+    win.style.left=e.clientX-ox+"px";
+    win.style.top=e.clientY-oy+"px";
+  }
+});
 
 </body>
 </html>
