@@ -8,10 +8,21 @@
 *{box-sizing:border-box;}
 body{margin:0;font-family:"MS UI Gothic";font-size:18px;}
 
+/* 背景レイヤー（立ち絵） */
+#bgLayer{
+  position:fixed;
+  inset:0;
+  background:url("https://via.placeholder.com/500x700") no-repeat right bottom;
+  background-size:contain;
+  pointer-events:none;
+  z-index:0;
+}
+
 .desktop-screen{
   display:none;
   height:100vh;
-  background: linear-gradient(to bottom,#87cefa,#b0e0ff,#e0ffff);
+  position:relative;
+  z-index:1;
 }
 
 /* アイコン */
@@ -30,13 +41,29 @@ body{margin:0;font-family:"MS UI Gothic";font-size:18px;}
   display:none;
 }
 
+/* タイトルバー */
 .titlebar{
   background:linear-gradient(to right,#000080,#1084d0);
   color:white;
-  padding:5px;
+  padding:4px;
   display:flex;
   justify-content:space-between;
+  align-items:center;
   cursor:move;
+}
+
+.win-btns button{
+  width:22px;
+  height:22px;
+  margin-left:2px;
+  border:1px solid #000;
+  background:#c0c0c0;
+  cursor:pointer;
+}
+
+.win-btns button:active{
+  border-top:1px solid #404040;
+  border-left:1px solid #404040;
 }
 
 .content{
@@ -51,7 +78,7 @@ body{margin:0;font-family:"MS UI Gothic";font-size:18px;}
   position:fixed;
   right:20px;
   bottom:90px;
-  width:260px;
+  width:280px;
   background:#c0c0c0;
   border:2px solid #fff;
   border-right-color:#404040;
@@ -61,14 +88,16 @@ body{margin:0;font-family:"MS UI Gothic";font-size:18px;}
 
 .notice .content{padding:8px;}
 
-/* カード */
 .notice-card{
-  border:2px solid #fff;
-  border-right-color:#404040;
-  border-bottom-color:#404040;
   background:white;
-  padding:5px;
-  font-size:14px;
+  padding:6px;
+  border:2px solid #000;
+  animation:slideIn 0.3s ease;
+}
+
+@keyframes slideIn{
+  from{transform:translateY(20px);opacity:0;}
+  to{transform:translateY(0);opacity:1;}
 }
 
 .notice-card img{width:100%;}
@@ -78,23 +107,26 @@ body{margin:0;font-family:"MS UI Gothic";font-size:18px;}
   font-weight:bold;
 }
 
-/* 🔴 点滅 */
+/* 点滅 */
 .blink{
   animation:blinkAnim 1s infinite;
 }
 @keyframes blinkAnim{
-  0%{opacity:1;}
   50%{opacity:0;}
-  100%{opacity:1;}
 }
 
 /* タスクバー */
 .taskbar{
-  position:fixed;bottom:0;width:100%;height:50px;
-  background:#c0c0c0;display:flex;align-items:center;
+  position:fixed;
+  bottom:0;
+  width:100%;
+  height:50px;
+  background:#c0c0c0;
+  display:flex;
+  align-items:center;
 }
 
-.task-btn,.link-btn{
+.task-btn{
   margin-left:5px;
   padding:5px;
   border:2px solid #fff;
@@ -117,6 +149,8 @@ body{margin:0;font-family:"MS UI Gothic";font-size:18px;}
 
 <body>
 
+<div id="bgLayer"></div>
+
 <div id="boot" style="position:fixed;inset:0;background:black;color:lime;display:flex;align-items:center;justify-content:center;">
 MepoOS Loading...
 </div>
@@ -127,9 +161,17 @@ MepoOS Loading...
 <div class="icon" ondblclick="openWin(ytWin)">📺<br>配信</div>
 </div>
 
-<!-- 配信 -->
+<!-- 配信ウィンドウ -->
 <div class="window" id="ytWin" style="top:120px;left:200px;">
-<div class="titlebar">配信</div>
+<div class="titlebar">
+<span>配信</span>
+<div class="win-btns">
+<button onclick="minWin(this)">＿</button>
+<button onclick="maxWin(this)">□</button>
+<button onclick="closeWin(this)">×</button>
+</div>
+</div>
+
 <div class="content">
 <h3 id="liveLabel">確認中...</h3>
 <div id="player"></div>
@@ -151,10 +193,7 @@ MepoOS Loading...
 <!-- タスクバー -->
 <div class="taskbar">
 <div class="task-btn" onclick="openWin(ytWin)">配信</div>
-
-<!-- ★ここが追加 -->
 <div id="taskLive" class="live-indicator"></div>
-
 <div class="clock" id="clock"></div>
 </div>
 
@@ -174,9 +213,41 @@ setInterval(()=>{
 
 /* ウィンドウ */
 let topZ=1;
+
 function openWin(win){
  win.style.display="block";
  win.style.zIndex=++topZ;
+}
+
+function closeWin(btn){
+ btn.closest(".window").style.display="none";
+}
+
+function minWin(btn){
+ btn.closest(".window").style.display="none";
+}
+
+function maxWin(btn){
+ const win=btn.closest(".window");
+
+ if(!win.classList.contains("max")){
+   win.dataset.top=win.style.top;
+   win.dataset.left=win.style.left;
+   win.dataset.w=win.style.width;
+   win.dataset.h=win.style.height;
+
+   win.style.top="0";
+   win.style.left="0";
+   win.style.width="100%";
+   win.style.height="calc(100vh - 50px)";
+   win.classList.add("max");
+ }else{
+   win.style.top=win.dataset.top;
+   win.style.left=win.dataset.left;
+   win.style.width=win.dataset.w;
+   win.style.height=win.dataset.h;
+   win.classList.remove("max");
+ }
 }
 
 /* =====================
@@ -204,7 +275,7 @@ function updateNoticeUI(data){
    <div class="notice-live blink">🔴 LIVE中</div>
    <img src="${item.snippet.thumbnails.medium.url}">
    <div>${item.snippet.title}</div>
-   <a href="https://youtube.com/watch?v=${id}" target="_blank">▶見る</a>
+   <a href="https://youtube.com/watch?v=${id}" target="_blank">▶ 今すぐ見る</a>
  </div>`;
 }
 
