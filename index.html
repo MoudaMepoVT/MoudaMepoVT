@@ -12,7 +12,7 @@ body{
   font-size:14px;
 }
 
-/* 背景（レトロ＋立ち絵） */
+/* 背景 */
 #bgLayer{
   position:fixed;
   inset:0;
@@ -24,21 +24,32 @@ body{
   pointer-events:none;
 }
 
-.desktop-screen{
+/* 👻 黒い影 */
+#shadow{
+  position:fixed;
+  width:80px;
+  height:80px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(0,0,0,0.6) 0%, transparent 70%);
+  pointer-events:none;
+  transform:translate(-50%,-50%);
+  z-index:9997;
   display:none;
-  height:100vh;
-  position:relative;
-  z-index:1;
 }
 
-/* アイコン */
-.desktop{position:absolute;top:20px;left:20px;}
-.icon{
-  width:100px;
-  text-align:center;
-  color:white;
-  margin-bottom:20px;
-  cursor:pointer;
+/* 🌙 ホラー状態 */
+.horror{
+  filter:brightness(0.7) contrast(1.3);
+}
+
+/* ノイズ */
+.noise{
+  position:fixed;
+  inset:0;
+  background:url("https://www.transparenttextures.com/patterns/asfalt-dark.png");
+  opacity:0.15;
+  pointer-events:none;
+  z-index:9996;
 }
 
 /* ウィンドウ */
@@ -61,26 +72,12 @@ body{
   padding:4px;
   display:flex;
   justify-content:space-between;
-  align-items:center;
   cursor:move;
-  font-weight:bold;
 }
 
-/* ボタン */
 .win-btns button{
-  width:22px;
-  height:22px;
+  width:22px;height:22px;
   margin-left:2px;
-  border:2px solid #fff;
-  border-right-color:#404040;
-  border-bottom-color:#404040;
-  background:#c0c0c0;
-  cursor:pointer;
-}
-.win-btns button:active{
-  border:2px solid #404040;
-  border-right-color:#fff;
-  border-bottom-color:#fff;
 }
 
 .content{
@@ -101,39 +98,16 @@ body{
   border-right-color:#404040;
   border-bottom-color:#404040;
   z-index:9999;
-  box-shadow:3px 3px 0 #000;
 }
-
-.notice .content{padding:8px;}
 
 .notice-card{
   background:white;
   padding:6px;
-  border:2px solid #fff;
-  border-right-color:#404040;
-  border-bottom-color:#404040;
-  animation:popup 0.25s ease;
-}
-
-@keyframes popup{
-  from{transform:translateY(15px);opacity:0;}
-  to{transform:translateY(0);opacity:1;}
-}
-
-.notice-card img{width:100%;}
-
-.notice-live{
-  color:red;
-  font-weight:bold;
 }
 
 /* 点滅 */
-.blink{
-  animation:blink 1s infinite;
-}
-@keyframes blink{
-  50%{opacity:0;}
-}
+.blink{animation:blink 1s infinite;}
+@keyframes blink{50%{opacity:0;}}
 
 /* タスクバー */
 .taskbar{
@@ -144,32 +118,9 @@ body{
   background:#c0c0c0;
   display:flex;
   align-items:center;
-  border-top:2px solid #fff;
 }
 
-/* スタート */
-.start-btn{
-  margin-left:5px;
-  padding:5px 10px;
-  font-weight:bold;
-  border:2px solid #fff;
-  border-right-color:#404040;
-  border-bottom-color:#404040;
-  cursor:pointer;
-}
-.start-btn:active{
-  border:2px solid #404040;
-  border-right-color:#fff;
-  border-bottom-color:#fff;
-}
-
-/* タスク */
-.task-btn{
-  margin-left:5px;
-  padding:5px;
-  border:2px solid #fff;
-  cursor:pointer;
-}
+.task-btn{margin-left:5px;padding:5px;}
 
 .live-indicator{
   margin-left:10px;
@@ -177,59 +128,32 @@ body{
   font-weight:bold;
 }
 
-.clock{
-  margin-left:auto;
-  padding:5px;
-}
+.clock{margin-left:auto;padding:5px;}
 </style>
 </head>
 
 <body>
 
 <div id="bgLayer"></div>
+<div id="shadow"></div>
+<div id="noiseLayer"></div>
 
-<div id="boot" style="position:fixed;inset:0;background:black;color:lime;display:flex;align-items:center;justify-content:center;">
-MepoOS Loading...
-</div>
+<div id="desktop">
 
-<div id="desktop" class="desktop-screen">
-
-<div class="desktop">
-<div class="icon" ondblclick="openWin(ytWin)">📺<br>配信</div>
-</div>
-
-<!-- 配信 -->
 <div class="window" id="ytWin" style="top:120px;left:200px;">
-<div class="titlebar">
-<span>配信</span>
-<div class="win-btns">
-<button onclick="minWin(this)">＿</button>
-<button onclick="maxWin(this)">□</button>
-<button onclick="closeWin(this)">×</button>
-</div>
-</div>
-
+<div class="titlebar">配信</div>
 <div class="content">
 <h3 id="liveLabel">確認中...</h3>
 <div id="player"></div>
-
-<h3>🔴 LIVE</h3>
-<div id="live"></div>
-
-<h3>⏰ 予定</h3>
-<div id="upcoming"></div>
 </div>
 </div>
 
-<!-- お知らせ -->
 <div class="notice">
 <div class="titlebar">📢 お知らせ</div>
-<div class="content" id="noticeContent">読み込み中...</div>
+<div id="noticeContent"></div>
 </div>
 
-<!-- タスクバー -->
 <div class="taskbar">
-<div class="start-btn">🟩 Start</div>
 <div class="task-btn" onclick="openWin(ytWin)">配信</div>
 <div id="taskLive" class="live-indicator"></div>
 <div class="clock" id="clock"></div>
@@ -238,12 +162,6 @@ MepoOS Loading...
 </div>
 
 <script>
-/* 起動 */
-setTimeout(()=>{
- boot.style.display="none";
- desktop.style.display="block";
-},1500);
-
 /* 時計 */
 setInterval(()=>{
  clock.innerHTML=new Date().toLocaleTimeString();
@@ -251,55 +169,16 @@ setInterval(()=>{
 
 /* ウィンドウ */
 let topZ=1;
-
 function openWin(win){
  win.style.display="block";
  win.style.zIndex=++topZ;
 }
 
-function closeWin(btn){
- btn.closest(".window").style.display="none";
-}
-
-function minWin(btn){
- btn.closest(".window").style.display="none";
-}
-
-function maxWin(btn){
- const win=btn.closest(".window");
-
- if(!win.classList.contains("max")){
-   win.dataset.top=win.style.top;
-   win.dataset.left=win.style.left;
-   win.dataset.w=win.style.width;
-   win.dataset.h=win.style.height;
-
-   win.style.top="0";
-   win.style.left="0";
-   win.style.width="100%";
-   win.style.height="calc(100vh - 50px)";
-   win.classList.add("max");
- }else{
-   win.style.top=win.dataset.top;
-   win.style.left=win.dataset.left;
-   win.style.width=win.dataset.w;
-   win.style.height=win.dataset.h;
-   win.classList.remove("max");
- }
-}
-
-/* 前面に持ってくる */
-document.querySelectorAll(".window").forEach(win=>{
- win.addEventListener("mousedown",()=>{
-  win.style.zIndex=++topZ;
- });
-});
-
-/* ===================== YouTube ===================== */
-const API_KEY="AIzaSyCWEQ1J0mEq8EFo7Cw5UYHpGRhYbC0Tu88";
+/* ================= YouTube ================= */
+const API_KEY="YOUR_KEY";
 const CHANNEL_ID="UCmUlzug_w0WqRdTsEMJHjFw";
 
-let prevLiveId=null;
+let isLive=false;
 
 /* お知らせ */
 function updateNoticeUI(data){
@@ -315,37 +194,13 @@ function updateNoticeUI(data){
 
  box.innerHTML=`
  <div class="notice-card">
-   <div class="notice-live blink">🔴 LIVE中</div>
+   <div class="blink">🔴 LIVE中</div>
    <img src="${item.snippet.thumbnails.medium.url}">
    <div>${item.snippet.title}</div>
-   <a href="https://youtube.com/watch?v=${id}" target="_blank">▶ 今すぐ見る</a>
  </div>`;
 }
 
-/* 一覧 */
-async function loadYT(type,target){
- const res=await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL_ID}&eventType=${type}&type=video&key=${API_KEY}`);
- const data=await res.json();
-
- let html="";
- if(data.items){
-  data.items.forEach(i=>{
-   html+=`
-   <div>
-    <img src="${i.snippet.thumbnails.medium.url}" width="200"><br>
-    ${i.snippet.title}<br>
-   </div><hr>`;
-  });
- }
-
- document.getElementById(target).innerHTML=html;
-
- if(type==="live"){
-  updateNoticeUI(data.items);
- }
-}
-
-/* LIVE監視 */
+/* LIVEチェック */
 async function checkLive(){
  const r=await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL_ID}&eventType=live&type=video&key=${API_KEY}`);
  const d=await r.json();
@@ -353,35 +208,67 @@ async function checkLive(){
  const task=document.getElementById("taskLive");
 
  if(d.items && d.items.length){
-  const id=d.items[0].id.videoId;
-
-  document.getElementById("liveLabel").innerHTML="<span class='blink'>🔴 LIVE中</span>";
-
-  document.getElementById("player").innerHTML=
-  `<iframe width="100%" height="260"
-  src="https://www.youtube.com/embed/${id}?autoplay=1&mute=1"></iframe>`;
+  isLive=true;
+  document.body.classList.remove("horror");
+  document.getElementById("shadow").style.display="none";
+  document.getElementById("noiseLayer").classList.remove("noise");
 
   task.innerHTML="<span class='blink'>🔴 LIVE</span>";
-
-  if(prevLiveId!==id){
-   prevLiveId=id;
-   updateNoticeUI(d.items);
-  }
+  updateNoticeUI(d.items);
 
  }else{
-  document.getElementById("liveLabel").innerText="配信なし";
+  isLive=false;
+  document.body.classList.add("horror");
+  document.getElementById("shadow").style.display="block";
+  document.getElementById("noiseLayer").classList.add("noise");
+
   task.innerHTML="";
-  prevLiveId=null;
   updateNoticeUI([]);
  }
 }
 
-/* 初期 */
-loadYT("live","live");
-loadYT("upcoming","upcoming");
-
-setInterval(checkLive,30000);
+setInterval(checkLive,10000);
 checkLive();
+
+/* ================= ホラー演出 ================= */
+
+/* 👤 マウス影 */
+document.addEventListener("mousemove",e=>{
+ if(!isLive){
+   const s=document.getElementById("shadow");
+   s.style.left=e.clientX+"px";
+   s.style.top=e.clientY+"px";
+ }
+});
+
+/* 📺 ウィンドウずれ */
+setInterval(()=>{
+ if(!isLive){
+   document.querySelectorAll(".window").forEach(w=>{
+     const x=Math.random()<0.5?1:-1;
+     const y=Math.random()<0.5?1:-1;
+     w.style.left=(w.offsetLeft+x)+"px";
+     w.style.top=(w.offsetTop+y)+"px";
+   });
+ }
+},300);
+
+/* 🖱 クリックで一時解除 */
+document.addEventListener("click",()=>{
+ if(!isLive){
+   document.body.classList.remove("horror");
+   document.getElementById("shadow").style.display="none";
+   document.getElementById("noiseLayer").classList.remove("noise");
+
+   setTimeout(()=>{
+     if(!isLive){
+       document.body.classList.add("horror");
+       document.getElementById("shadow").style.display="block";
+       document.getElementById("noiseLayer").classList.add("noise");
+     }
+   },2000);
+ }
+});
 </script>
 
 </body>
