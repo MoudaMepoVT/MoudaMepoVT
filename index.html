@@ -167,12 +167,39 @@ MepoOS Loading...
 <!-- お知らせ -->
 <div class="notice" id="noticeWin">
 <div class="titlebar">📢 お知らせ</div>
-<div class="content">
-ようこそ めぽるーむへ！
+<div class="content" id="noticeContent">
+読み込み中...
+</div>
+</div>
 
- /* YouTube */
+<script>
+/* YouTube */
 const API_KEY = "AIzaSyDQq60pEFFz8KhlaF-GqIebY9C069qaT1s";
 const CHANNEL_ID = "UCmUlzug_w0WqRdTsEMJHjFw";
+
+/* ★お知らせカード */
+function updateNoticeUI(liveData){
+  const box = document.getElementById("noticeContent");
+
+  if(!liveData || liveData.length === 0){
+    box.innerHTML = "<div class='notice-card'>配信なし</div>";
+    return;
+  }
+
+  const item = liveData[0];
+  const title = item.snippet.title;
+  const thumb = item.snippet.thumbnails.medium.url;
+  const id = item.id.videoId;
+
+  box.innerHTML = `
+    <div class="notice-card">
+      <div class="notice-live">🔴 LIVE中</div>
+      <img src="${thumb}">
+      <div>${title}</div>
+      <a href="https://youtube.com/watch?v=${id}" target="_blank">▶ 見る</a>
+    </div>
+  `;
+}
 
 async function loadYT(type,target){
  try{
@@ -198,6 +225,11 @@ async function loadYT(type,target){
   }
 
   document.getElementById(target).innerHTML=html;
+
+  if(type === "live"){
+    updateNoticeUI(data.items);
+  }
+
  }catch{
   document.getElementById(target).innerHTML="取得失敗";
  }
@@ -215,16 +247,13 @@ async function checkLive(){
     src="https://www.youtube.com/embed/${id}?autoplay=1&mute=1"></iframe>`;
 
     liveLabel.innerText="🔴 LIVE中";
-
-    noticeWin.querySelector(".content").innerHTML=
-    "🔴 配信中！<br><a href='https://youtube.com/watch?v="+id+"' target='_blank'>今すぐ見る</a>";
-
   }else{
     liveLabel.innerText="配信なし";
   }
  }catch{}
 }
 
+/* 初期読み込み */
 loadYT("live","live");
 loadYT("upcoming","upcoming");
 loadYT("completed","archive");
@@ -232,7 +261,6 @@ loadYT("completed","archive");
 setInterval(checkLive,30000);
 checkLive();
 </script>
-
   document.addEventListener("mousemove",e=>{
   if(drag){
     win.style.left=e.clientX-ox+"px";
