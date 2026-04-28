@@ -46,7 +46,7 @@ body{margin:0;font-family:"MS UI Gothic";font-size:18px;}
   padding:10px;
 }
 
-/* お知らせカード */
+/* お知らせ */
 .notice{
   position:fixed;
   right:20px;
@@ -59,9 +59,7 @@ body{margin:0;font-family:"MS UI Gothic";font-size:18px;}
   z-index:9999;
 }
 
-.notice .content{
-  padding:8px;
-}
+.notice .content{padding:8px;}
 
 .notice-card{
   background:white;
@@ -70,9 +68,7 @@ body{margin:0;font-family:"MS UI Gothic";font-size:18px;}
   font-size:12px;
 }
 
-.notice-card img{
-  width:100%;
-}
+.notice-card img{width:100%;}
 
 .notice-live{
   color:red;
@@ -86,9 +82,7 @@ body{margin:0;font-family:"MS UI Gothic";font-size:18px;}
   padding:5px;
 }
 
-.yt-card img{
-  width:100%;
-}
+.yt-card img{width:100%;}
 
 /* タスクバー */
 .taskbar{
@@ -96,12 +90,69 @@ body{margin:0;font-family:"MS UI Gothic";font-size:18px;}
   background:#c0c0c0;display:flex;align-items:center;
 }
 
-.task-btn{margin-left:5px;padding:5px;border:2px solid #fff;cursor:pointer;}
+.task-btn{
+  margin-left:5px;
+  padding:5px;
+  border:2px solid #fff;
+  cursor:pointer;
+}
 
 .clock{
   margin-left:auto;
   padding:5px;
   font-size:14px;
+}
+
+/* ===== トースト通知 ===== */
+.toast{
+  position:fixed;
+  right:20px;
+  bottom:20px;
+  width:260px;
+  background:#c0c0c0;
+  border:2px solid #fff;
+  border-right-color:#404040;
+  border-bottom-color:#404040;
+  transform:translateY(120%);
+  opacity:0;
+  z-index:10000;
+}
+
+.toast-inner{
+  background:white;
+  padding:8px;
+  font-size:12px;
+}
+
+.toast img{width:100%;}
+
+.toast.show{animation:toastIn 0.4s forwards;}
+.toast.hide{animation:toastOut 0.4s forwards;}
+
+@keyframes toastIn{
+  0%{transform:translateY(120%);opacity:0;}
+  60%{transform:translateY(-10px);opacity:1;}
+  100%{transform:translateY(0);opacity:1;}
+}
+
+@keyframes toastOut{
+  to{transform:translateY(120%);opacity:0;}
+}
+
+/* 点滅 */
+.blink{
+  animation:blinkAnim 1s infinite;
+}
+
+@keyframes blinkAnim{
+  0%,100%{opacity:1;}
+  50%{opacity:0.2;}
+}
+
+.task-live{
+  color:red;
+  font-weight:bold;
+  margin-left:10px;
 }
 </style>
 </head>
@@ -142,9 +193,15 @@ MepoOS Loading...
 <!-- タスクバー -->
 <div class="taskbar">
 <div class="task-btn" onclick="openWin(ytWin)">配信</div>
+<div id="taskLive" class="task-live"></div>
 <div class="clock" id="clock"></div>
 </div>
 
+</div>
+
+<!-- トースト -->
+<div id="toast" class="toast">
+  <div class="toast-inner" id="toastContent"></div>
 </div>
 
 <script>
@@ -166,50 +223,61 @@ function openWin(win){
  win.style.zIndex=++topZ;
 }
 
-/* =========================
-   YouTube
-========================= */
+/* YouTube */
 const API_KEY = "AIzaSyCWEQ1J0mEq8EFo7Cw5UYHpGRhYbC0Tu88";
 const CHANNEL_ID = "UCmUlzug_w0WqRdTsEMJHjFw";
 
 let prevLiveId=null;
 
-/* カード生成 */
+/* カード */
 function makeCard(item){
- const title=item.snippet.title;
- const thumb=item.snippet.thumbnails.medium.url;
- const id=item.id.videoId;
-
  return `
  <div class="yt-card">
-   <img src="${thumb}">
-   <div>${title}</div>
-   <a href="https://youtube.com/watch?v=${id}" target="_blank">▶見る</a>
+   <img src="${item.snippet.thumbnails.medium.url}">
+   <div>${item.snippet.title}</div>
+   <a href="https://youtube.com/watch?v=${item.id.videoId}" target="_blank">▶見る</a>
  </div>`;
 }
 
-/* お知らせUI */
-function updateNoticeUI(liveData){
+/* お知らせ */
+function updateNoticeUI(data){
  const box=document.getElementById("noticeContent");
 
- if(!liveData || liveData.length===0){
+ if(!data || data.length===0){
    box.innerHTML="<div class='notice-card'>配信なし</div>";
    return;
  }
 
- const item=liveData[0];
- const id=item.id.videoId;
-
+ const item=data[0];
  box.innerHTML=`
  <div class="notice-card">
    <div class="notice-live">🔴 LIVE中</div>
    <img src="${item.snippet.thumbnails.medium.url}">
    <div>${item.snippet.title}</div>
-   <a href="https://youtube.com/watch?v=${id}" target="_blank">▶見る</a>
  </div>`;
 }
 
-/* 一覧取得 */
+/* トースト */
+function showToast(item){
+ const toast=document.getElementById("toast");
+ const box=document.getElementById("toastContent");
+
+ box.innerHTML=`
+ <div style="color:red;font-weight:bold;">🔴 配信開始！</div>
+ <img src="${item.snippet.thumbnails.medium.url}">
+ <div>${item.snippet.title}</div>
+ `;
+
+ toast.classList.remove("hide");
+ toast.classList.add("show");
+
+ setTimeout(()=>{
+   toast.classList.remove("show");
+   toast.classList.add("hide");
+ },5000);
+}
+
+/* 一覧 */
 async function loadYT(type,target){
  const res=await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL_ID}&eventType=${type}&type=video&key=${API_KEY}`);
  const data=await res.json();
@@ -226,30 +294,38 @@ async function loadYT(type,target){
  }
 }
 
-/* LIVE監視（ポップアップ付き） */
+/* LIVE監視 */
 async function checkLive(){
  const r=await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL_ID}&eventType=live&type=video&key=${API_KEY}`);
  const d=await r.json();
 
  if(d.items && d.items.length){
-   const id=d.items[0].id.videoId;
+   const item=d.items[0];
+   const id=item.id.videoId;
 
-   document.getElementById("liveLabel").innerText="🔴 LIVE中";
+   liveLabel.innerText="🔴 LIVE中";
+   liveLabel.classList.add("blink");
 
-   document.getElementById("player").innerHTML=
-   `<iframe width="100%" height="260"
+   document.getElementById("taskLive").innerText="🔴 LIVE";
+   document.getElementById("taskLive").classList.add("blink");
+
+   player.innerHTML=`
+   <iframe width="100%" height="260"
    src="https://www.youtube.com/embed/${id}?autoplay=1&mute=1"></iframe>`;
 
-   /* ★初回だけポップアップ */
    if(prevLiveId!==id){
      prevLiveId=id;
-
-     alert("🔴 配信開始！");
+     showToast(item);
      updateNoticeUI(d.items);
    }
 
  }else{
-   document.getElementById("liveLabel").innerText="配信なし";
+   liveLabel.innerText="配信なし";
+   liveLabel.classList.remove("blink");
+
+   document.getElementById("taskLive").innerText="";
+   document.getElementById("taskLive").classList.remove("blink");
+
    prevLiveId=null;
    updateNoticeUI([]);
  }
