@@ -144,23 +144,64 @@ MepoOS Loading...
 <div class="resizer"></div>
 </div>
 
-<!-- YouTube -->
-<div class="window" id="ytWin" style="top:120px;left:500px;">
-<div class="titlebar">
-<span id="ytTitle">配信</span>
-<div>
-<button onclick="minWin(this)">＿</button>
-<button onclick="maxWin(this)">□</button>
-<button onclick="closeWin(this)">×</button>
-</div>
-</div>
-<div class="content">
-<h3 id="liveLabel">LIVE</h3>
-<div id="player"></div>
+<!-- 🔴 配信 -->
+<h2>★配信情報★</h2>
+
+<h3>🔴 LIVE中</h3>
 <div id="live"></div>
-</div>
-<div class="resizer"></div>
-</div>
+
+<h3>⏰ 配信予定</h3>
+<div id="upcoming"></div>
+
+<h3>📼 アーカイブ</h3>
+<div id="archive"></div>
+
+<script>
+const API_KEY = "AIzaSyDQq60pEFFz8KhlaF-GqIebY9C069qaT1s";
+const CHANNEL_ID = "UCmUlzug_w0WqRdTsEMJHjFw";
+
+async function loadYT(type, target) {
+  try {
+    const res = await fetch(
+      `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL_ID}&eventType=${type}&type=video&key=${API_KEY}`
+    );
+    const data = await res.json();
+
+    let html = "";
+
+    if (!data.items || data.items.length === 0) {
+      html = "なし";
+    } else {
+      data.items.forEach(item => {
+        const title = item.snippet.title;
+        const thumb = item.snippet.thumbnails.medium.url;
+        const videoId = item.id.videoId;
+
+        html += `
+          <div>
+            ${type === "live" ? '<p class="live">🔴 LIVE中！！！</p>' : ""}
+            <img src="${thumb}" width="200"><br>
+            ${title}<br>
+            <a href="https://youtube.com/watch?v=${videoId}" target="_blank">
+            ▶ 見に行く！
+            </a>
+          </div><hr>
+        `;
+      });
+    }
+
+    document.getElementById(target).innerHTML = html;
+  } catch(e) {
+    document.getElementById(target).innerHTML = "読み込み失敗";
+  }
+}
+
+loadYT("live", "live");
+loadYT("upcoming", "upcoming");
+loadYT("completed", "archive");
+</script>
+
+<hr>
 
 <!-- ★ お知らせ -->
 <div class="notice" id="noticeWin">
