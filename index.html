@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -53,20 +52,14 @@ body{margin:0;font-family:"MS UI Gothic";font-size:18px;}
   right:20px;
   bottom:90px;
   width:260px;
-  height:200px;
   background:#c0c0c0;
   border:2px solid #fff;
   border-right-color:#404040;
   border-bottom-color:#404040;
   z-index:9999;
-  display:flex;
-  flex-direction:column;
 }
 
-.notice .content{
-  flex:1;
-  overflow:auto;
-}
+.notice .content{padding:8px;}
 
 /* カード */
 .notice-card{
@@ -78,13 +71,21 @@ body{margin:0;font-family:"MS UI Gothic";font-size:18px;}
   font-size:14px;
 }
 
-.notice-card img{
-  width:100%;
-}
+.notice-card img{width:100%;}
 
 .notice-live{
   color:red;
   font-weight:bold;
+}
+
+/* 🔴 点滅 */
+.blink{
+  animation:blinkAnim 1s infinite;
+}
+@keyframes blinkAnim{
+  0%{opacity:1;}
+  50%{opacity:0;}
+  100%{opacity:1;}
 }
 
 /* タスクバー */
@@ -100,94 +101,63 @@ body{margin:0;font-family:"MS UI Gothic";font-size:18px;}
   cursor:pointer;
 }
 
+.live-indicator{
+  margin-left:10px;
+  color:red;
+  font-weight:bold;
+}
+
 .clock{
   margin-left:auto;
   padding:5px;
-  text-align:right;
   font-size:14px;
-}
-
-.maximized{
-  top:0!important;left:0!important;
-  width:100%!important;
-  height:calc(100vh - 50px)!important;
 }
 </style>
 </head>
 
 <body>
 
-<!-- 起動 -->
 <div id="boot" style="position:fixed;inset:0;background:black;color:lime;display:flex;align-items:center;justify-content:center;">
 MepoOS Loading...
 </div>
 
 <div id="desktop" class="desktop-screen">
 
-<!-- アイコン -->
 <div class="desktop">
-<div class="icon" ondblclick="openWin(bbsWin)">📄<br>掲示板</div>
 <div class="icon" ondblclick="openWin(ytWin)">📺<br>配信</div>
 </div>
 
-<!-- BBS -->
-<div class="window" id="bbsWin" style="top:100px;left:100px;">
-<div class="titlebar">
-<span>掲示板</span>
-<div>
-<button onclick="minWin(this)">＿</button>
-<button onclick="maxWin(this)">□</button>
-<button onclick="closeWin(this)">×</button>
-</div>
-</div>
-<div class="content">掲示板だよ</div>
-</div>
-
-<!-- 配信ウィンドウ -->
+<!-- 配信 -->
 <div class="window" id="ytWin" style="top:120px;left:200px;">
-<div class="titlebar">
-<span>配信</span>
-<div>
-<button onclick="minWin(this)">＿</button>
-<button onclick="maxWin(this)">□</button>
-<button onclick="closeWin(this)">×</button>
-</div>
-</div>
-
+<div class="titlebar">配信</div>
 <div class="content">
 <h3 id="liveLabel">確認中...</h3>
 <div id="player"></div>
-</div>
-</div>
 
 <h3>🔴 LIVE</h3>
 <div id="live"></div>
 
 <h3>⏰ 予定</h3>
 <div id="upcoming"></div>
-
-<h3>📼 アーカイブ</h3>
-<div id="archive"></div>
-
+</div>
 </div>
 
 <!-- お知らせ -->
-<div class="notice" id="noticeWin">
+<div class="notice">
 <div class="titlebar">📢 お知らせ</div>
-<div class="content" id="noticeContent">
-読み込み中...
-</div>
+<div class="content" id="noticeContent">読み込み中...</div>
 </div>
 
 <!-- タスクバー -->
 <div class="taskbar">
-<div class="task-btn" onclick="openWin(bbsWin)">掲示板</div>
 <div class="task-btn" onclick="openWin(ytWin)">配信</div>
 
-<div class="link-btn" onclick="window.open('https://www.youtube.com/')">YouTube</div>
-<div class="link-btn" onclick="window.open('https://x.com/')">X</div>
+<!-- ★ここが追加 -->
+<div id="taskLive" class="live-indicator"></div>
 
 <div class="clock" id="clock"></div>
+</div>
+
 </div>
 
 <script>
@@ -198,141 +168,103 @@ setTimeout(()=>{
 },1500);
 
 /* 時計 */
-function updateClock(){
- const now=new Date();
- clock.innerHTML=now.toLocaleDateString()+"<br>"+now.toLocaleTimeString();
-}
-setInterval(updateClock,1000);
-updateClock();
+setInterval(()=>{
+ clock.innerHTML=new Date().toLocaleTimeString();
+},1000);
 
 /* ウィンドウ */
 let topZ=1;
-function openWin(win){win.style.display="block";win.style.zIndex=++topZ;}
-function closeWin(btn){btn.closest(".window").style.display="none";}
-function minWin(btn){btn.closest(".window").style.display="none";}
+function openWin(win){
+ win.style.display="block";
+ win.style.zIndex=++topZ;
+}
 
-function maxWin(btn){
- const win=btn.closest(".window");
- if(!win.classList.contains("maximized")){
-  win.dataset.t=win.style.top;
-  win.dataset.l=win.style.left;
-  win.dataset.w=win.style.width;
-  win.dataset.h=win.style.height;
-  win.classList.add("maximized");
- }else{
-  win.classList.remove("maximized");
-  win.style.top=win.dataset.t;
-  win.style.left=win.dataset.l;
-  win.style.width=win.dataset.w;
-  win.style.height=win.dataset.h;
+/* =====================
+   YouTube
+===================== */
+const API_KEY="AIzaSyCWEQ1J0mEq8EFo7Cw5UYHpGRhYbC0Tu88";
+const CHANNEL_ID="UCmUlzug_w0WqRdTsEMJHjFw";
+
+let prevLiveId=null;
+
+/* お知らせ */
+function updateNoticeUI(data){
+ const box=document.getElementById("noticeContent");
+
+ if(!data || data.length===0){
+  box.innerHTML="<div class='notice-card'>配信なし</div>";
+  return;
  }
+
+ const item=data[0];
+ const id=item.id.videoId;
+
+ box.innerHTML=`
+ <div class="notice-card">
+   <div class="notice-live blink">🔴 LIVE中</div>
+   <img src="${item.snippet.thumbnails.medium.url}">
+   <div>${item.snippet.title}</div>
+   <a href="https://youtube.com/watch?v=${id}" target="_blank">▶見る</a>
+ </div>`;
 }
 
-/* ドラッグ */
-document.querySelectorAll(".window, .notice").forEach(win=>{
- const bar=win.querySelector(".titlebar");
- let drag=false,ox,oy;
-
- bar.addEventListener("mousedown",e=>{
-  drag=true;
-  ox=e.clientX-win.offsetLeft;
-  oy=e.clientY-win.offsetTop;
- });
-
- document.addEventListener("mousemove",e=>{
-  if(drag){
-    win.style.left=e.clientX-ox+"px";
-    win.style.top=e.clientY-oy+"px";
-  }
- });
-
- document.addEventListener("mouseup",()=>drag=false);
-});
-
-/* YouTube */
-const API_KEY = "AIzaSyCWEQ1J0mEq8EFo7Cw5UYHpGRhYbC0Tu88";
-const CHANNEL_ID = "UCmUlzug_w0WqRdTsEMJHjFw";
-
-/* お知らせUI */
-function updateNoticeUI(liveData){
-  const box = document.getElementById("noticeContent");
-
-  if(!liveData || liveData.length === 0){
-    box.innerHTML = "<div class='notice-card'>配信なし</div>";
-    return;
-  }
-
-  const item = liveData[0];
-  const title = item.snippet.title;
-  const thumb = item.snippet.thumbnails.medium.url;
-  const id = item.id.videoId;
-
-  box.innerHTML = `
-    <div class="notice-card">
-      <div class="notice-live">🔴 LIVE中</div>
-      <img src="${thumb}">
-      <div>${title}</div>
-      <a href="https://youtube.com/watch?v=${id}" target="_blank">▶ 見る</a>
-    </div>
-  `;
-}
-
+/* 一覧 */
 async function loadYT(type,target){
- try{
-  const res=await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL_ID}&eventType=${type}&type=video&key=${API_KEY}`);
-  const data=await res.json();
+ const res=await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL_ID}&eventType=${type}&type=video&key=${API_KEY}`);
+ const data=await res.json();
 
-  let html="";
-  if(!data.items||data.items.length===0){
-    html="なし";
-  }else{
-    data.items.forEach(item=>{
-      const title=item.snippet.title;
-      const thumb=item.snippet.thumbnails.medium.url;
-      const id=item.id.videoId;
+ let html="";
+ if(data.items){
+  data.items.forEach(i=>{
+   html+=`
+   <div>
+    <img src="${i.snippet.thumbnails.medium.url}" width="200"><br>
+    ${i.snippet.title}<br>
+   </div><hr>`;
+  });
+ }
 
-      html+=`
-      <div>
-        <img src="${thumb}" width="200"><br>
-        ${title}<br>
-        <a href="https://youtube.com/watch?v=${id}" target="_blank">▶見る</a>
-      </div><hr>`;
-    });
-  }
+ document.getElementById(target).innerHTML=html;
 
-  document.getElementById(target).innerHTML=html;
-
-  if(type === "live"){
-    updateNoticeUI(data.items);
-  }
-
- }catch{
-  document.getElementById(target).innerHTML="取得失敗";
+ if(type==="live"){
+  updateNoticeUI(data.items);
  }
 }
 
+/* LIVE監視 */
 async function checkLive(){
- try{
-  const r=await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL_ID}&eventType=live&type=video&key=${API_KEY}`);
-  const d=await r.json();
+ const r=await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL_ID}&eventType=live&type=video&key=${API_KEY}`);
+ const d=await r.json();
 
-  if(d.items&&d.items.length){
-    const id=d.items[0].id.videoId;
+ const task=document.getElementById("taskLive");
 
-    player.innerHTML=`<iframe width="100%" height="260"
-    src="https://www.youtube.com/embed/${id}?autoplay=1&mute=1"></iframe>`;
+ if(d.items && d.items.length){
+  const id=d.items[0].id.videoId;
 
-    liveLabel.innerText="🔴 LIVE中";
-  }else{
-    liveLabel.innerText="配信なし";
+  document.getElementById("liveLabel").innerHTML="<span class='blink'>🔴 LIVE中</span>";
+
+  document.getElementById("player").innerHTML=
+  `<iframe width="100%" height="260"
+  src="https://www.youtube.com/embed/${id}?autoplay=1&mute=1"></iframe>`;
+
+  task.innerHTML="<span class='blink'>🔴 LIVE</span>";
+
+  if(prevLiveId!==id){
+   prevLiveId=id;
+   updateNoticeUI(d.items);
   }
- }catch{}
+
+ }else{
+  document.getElementById("liveLabel").innerText="配信なし";
+  task.innerHTML="";
+  prevLiveId=null;
+  updateNoticeUI([]);
+ }
 }
 
-/* 初期読み込み */
+/* 初期 */
 loadYT("live","live");
 loadYT("upcoming","upcoming");
-loadYT("completed","archive");
 
 setInterval(checkLive,30000);
 checkLive();
